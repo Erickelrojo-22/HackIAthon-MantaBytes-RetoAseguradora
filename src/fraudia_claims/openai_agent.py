@@ -8,6 +8,7 @@ from typing import Any
 from fraudia_claims.agent_tools import (
     aggregate_alerts,
     get_claim_detail,
+    get_impact_summary,
     get_relationship_network,
     list_risk_cases,
     score_candidate_claim,
@@ -68,6 +69,12 @@ TOOLS = [
         "description": "Calcula un score temporal para un siniestro nuevo sin persistirlo.",
         "parameters": {"type": "object", "properties": {}, "additionalProperties": True},
     },
+    {
+        "type": "function",
+        "name": "get_impact_summary",
+        "description": "Devuelve KPIs ejecutivos e impacto potencial simulado.",
+        "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
 ]
 
 
@@ -82,6 +89,8 @@ def _dispatch(name: str, arguments: dict[str, Any], db_path: Path) -> Any:
         return get_relationship_network(limit=int(arguments.get("limit", 60)), db_path=db_path)
     if name == "score_candidate_claim":
         return score_candidate_claim(arguments)
+    if name == "get_impact_summary":
+        return get_impact_summary(db_path)
     raise ValueError(f"Herramienta no soportada: {name}")
 
 
@@ -136,5 +145,12 @@ def ask_with_openai(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
         return answer_offline(question, db_path)
 
 
-def ask_agent(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
+def ask_agent(
+    question: str,
+    db_path: Path = DEFAULT_DB_PATH,
+    session_cases: list[dict[str, Any]] | None = None,
+) -> str:
+    normalized = question.lower()
+    if "ultimo caso" in normalized or "caso evaluado" in normalized or "caso en vivo" in normalized:
+        return answer_offline(question, db_path, session_cases=session_cases)
     return ask_with_openai(question, db_path)

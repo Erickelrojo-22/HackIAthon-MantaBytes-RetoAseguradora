@@ -4,6 +4,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
+from fraudia_claims.analytics import impact_summary
 from fraudia_claims.config import DEFAULT_DB_PATH
 from fraudia_claims.scoring import level_from_score
 
@@ -220,6 +221,10 @@ def get_relationship_network(limit: int = 60, db_path: Path = DEFAULT_DB_PATH) -
     return {"nodes": list(nodes.values()), "edges": edges}
 
 
+def get_impact_summary(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
+    return impact_summary(db_path)
+
+
 def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
     alerts: list[dict[str, Any]] = []
     points = 0
@@ -280,6 +285,7 @@ def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
     if critical and score < 76:
         score = 76
     level = level_from_score(score)
+    explanation = " | ".join(f"{alert['descripcion']} ({alert['puntos']} pts)" for alert in alerts[:3])
     return {
         "score_final": int(score),
         "nivel_riesgo": level,
@@ -292,4 +298,5 @@ def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
             "Rojo": "Escalar a revision especializada de campo.",
         }[level],
         "alertas": alerts,
+        "explicacion_resumen": explanation or "Sin alertas materiales; mantener flujo normal con controles habituales.",
     }

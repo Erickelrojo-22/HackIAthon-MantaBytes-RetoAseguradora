@@ -16,6 +16,8 @@ El modo offline responde consultas frecuentes:
 - Ramos o ciudades con mayor exposicion.
 - Documentos faltantes en casos criticos.
 - Detalle explicable de un siniestro `SINxxxxx`.
+- Ahorro potencial simulado.
+- Ultimo caso evaluado en vivo.
 - Resumen ejecutivo.
 
 ## OpenAI opcional
@@ -27,5 +29,6 @@ Si existen `OPENAI_API_KEY` y `OPENAI_MODEL`, el agente usa la Responses API con
 - `aggregate_alerts`
 - `get_relationship_network`
 - `score_candidate_claim`
+- `get_impact_summary`
 
 El modelo no escribe en la base ni modifica scores. Si la API falla, el sistema responde offline.

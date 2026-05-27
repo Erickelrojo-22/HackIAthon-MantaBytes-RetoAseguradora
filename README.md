@@ -11,8 +11,11 @@ Importante: FraudIA genera **alertas de revision humana**. No acusa fraude, no r
 - Score trazable: reglas + anomalias + NLP.
 - Semaforo: Verde `0-40`, Amarillo `41-75`, Rojo `76-100`.
 - Dashboard Streamlit con bandeja, detalle, red de relaciones y formulario de caso nuevo.
+- Demo guiada con ruta de pitch, casos destacados y preguntas listas para el jurado.
+- Casos evaluados en vivo guardados en sesion sin modificar la base historica.
 - Agente offline con preguntas frecuentes del reto.
 - Integracion OpenAI opcional con herramientas locales de solo lectura.
+- Reporte ejecutivo HTML descargable con KPIs, top casos, proveedores y limitaciones.
 
 ## Instalacion
 
@@ -60,12 +63,13 @@ Si las variables no existen, la app funciona en modo offline. El LLM no modifica
 
 ## Demo sugerida
 
-1. Mostrar resumen y explicar que los resultados son alertas, no acusaciones.
-2. Abrir la bandeja y filtrar casos rojos.
-3. Entrar al detalle de un caso rojo y revisar reglas, documentos y similitud narrativa.
-4. Abrir la red de relaciones para evidenciar proveedores o asegurados recurrentes.
+1. Abrir `Demo guiada` y seguir la ruta de pitch preparada.
+2. Mostrar KPIs ejecutivos y explicar que los resultados son alertas, no acusaciones.
+3. Abrir el caso rojo destacado y revisar reglas, documentos y similitud narrativa.
+4. Mostrar la red de relaciones para evidenciar proveedores o asegurados recurrentes.
 5. Preguntar al agente: "Que proveedores concentran mas alertas rojas?"
 6. Evaluar un caso nuevo ocurrido 24 horas despues de iniciar la poliza.
+7. Descargar el reporte ejecutivo HTML como evidencia para gerencia/auditoria.
 
 ## Estructura
 
@@ -79,3 +83,10 @@ tests/
 ```
 
 La documentacion tecnica vive en `docs/` y el guion del pitch en `presentation/pitch.md`.
+
+## Smoke test local
+
+```powershell
+.\.venv\Scripts\python -m unittest discover -s tests
+.\.venv\Scripts\python -m streamlit run src\fraudia_claims\app\main.py
+```

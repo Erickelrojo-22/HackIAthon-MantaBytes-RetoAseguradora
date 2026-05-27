@@ -7,6 +7,8 @@
 - El score depende de pesos definidos para el reto y requiere calibracion con expertos antes de produccion.
 - La similitud textual detecta patrones de narrativa, pero no sustituye revision documental real.
 - La red de relaciones evidencia concentraciones, no culpabilidad.
+- El ahorro potencial es simulado para narrativa de negocio; no es un resultado financiero auditado.
+- Los casos evaluados en vivo son temporales y no forman parte del dataset historico.
 
 ## Seguridad
 
@@ -14,6 +16,7 @@
 - `.env` queda ignorado por Git.
 - Los identificadores son anonimos.
 - La integracion OpenAI es opcional y de solo lectura.
+- El reporte HTML es una salida ejecutiva de demo, no un informe legal.
 
 ## Principio etico
 
