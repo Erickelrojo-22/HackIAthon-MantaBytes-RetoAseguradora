@@ -1,0 +1,1701 @@
+id_asegurado,segmento,antiguedad_meses,ciudad,numero_polizas,reclamos_ultimos_12_meses,mora_actual,score_cliente_simulado,lista_restrictiva
+ASE00001,Individual,6,Quito,2,0,False,727,False
+ASE00002,Pyme,26,Portoviejo,3,3,True,727,False
+ASE00003,Individual,131,Manta,4,0,False,781,False
+ASE00004,Individual,60,Portoviejo,1,0,False,561,False
+ASE00005,Individual,70,Manta,1,1,True,693,False
+ASE00006,Pyme,63,Cuenca,3,1,False,714,False
+ASE00007,Corporativo,39,Portoviejo,3,0,False,790,False
+ASE00008,Individual,7,Cuenca,2,0,False,834,False
+ASE00009,Pyme,50,Guayaquil,3,1,False,553,False
+ASE00010,Individual,130,Ambato,1,2,False,710,False
+ASE00011,VIP,110,Manta,2,0,False,644,False
+ASE00012,Corporativo,41,Guayaquil,4,0,False,605,False
+ASE00013,Pyme,13,Loja,1,0,False,696,False
+ASE00014,Pyme,87,Guayaquil,3,2,False,802,False
+ASE00015,Individual,98,Cuenca,2,0,False,565,False
+ASE00016,Pyme,37,Santo Domingo,2,0,False,673,False
+ASE00017,Individual,81,Cuenca,1,2,False,734,False
+ASE00018,Individual,84,Ambato,3,2,False,584,False
+ASE00019,Individual,50,Ambato,3,0,False,708,False
+ASE00020,Individual,122,Portoviejo,1,0,False,585,False
+ASE00021,Individual,118,Portoviejo,3,0,False,679,False
+ASE00022,Individual,26,Loja,3,0,False,657,False
+ASE00023,Pyme,18,Cuenca,4,0,False,782,False
+ASE00024,Individual,61,Cuenca,2,1,False,731,False
+ASE00025,Individual,77,Quito,4,0,False,629,False
+ASE00026,Individual,76,Ambato,1,0,False,652,False
+ASE00027,Individual,62,Quito,1,0,False,572,False
+ASE00028,Individual,15,Portoviejo,4,2,False,725,False
+ASE00029,Individual,66,Santo Domingo,4,1,False,473,False
+ASE00030,Individual,86,Cuenca,4,1,False,752,False
+ASE00031,Individual,123,Guayaquil,4,0,False,579,False
+ASE00032,Corporativo,143,Cuenca,2,0,False,597,False
+ASE00033,Pyme,46,Ambato,3,0,False,687,False
+ASE00034,Individual,116,Manta,2,0,False,642,False
+ASE00035,Individual,7,Cuenca,4,0,False,582,False
+ASE00036,VIP,75,Guayaquil,1,0,False,649,False
+ASE00037,Individual,57,Quito,1,0,True,793,False
+ASE00038,Individual,30,Ambato,2,0,False,627,False
+ASE00039,Corporativo,51,Manta,4,0,True,524,False
+ASE00040,Individual,16,Santo Domingo,3,0,False,790,False
+ASE00041,Pyme,61,Guayaquil,1,0,False,569,False
+ASE00042,Individual,126,Santo Domingo,2,1,False,620,False
+ASE00043,Individual,2,Quito,2,0,False,747,False
+ASE00044,Pyme,106,Portoviejo,4,1,False,683,False
+ASE00045,Individual,71,Loja,1,0,False,702,False
+ASE00046,Individual,110,Quito,3,1,False,682,False
+ASE00047,Individual,73,Cuenca,2,1,False,619,False
+ASE00048,Individual,67,Guayaquil,4,0,True,725,False
+ASE00049,Pyme,39,Portoviejo,1,0,False,668,False
+ASE00050,Individual,7,Portoviejo,4,1,False,533,False
+ASE00051,Pyme,87,Manta,3,0,False,704,False
+ASE00052,Individual,82,Quito,3,0,False,642,False
+ASE00053,Individual,69,Guayaquil,2,1,False,725,False
+ASE00054,Individual,73,Cuenca,1,3,False,677,False
+ASE00055,Individual,10,Guayaquil,2,0,False,570,False
+ASE00056,Pyme,7,Ambato,3,0,False,557,False
+ASE00057,Individual,120,Portoviejo,3,0,False,724,False
+ASE00058,Individual,56,Guayaquil,2,0,True,608,False
+ASE00059,Individual,57,Cuenca,1,1,False,584,False
+ASE00060,Pyme,93,Portoviejo,3,0,False,654,False
+ASE00061,Individual,90,Loja,4,0,False,714,False
+ASE00062,Individual,20,Ambato,2,0,False,719,False
+ASE00063,Individual,73,Santo Domingo,1,0,False,627,False
+ASE00064,Individual,39,Guayaquil,1,0,False,653,False
+ASE00065,Corporativo,71,Portoviejo,1,0,False,835,False
+ASE00066,VIP,33,Portoviejo,2,0,False,555,False
+ASE00067,Individual,97,Guayaquil,3,0,False,589,False
+ASE00068,Individual,106,Ambato,1,0,False,674,False
+ASE00069,Pyme,54,Cuenca,2,1,False,735,False
+ASE00070,Individual,56,Manta,4,0,False,632,False
+ASE00071,Individual,60,Quito,2,0,False,660,False
+ASE00072,Individual,92,Cuenca,2,0,False,785,False
+ASE00073,Pyme,34,Guayaquil,2,1,False,704,False
+ASE00074,VIP,58,Quito,1,0,True,752,False
+ASE00075,Corporativo,96,Cuenca,2,1,False,519,False
+ASE00076,Pyme,62,Santo Domingo,2,0,False,583,False
+ASE00077,Individual,79,Guayaquil,1,2,False,729,False
+ASE00078,VIP,18,Manta,3,0,False,845,False
+ASE00079,Individual,112,Portoviejo,1,0,True,762,False
+ASE00080,Individual,62,Quito,4,0,True,840,False
+ASE00081,Individual,13,Loja,2,0,False,660,False
+ASE00082,Pyme,143,Guayaquil,2,0,False,766,False
+ASE00083,Individual,52,Quito,1,1,False,602,False
+ASE00084,Individual,108,Quito,2,0,False,621,False
+ASE00085,Individual,84,Portoviejo,1,1,False,687,False
+ASE00086,Individual,100,Loja,1,0,False,785,False
+ASE00087,Individual,54,Portoviejo,1,0,False,641,False
+ASE00088,Individual,116,Quito,4,0,False,683,False
+ASE00089,Individual,137,Guayaquil,1,0,False,771,False
+ASE00090,Corporativo,10,Ambato,1,0,False,565,False
+ASE00091,Corporativo,135,Santo Domingo,3,0,False,787,False
+ASE00092,Individual,115,Santo Domingo,1,0,False,769,False
+ASE00093,VIP,17,Santo Domingo,4,0,True,690,False
+ASE00094,Pyme,114,Manta,1,0,False,851,False
+ASE00095,Pyme,15,Santo Domingo,4,0,False,596,False
+ASE00096,Pyme,95,Portoviejo,3,0,False,688,False
+ASE00097,Individual,29,Santo Domingo,4,3,False,760,False
+ASE00098,Corporativo,131,Quito,2,0,False,709,False
+ASE00099,Individual,56,Cuenca,4,0,False,579,False
+ASE00100,Individual,10,Quito,4,0,True,632,False
+ASE00101,Pyme,135,Portoviejo,4,0,False,558,False
+ASE00102,Individual,13,Manta,4,0,False,767,False
+ASE00103,Individual,134,Portoviejo,4,0,False,778,False
+ASE00104,Individual,132,Ambato,4,0,False,590,False
+ASE00105,Pyme,17,Manta,2,1,False,731,False
+ASE00106,Individual,59,Manta,1,1,False,510,False
+ASE00107,Individual,23,Loja,2,0,False,560,False
+ASE00108,Corporativo,136,Loja,3,1,False,669,False
+ASE00109,Pyme,29,Portoviejo,2,0,False,641,False
+ASE00110,Individual,69,Ambato,4,0,False,622,False
+ASE00111,Pyme,126,Santo Domingo,4,1,False,681,False
+ASE00112,Individual,63,Portoviejo,4,0,False,563,False
+ASE00113,Pyme,121,Guayaquil,2,1,False,582,False
+ASE00114,Individual,116,Manta,1,0,False,741,False
+ASE00115,Individual,60,Santo Domingo,4,1,False,549,False
+ASE00116,Individual,67,Portoviejo,1,0,False,877,False
+ASE00117,Individual,56,Santo Domingo,4,2,False,610,False
+ASE00118,Individual,26,Manta,3,1,False,643,False
+ASE00119,Individual,92,Ambato,3,0,False,670,False
+ASE00120,Individual,62,Manta,1,1,False,732,False
+ASE00121,Pyme,105,Quito,1,0,False,602,False
+ASE00122,Corporativo,30,Cuenca,1,0,False,527,False
+ASE00123,Individual,60,Quito,2,0,False,626,False
+ASE00124,Individual,130,Quito,1,0,False,758,False
+ASE00125,Individual,138,Quito,3,0,False,653,False
+ASE00126,Individual,122,Santo Domingo,2,0,False,680,False
+ASE00127,Pyme,91,Ambato,1,0,False,702,False
+ASE00128,Pyme,18,Guayaquil,3,0,False,689,False
+ASE00129,Individual,72,Guayaquil,4,0,False,643,False
+ASE00130,Individual,50,Guayaquil,1,0,False,782,False
+ASE00131,VIP,29,Quito,3,0,False,606,False
+ASE00132,Pyme,117,Guayaquil,1,0,False,711,False
+ASE00133,Pyme,78,Loja,4,0,False,614,False
+ASE00134,Corporativo,4,Manta,1,1,False,674,False
+ASE00135,Individual,9,Portoviejo,1,0,False,827,False
+ASE00136,Pyme,1,Portoviejo,4,1,False,757,False
+ASE00137,Pyme,86,Portoviejo,1,0,False,709,False
+ASE00138,Corporativo,27,Cuenca,1,0,False,661,False
+ASE00139,Individual,46,Portoviejo,1,1,False,822,False
+ASE00140,Pyme,134,Ambato,1,0,False,746,False
+ASE00141,Individual,32,Quito,2,0,False,687,False
+ASE00142,Individual,69,Cuenca,4,0,False,604,False
+ASE00143,Individual,48,Ambato,4,0,False,591,False
+ASE00144,Individual,26,Guayaquil,3,0,False,711,False
+ASE00145,VIP,108,Guayaquil,3,2,False,657,False
+ASE00146,Individual,31,Manta,1,0,False,717,False
+ASE00147,Individual,108,Guayaquil,1,1,False,623,False
+ASE00148,Individual,20,Manta,2,0,False,636,False
+ASE00149,Individual,92,Loja,3,0,False,700,False
+ASE00150,Individual,82,Portoviejo,4,3,False,742,False
+ASE00151,Corporativo,112,Cuenca,1,1,False,626,False
+ASE00152,Individual,29,Cuenca,1,1,False,679,False
+ASE00153,Individual,99,Santo Domingo,3,0,False,692,False
+ASE00154,Individual,89,Manta,4,0,False,637,False
+ASE00155,Pyme,113,Manta,1,2,False,693,False
+ASE00156,Individual,140,Cuenca,2,0,False,850,False
+ASE00157,Pyme,139,Santo Domingo,4,0,False,877,False
+ASE00158,Individual,89,Quito,4,0,False,510,True
+ASE00159,Individual,96,Loja,4,0,False,692,False
+ASE00160,Pyme,34,Cuenca,2,0,False,668,False
+ASE00161,Individual,4,Portoviejo,4,0,False,789,False
+ASE00162,Individual,24,Ambato,2,1,False,689,False
+ASE00163,Individual,118,Portoviejo,1,3,False,627,False
+ASE00164,Pyme,41,Santo Domingo,1,1,False,790,False
+ASE00165,Individual,2,Loja,3,1,True,739,False
+ASE00166,Individual,69,Manta,3,2,False,549,False
+ASE00167,VIP,5,Cuenca,3,0,False,588,False
+ASE00168,Individual,31,Manta,4,0,False,752,False
+ASE00169,Individual,36,Manta,1,0,False,677,False
+ASE00170,Individual,2,Cuenca,2,0,False,589,False
+ASE00171,Individual,9,Quito,1,0,False,699,False
+ASE00172,Individual,114,Manta,2,2,False,826,False
+ASE00173,Individual,88,Ambato,4,0,True,689,False
+ASE00174,VIP,81,Santo Domingo,3,0,False,682,False
+ASE00175,Corporativo,96,Manta,2,1,False,831,False
+ASE00176,Individual,104,Quito,3,0,False,680,False
+ASE00177,Corporativo,140,Quito,3,0,False,810,False
+ASE00178,Individual,57,Manta,4,1,False,686,False
+ASE00179,Pyme,128,Santo Domingo,4,1,False,673,False
+ASE00180,Individual,33,Santo Domingo,1,2,False,615,False
+ASE00181,Pyme,71,Portoviejo,3,1,False,553,False
+ASE00182,Pyme,87,Ambato,4,0,False,684,False
+ASE00183,Corporativo,88,Quito,3,2,False,707,False
+ASE00184,VIP,60,Portoviejo,4,0,False,594,False
+ASE00185,Individual,73,Santo Domingo,4,0,False,636,False
+ASE00186,Pyme,41,Portoviejo,3,0,False,662,False
+ASE00187,Pyme,113,Quito,4,0,False,539,False
+ASE00188,Individual,122,Guayaquil,1,0,False,633,False
+ASE00189,Pyme,82,Quito,4,1,False,516,False
+ASE00190,Individual,139,Portoviejo,3,0,False,642,False
+ASE00191,Individual,54,Ambato,4,0,False,679,False
+ASE00192,Individual,113,Cuenca,2,0,False,777,False
+ASE00193,Individual,64,Cuenca,1,0,False,521,False
+ASE00194,Individual,129,Quito,4,0,False,597,False
+ASE00195,Pyme,142,Cuenca,3,0,False,740,False
+ASE00196,Individual,85,Manta,3,0,False,726,False
+ASE00197,Corporativo,128,Guayaquil,2,1,False,652,False
+ASE00198,Individual,36,Manta,2,1,False,839,False
+ASE00199,Individual,54,Loja,1,0,False,634,False
+ASE00200,Individual,121,Ambato,2,1,False,755,False
+ASE00201,Pyme,96,Cuenca,4,0,False,757,False
+ASE00202,Pyme,105,Portoviejo,2,0,False,534,False
+ASE00203,Individual,102,Ambato,1,0,False,722,False
+ASE00204,Pyme,21,Quito,4,0,False,713,False
+ASE00205,Pyme,33,Cuenca,4,0,False,575,False
+ASE00206,Pyme,141,Portoviejo,3,0,False,823,False
+ASE00207,Individual,77,Cuenca,3,0,False,663,False
+ASE00208,Individual,135,Manta,3,1,False,828,False
+ASE00209,Corporativo,6,Cuenca,2,0,False,558,False
+ASE00210,Corporativo,54,Manta,3,0,False,619,False
+ASE00211,Individual,95,Quito,2,1,False,731,False
+ASE00212,Individual,65,Portoviejo,1,1,True,647,False
+ASE00213,Individual,121,Manta,1,0,False,784,False
+ASE00214,Individual,59,Manta,3,0,False,640,False
+ASE00215,Individual,111,Portoviejo,3,0,False,500,False
+ASE00216,Individual,73,Ambato,1,0,False,778,False
+ASE00217,Individual,124,Cuenca,1,0,False,658,False
+ASE00218,Corporativo,39,Santo Domingo,1,1,False,681,False
+ASE00219,Individual,106,Ambato,3,0,False,656,False
+ASE00220,Individual,23,Portoviejo,2,1,False,744,False
+ASE00221,Individual,53,Portoviejo,4,0,False,741,False
+ASE00222,Individual,135,Ambato,3,3,False,434,False
+ASE00223,Pyme,15,Guayaquil,4,1,True,714,False
+ASE00224,Individual,96,Cuenca,3,0,False,527,False
+ASE00225,Individual,31,Quito,3,2,False,691,False
+ASE00226,Individual,141,Cuenca,4,2,False,663,False
+ASE00227,Individual,58,Manta,1,0,False,730,False
+ASE00228,VIP,100,Guayaquil,2,1,False,517,False
+ASE00229,Individual,131,Quito,1,1,False,659,False
+ASE00230,Corporativo,47,Portoviejo,3,1,False,842,False
+ASE00231,Individual,91,Loja,3,1,False,867,False
+ASE00232,Individual,115,Cuenca,2,0,False,557,False
+ASE00233,Corporativo,97,Cuenca,2,0,False,626,False
+ASE00234,Individual,35,Quito,4,0,False,563,False
+ASE00235,Individual,66,Portoviejo,2,0,False,651,False
+ASE00236,Individual,143,Santo Domingo,3,0,False,771,False
+ASE00237,Individual,10,Manta,3,0,False,761,False
+ASE00238,Pyme,55,Cuenca,2,0,False,610,False
+ASE00239,Individual,43,Santo Domingo,3,0,True,611,False
+ASE00240,Individual,60,Cuenca,2,0,False,542,False
+ASE00241,Pyme,17,Loja,3,1,True,614,True
+ASE00242,VIP,99,Cuenca,2,1,False,731,False
+ASE00243,VIP,15,Portoviejo,2,0,False,695,False
+ASE00244,Individual,44,Ambato,3,0,False,760,False
+ASE00245,Individual,71,Ambato,1,0,False,749,False
+ASE00246,Individual,64,Portoviejo,4,0,False,764,False
+ASE00247,Individual,23,Manta,4,0,False,746,False
+ASE00248,Individual,50,Portoviejo,1,1,False,601,False
+ASE00249,Individual,97,Cuenca,2,0,False,733,False
+ASE00250,Individual,4,Cuenca,2,0,False,580,False
+ASE00251,VIP,122,Santo Domingo,4,1,True,489,False
+ASE00252,Individual,85,Santo Domingo,3,0,False,524,False
+ASE00253,Individual,110,Santo Domingo,3,0,False,660,False
+ASE00254,Corporativo,83,Cuenca,2,1,False,744,True
+ASE00255,Pyme,142,Manta,4,1,False,726,False
+ASE00256,Pyme,50,Guayaquil,3,0,True,532,False
+ASE00257,Individual,4,Guayaquil,1,0,False,650,False
+ASE00258,Corporativo,54,Portoviejo,4,0,False,742,False
+ASE00259,VIP,111,Loja,1,1,False,698,False
+ASE00260,Individual,6,Santo Domingo,3,0,False,651,False
+ASE00261,VIP,83,Santo Domingo,3,0,False,614,False
+ASE00262,Individual,45,Quito,4,0,False,599,False
+ASE00263,Individual,107,Santo Domingo,1,0,False,689,False
+ASE00264,Pyme,106,Quito,1,0,False,800,False
+ASE00265,Pyme,18,Loja,4,0,False,834,False
+ASE00266,Individual,71,Guayaquil,3,0,False,527,False
+ASE00267,Individual,72,Loja,1,1,True,702,False
+ASE00268,Individual,27,Santo Domingo,3,1,True,844,False
+ASE00269,Corporativo,7,Cuenca,4,1,False,524,False
+ASE00270,Individual,19,Portoviejo,3,0,False,689,False
+ASE00271,Individual,29,Cuenca,2,0,False,820,False
+ASE00272,Corporativo,69,Loja,1,0,False,783,False
+ASE00273,VIP,64,Ambato,2,3,True,806,False
+ASE00274,Pyme,68,Santo Domingo,1,0,False,692,False
+ASE00275,Individual,127,Santo Domingo,2,1,False,698,False
+ASE00276,Individual,66,Loja,3,2,False,833,False
+ASE00277,Individual,27,Cuenca,1,0,False,706,False
+ASE00278,Individual,85,Ambato,1,0,False,770,False
+ASE00279,Individual,140,Santo Domingo,4,0,False,792,False
+ASE00280,Individual,50,Cuenca,3,2,False,644,False
+ASE00281,Pyme,9,Portoviejo,3,0,False,736,False
+ASE00282,Individual,57,Guayaquil,3,0,False,790,False
+ASE00283,Individual,91,Portoviejo,2,0,False,748,False
+ASE00284,Pyme,48,Cuenca,4,0,False,724,False
+ASE00285,Corporativo,76,Ambato,3,0,False,773,False
+ASE00286,Corporativo,90,Guayaquil,4,1,False,807,False
+ASE00287,Pyme,8,Portoviejo,2,0,False,753,False
+ASE00288,VIP,5,Loja,3,1,True,723,False
+ASE00289,Individual,99,Santo Domingo,1,0,False,639,False
+ASE00290,Pyme,101,Loja,4,2,False,697,False
+ASE00291,Individual,44,Santo Domingo,2,0,False,778,False
+ASE00292,Individual,115,Ambato,3,0,False,681,False
+ASE00293,Corporativo,101,Santo Domingo,1,3,False,695,False
+ASE00294,Individual,53,Portoviejo,3,0,False,735,False
+ASE00295,Pyme,20,Guayaquil,3,0,False,559,False
+ASE00296,Individual,5,Portoviejo,2,0,False,616,False
+ASE00297,Individual,37,Cuenca,2,1,False,700,False
+ASE00298,Individual,101,Manta,4,0,False,825,False
+ASE00299,Individual,91,Ambato,4,1,False,678,False
+ASE00300,Pyme,91,Guayaquil,1,0,False,805,False
+ASE00301,Pyme,46,Loja,4,2,False,726,False
+ASE00302,Individual,108,Santo Domingo,1,1,False,692,False
+ASE00303,Individual,13,Loja,3,0,False,717,False
+ASE00304,Individual,21,Quito,3,1,False,695,False
+ASE00305,Individual,71,Portoviejo,4,1,False,686,False
+ASE00306,Individual,82,Guayaquil,3,0,False,676,False
+ASE00307,Individual,96,Santo Domingo,4,0,False,619,False
+ASE00308,Individual,56,Portoviejo,1,0,False,794,False
+ASE00309,Individual,19,Santo Domingo,4,0,True,664,False
+ASE00310,Individual,9,Guayaquil,4,0,False,615,False
+ASE00311,Individual,127,Guayaquil,1,0,False,614,False
+ASE00312,Corporativo,91,Manta,4,0,True,713,False
+ASE00313,Individual,35,Cuenca,1,0,False,710,False
+ASE00314,Corporativo,73,Loja,1,1,False,667,False
+ASE00315,Corporativo,136,Cuenca,2,0,False,577,False
+ASE00316,Individual,116,Manta,4,0,False,721,False
+ASE00317,Individual,89,Santo Domingo,3,1,False,602,False
+ASE00318,Individual,51,Quito,1,0,False,723,False
+ASE00319,Individual,22,Ambato,2,0,True,513,False
+ASE00320,Individual,59,Portoviejo,4,0,False,774,False
+ASE00321,Corporativo,40,Cuenca,1,0,False,724,False
+ASE00322,Pyme,38,Quito,2,1,False,654,False
+ASE00323,Individual,93,Portoviejo,4,0,False,643,False
+ASE00324,Pyme,70,Cuenca,1,1,True,641,True
+ASE00325,Individual,73,Portoviejo,2,0,False,737,False
+ASE00326,Pyme,68,Santo Domingo,2,0,False,670,False
+ASE00327,Individual,4,Guayaquil,3,0,False,808,False
+ASE00328,Individual,11,Quito,3,1,False,648,False
+ASE00329,Corporativo,48,Manta,2,1,False,755,False
+ASE00330,Pyme,138,Loja,3,0,False,807,False
+ASE00331,Individual,123,Cuenca,3,0,False,645,False
+ASE00332,Corporativo,118,Santo Domingo,2,0,False,732,False
+ASE00333,Individual,137,Guayaquil,2,2,False,600,False
+ASE00334,Pyme,122,Santo Domingo,3,0,False,506,False
+ASE00335,Pyme,120,Quito,2,0,False,707,False
+ASE00336,Individual,70,Guayaquil,2,0,False,699,False
+ASE00337,Pyme,24,Portoviejo,1,0,False,725,False
+ASE00338,Individual,55,Guayaquil,2,0,False,589,False
+ASE00339,VIP,39,Portoviejo,4,0,False,700,False
+ASE00340,Corporativo,104,Quito,3,0,True,558,False
+ASE00341,Corporativo,75,Ambato,4,1,False,637,False
+ASE00342,Corporativo,142,Portoviejo,3,1,False,786,False
+ASE00343,Individual,39,Ambato,3,0,False,562,False
+ASE00344,Pyme,109,Portoviejo,4,0,False,743,False
+ASE00345,Pyme,26,Ambato,4,1,False,573,False
+ASE00346,Individual,14,Loja,1,0,False,712,False
+ASE00347,Individual,97,Loja,1,0,False,598,False
+ASE00348,Individual,115,Guayaquil,4,0,False,582,False
+ASE00349,Individual,118,Loja,3,2,False,532,False
+ASE00350,Pyme,66,Manta,1,0,False,710,False
+ASE00351,Individual,69,Cuenca,4,1,False,538,False
+ASE00352,Pyme,2,Loja,1,1,True,694,False
+ASE00353,Individual,14,Portoviejo,3,0,False,663,False
+ASE00354,Individual,37,Ambato,3,0,False,512,False
+ASE00355,Individual,139,Portoviejo,1,1,False,648,False
+ASE00356,Pyme,130,Cuenca,1,0,False,592,False
+ASE00357,Individual,133,Cuenca,3,0,False,712,False
+ASE00358,Individual,70,Quito,3,0,False,693,False
+ASE00359,Individual,81,Loja,1,1,False,800,False
+ASE00360,Individual,107,Manta,2,1,False,706,False
+ASE00361,Pyme,86,Cuenca,2,0,False,688,False
+ASE00362,Individual,64,Quito,4,0,False,717,False
+ASE00363,Pyme,57,Loja,3,0,False,705,False
+ASE00364,Pyme,2,Quito,4,1,False,662,False
+ASE00365,VIP,38,Cuenca,1,0,False,727,False
+ASE00366,Individual,87,Loja,2,0,False,700,False
+ASE00367,Corporativo,24,Cuenca,3,0,False,722,False
+ASE00368,Individual,41,Guayaquil,3,0,False,578,False
+ASE00369,VIP,114,Portoviejo,1,0,False,674,False
+ASE00370,Individual,20,Loja,1,0,True,753,False
+ASE00371,Individual,93,Ambato,1,1,False,731,False
+ASE00372,Individual,99,Quito,3,0,False,738,False
+ASE00373,Pyme,99,Loja,1,1,False,738,False
+ASE00374,Individual,88,Quito,4,0,False,711,False
+ASE00375,VIP,125,Santo Domingo,2,0,False,765,False
+ASE00376,Individual,36,Guayaquil,3,0,False,609,False
+ASE00377,Corporativo,80,Quito,2,0,False,742,False
+ASE00378,Individual,7,Cuenca,2,0,False,698,False
+ASE00379,Individual,49,Quito,2,0,False,658,False
+ASE00380,Pyme,117,Portoviejo,2,2,False,697,False
+ASE00381,Individual,126,Guayaquil,4,0,False,701,False
+ASE00382,Individual,100,Manta,2,0,True,578,False
+ASE00383,Individual,139,Cuenca,3,1,False,605,False
+ASE00384,Individual,19,Santo Domingo,4,0,False,758,False
+ASE00385,Individual,27,Loja,3,0,False,613,False
+ASE00386,Individual,112,Ambato,3,0,False,755,False
+ASE00387,Individual,97,Santo Domingo,2,1,False,742,False
+ASE00388,Corporativo,56,Cuenca,1,0,False,723,False
+ASE00389,Individual,63,Portoviejo,1,0,False,694,False
+ASE00390,Individual,113,Manta,2,0,False,800,False
+ASE00391,Pyme,110,Quito,2,0,False,723,False
+ASE00392,Individual,123,Quito,2,0,True,784,False
+ASE00393,Individual,10,Ambato,4,0,False,762,False
+ASE00394,Individual,23,Ambato,2,0,False,671,False
+ASE00395,Pyme,49,Guayaquil,3,0,False,663,False
+ASE00396,Pyme,69,Portoviejo,4,0,False,677,False
+ASE00397,Individual,19,Portoviejo,3,0,False,727,False
+ASE00398,Pyme,110,Ambato,4,0,False,598,False
+ASE00399,Individual,64,Cuenca,4,0,False,548,False
+ASE00400,Individual,137,Guayaquil,2,0,False,673,False
+ASE00401,Individual,133,Quito,2,1,False,563,False
+ASE00402,Individual,95,Loja,3,1,False,622,False
+ASE00403,Individual,121,Manta,1,0,False,706,False
+ASE00404,Individual,94,Santo Domingo,1,1,False,712,False
+ASE00405,Individual,15,Guayaquil,1,1,False,806,False
+ASE00406,Pyme,137,Ambato,2,2,False,586,False
+ASE00407,Individual,97,Portoviejo,3,0,False,542,False
+ASE00408,Pyme,19,Guayaquil,3,0,False,741,False
+ASE00409,Individual,83,Portoviejo,3,0,False,566,False
+ASE00410,Pyme,89,Cuenca,2,0,False,724,False
+ASE00411,Individual,56,Manta,1,0,False,536,False
+ASE00412,Corporativo,102,Cuenca,2,0,True,597,False
+ASE00413,Corporativo,117,Guayaquil,4,1,False,738,False
+ASE00414,Pyme,56,Manta,3,0,False,554,False
+ASE00415,Individual,70,Santo Domingo,3,0,False,670,False
+ASE00416,Individual,84,Guayaquil,1,0,False,710,False
+ASE00417,Pyme,90,Loja,2,0,False,570,False
+ASE00418,Individual,65,Quito,2,0,False,710,False
+ASE00419,Individual,79,Cuenca,1,1,False,767,False
+ASE00420,Individual,11,Manta,3,0,False,666,False
+ASE00421,Individual,62,Guayaquil,4,0,False,663,False
+ASE00422,Individual,55,Loja,3,0,False,776,False
+ASE00423,Individual,39,Manta,1,0,False,566,False
+ASE00424,Pyme,1,Loja,4,0,False,736,False
+ASE00425,Individual,111,Cuenca,1,0,False,677,False
+ASE00426,Individual,103,Ambato,1,0,False,726,False
+ASE00427,Individual,110,Guayaquil,1,0,False,673,False
+ASE00428,Individual,128,Guayaquil,4,0,False,586,False
+ASE00429,Corporativo,131,Quito,3,3,False,718,False
+ASE00430,Corporativo,26,Manta,1,0,True,713,False
+ASE00431,Individual,104,Manta,4,0,False,632,False
+ASE00432,Individual,128,Santo Domingo,3,0,False,546,False
+ASE00433,Individual,85,Cuenca,4,0,False,699,False
+ASE00434,Corporativo,36,Quito,2,1,False,706,False
+ASE00435,Individual,55,Ambato,2,0,False,539,False
+ASE00436,Individual,4,Guayaquil,4,1,False,582,False
+ASE00437,Pyme,119,Loja,1,0,False,484,False
+ASE00438,Individual,46,Cuenca,1,0,False,704,False
+ASE00439,Individual,10,Cuenca,2,0,False,695,False
+ASE00440,Individual,64,Manta,1,1,False,634,False
+ASE00441,Pyme,91,Quito,3,0,False,734,False
+ASE00442,Individual,121,Santo Domingo,3,0,False,854,False
+ASE00443,Pyme,21,Quito,2,1,False,630,False
+ASE00444,Individual,83,Santo Domingo,4,0,False,596,False
+ASE00445,Individual,65,Manta,3,0,False,780,False
+ASE00446,Individual,12,Guayaquil,4,1,False,517,False
+ASE00447,Pyme,100,Cuenca,4,1,False,489,False
+ASE00448,Individual,31,Portoviejo,4,0,False,753,False
+ASE00449,Individual,40,Santo Domingo,3,0,True,666,False
+ASE00450,Individual,104,Manta,3,2,False,569,False
+ASE00451,VIP,101,Cuenca,2,0,True,634,False
+ASE00452,Individual,71,Ambato,4,0,False,673,False
+ASE00453,Individual,87,Cuenca,2,0,False,659,False
+ASE00454,Pyme,87,Santo Domingo,1,0,False,714,False
+ASE00455,Individual,129,Guayaquil,2,1,False,634,False
+ASE00456,Individual,21,Loja,2,0,False,527,False
+ASE00457,Corporativo,3,Portoviejo,3,0,False,545,False
+ASE00458,Pyme,83,Manta,1,0,False,769,False
+ASE00459,Individual,47,Quito,4,0,False,623,False
+ASE00460,Individual,46,Guayaquil,3,0,False,628,False
+ASE00461,Corporativo,100,Ambato,4,3,False,459,False
+ASE00462,Individual,7,Santo Domingo,2,0,False,557,False
+ASE00463,Corporativo,71,Portoviejo,1,0,False,684,False
+ASE00464,Individual,54,Santo Domingo,3,0,False,625,False
+ASE00465,Individual,120,Manta,1,3,False,686,False
+ASE00466,Individual,85,Ambato,2,0,False,713,False
+ASE00467,Individual,135,Guayaquil,1,1,False,636,False
+ASE00468,Pyme,83,Santo Domingo,4,0,False,892,False
+ASE00469,Individual,3,Ambato,1,1,True,640,False
+ASE00470,Individual,44,Cuenca,2,0,False,736,False
+ASE00471,Individual,71,Quito,4,0,True,709,False
+ASE00472,Pyme,66,Cuenca,1,0,True,831,False
+ASE00473,Individual,8,Manta,1,0,False,650,False
+ASE00474,Corporativo,47,Santo Domingo,1,0,False,628,False
+ASE00475,Individual,30,Ambato,1,0,False,630,False
+ASE00476,Pyme,68,Cuenca,3,0,True,713,False
+ASE00477,Pyme,52,Cuenca,2,0,False,730,False
+ASE00478,Corporativo,113,Manta,3,0,False,615,False
+ASE00479,Individual,91,Loja,4,0,False,699,False
+ASE00480,Pyme,91,Cuenca,4,0,False,542,False
+ASE00481,Individual,100,Ambato,2,0,False,810,False
+ASE00482,Individual,64,Quito,1,0,True,776,False
+ASE00483,Individual,48,Guayaquil,4,0,False,747,False
+ASE00484,Individual,26,Manta,1,0,False,669,False
+ASE00485,Individual,54,Quito,3,0,False,626,False
+ASE00486,VIP,33,Loja,2,0,False,723,False
+ASE00487,Individual,60,Portoviejo,4,0,False,618,False
+ASE00488,Individual,109,Ambato,1,0,True,553,False
+ASE00489,Pyme,132,Portoviejo,2,0,False,722,False
+ASE00490,Individual,42,Guayaquil,3,0,False,694,False
+ASE00491,Individual,50,Loja,2,0,False,800,False
+ASE00492,Individual,100,Cuenca,4,1,False,612,False
+ASE00493,Pyme,129,Loja,4,0,False,758,False
+ASE00494,Pyme,22,Loja,2,0,False,627,False
+ASE00495,Pyme,69,Manta,2,1,False,682,False
+ASE00496,Pyme,21,Loja,1,0,False,717,False
+ASE00497,Individual,47,Cuenca,3,0,False,691,False
+ASE00498,Individual,121,Cuenca,4,0,False,613,False
+ASE00499,Individual,60,Quito,1,0,False,750,False
+ASE00500,Individual,94,Loja,4,1,False,586,False
+ASE00501,Corporativo,69,Cuenca,2,1,False,793,False
+ASE00502,Individual,21,Ambato,2,0,False,512,False
+ASE00503,Corporativo,76,Cuenca,1,0,False,765,False
+ASE00504,Individual,130,Cuenca,3,1,False,620,False
+ASE00505,Individual,121,Quito,4,0,False,639,False
+ASE00506,Individual,122,Portoviejo,1,0,False,530,False
+ASE00507,Individual,27,Manta,2,0,False,665,False
+ASE00508,Individual,80,Quito,4,0,False,697,False
+ASE00509,Individual,1,Ambato,1,0,False,740,False
+ASE00510,Pyme,53,Guayaquil,1,0,False,771,False
+ASE00511,Individual,83,Manta,4,0,False,667,False
+ASE00512,Individual,32,Quito,3,0,False,684,False
+ASE00513,VIP,142,Guayaquil,4,0,False,713,False
+ASE00514,Individual,49,Portoviejo,2,2,False,706,False
+ASE00515,Individual,90,Guayaquil,3,2,False,797,False
+ASE00516,VIP,100,Loja,3,0,False,699,False
+ASE00517,Individual,44,Cuenca,4,0,False,613,False
+ASE00518,Individual,30,Santo Domingo,3,0,False,730,False
+ASE00519,Individual,3,Quito,3,1,True,529,False
+ASE00520,Individual,108,Santo Domingo,4,0,False,576,False
+ASE00521,Pyme,32,Ambato,4,0,False,659,False
+ASE00522,Corporativo,140,Guayaquil,2,0,True,673,False
+ASE00523,Corporativo,70,Cuenca,4,3,False,790,False
+ASE00524,Individual,105,Loja,3,0,False,689,False
+ASE00525,Individual,24,Quito,1,1,False,662,False
+ASE00526,Pyme,12,Guayaquil,1,0,False,745,False
+ASE00527,VIP,139,Ambato,4,0,False,731,False
+ASE00528,VIP,37,Guayaquil,2,1,False,734,False
+ASE00529,Individual,6,Portoviejo,3,1,False,769,False
+ASE00530,Corporativo,17,Cuenca,2,0,False,746,False
+ASE00531,Pyme,127,Cuenca,4,1,False,681,False
+ASE00532,Corporativo,84,Cuenca,2,0,False,636,False
+ASE00533,Individual,90,Quito,3,0,False,570,False
+ASE00534,VIP,36,Loja,3,0,False,743,False
+ASE00535,Pyme,122,Quito,4,0,False,692,False
+ASE00536,Individual,44,Manta,4,0,False,755,False
+ASE00537,Individual,7,Guayaquil,2,0,False,670,False
+ASE00538,Individual,5,Cuenca,1,1,False,718,False
+ASE00539,Pyme,113,Portoviejo,2,0,False,693,False
+ASE00540,Individual,92,Portoviejo,2,1,False,556,False
+ASE00541,Individual,28,Loja,4,0,False,653,False
+ASE00542,Corporativo,99,Santo Domingo,1,0,True,505,False
+ASE00543,Pyme,108,Portoviejo,2,1,False,685,False
+ASE00544,Individual,81,Cuenca,1,0,False,900,False
+ASE00545,Pyme,91,Cuenca,2,0,True,776,False
+ASE00546,Individual,16,Loja,2,2,False,799,False
+ASE00547,Individual,117,Portoviejo,2,0,True,660,False
+ASE00548,Individual,101,Ambato,4,1,False,613,False
+ASE00549,Individual,19,Santo Domingo,1,0,False,647,False
+ASE00550,Corporativo,133,Manta,4,1,False,743,False
+ASE00551,Corporativo,140,Ambato,4,0,False,590,False
+ASE00552,Individual,130,Ambato,1,0,False,884,False
+ASE00553,Individual,56,Loja,3,0,False,637,False
+ASE00554,Corporativo,139,Manta,3,0,False,657,False
+ASE00555,Individual,84,Portoviejo,4,1,False,785,False
+ASE00556,Corporativo,125,Ambato,1,0,False,718,False
+ASE00557,Individual,123,Manta,1,0,False,755,False
+ASE00558,Individual,102,Cuenca,3,2,False,494,False
+ASE00559,Individual,8,Quito,1,0,False,654,False
+ASE00560,Individual,26,Manta,2,0,True,672,False
+ASE00561,Corporativo,103,Portoviejo,1,3,False,683,False
+ASE00562,Individual,143,Quito,4,0,False,828,False
+ASE00563,Individual,16,Manta,2,0,False,627,False
+ASE00564,Pyme,32,Cuenca,3,0,False,704,False
+ASE00565,Individual,19,Ambato,1,1,False,827,False
+ASE00566,Individual,56,Santo Domingo,3,0,False,499,False
+ASE00567,VIP,100,Quito,2,0,False,561,False
+ASE00568,Pyme,135,Portoviejo,3,0,False,648,False
+ASE00569,Pyme,39,Quito,4,0,False,603,False
+ASE00570,Corporativo,143,Ambato,4,0,False,579,False
+ASE00571,Pyme,64,Quito,3,0,False,701,False
+ASE00572,VIP,45,Cuenca,3,0,False,804,False
+ASE00573,Pyme,113,Santo Domingo,1,1,False,573,False
+ASE00574,Individual,135,Portoviejo,3,1,False,778,False
+ASE00575,Individual,42,Cuenca,2,0,True,596,False
+ASE00576,Individual,24,Cuenca,2,0,False,633,False
+ASE00577,Individual,56,Manta,2,2,False,768,False
+ASE00578,Individual,34,Cuenca,3,0,False,738,False
+ASE00579,Individual,31,Santo Domingo,1,1,False,683,False
+ASE00580,Pyme,9,Santo Domingo,1,0,False,678,False
+ASE00581,Pyme,40,Quito,2,1,False,674,False
+ASE00582,Individual,99,Loja,4,0,False,575,False
+ASE00583,Individual,117,Loja,3,0,False,784,False
+ASE00584,Individual,11,Manta,1,0,False,729,False
+ASE00585,Individual,14,Cuenca,4,1,False,524,False
+ASE00586,Individual,80,Portoviejo,1,0,False,768,False
+ASE00587,Individual,113,Guayaquil,4,0,True,565,False
+ASE00588,Corporativo,63,Cuenca,2,0,False,737,False
+ASE00589,Individual,101,Ambato,3,1,False,565,False
+ASE00590,Individual,45,Ambato,2,0,False,852,False
+ASE00591,Individual,17,Guayaquil,4,0,False,785,False
+ASE00592,Individual,105,Cuenca,4,1,False,765,False
+ASE00593,VIP,122,Guayaquil,1,2,False,737,False
+ASE00594,Individual,92,Loja,3,1,False,573,False
+ASE00595,Individual,121,Manta,4,0,False,588,False
+ASE00596,Individual,51,Santo Domingo,2,0,False,796,False
+ASE00597,Pyme,89,Manta,1,1,False,724,False
+ASE00598,Individual,31,Ambato,4,1,False,720,False
+ASE00599,Corporativo,61,Cuenca,1,1,False,610,False
+ASE00600,Individual,120,Quito,4,0,False,637,False
+ASE00601,Individual,59,Santo Domingo,1,3,False,650,False
+ASE00602,Pyme,93,Manta,3,0,False,725,False
+ASE00603,Individual,134,Guayaquil,1,0,False,783,False
+ASE00604,Individual,141,Cuenca,2,1,False,854,False
+ASE00605,Pyme,75,Guayaquil,1,1,False,681,False
+ASE00606,Individual,28,Cuenca,2,0,False,706,False
+ASE00607,Corporativo,29,Quito,1,0,False,618,False
+ASE00608,Individual,138,Quito,4,0,False,503,False
+ASE00609,Individual,131,Portoviejo,4,0,False,736,False
+ASE00610,Pyme,136,Portoviejo,3,0,False,539,False
+ASE00611,Corporativo,24,Santo Domingo,4,0,True,638,False
+ASE00612,Individual,132,Cuenca,2,0,False,687,False
+ASE00613,Pyme,86,Quito,4,1,False,726,False
+ASE00614,Pyme,61,Quito,2,0,True,672,False
+ASE00615,Corporativo,81,Cuenca,1,0,False,759,False
+ASE00616,Individual,113,Santo Domingo,3,0,False,769,False
+ASE00617,Individual,98,Portoviejo,2,0,False,631,False
+ASE00618,Pyme,70,Guayaquil,2,0,False,587,False
+ASE00619,Individual,23,Manta,1,1,False,716,False
+ASE00620,Individual,118,Santo Domingo,3,0,False,699,False
+ASE00621,Pyme,45,Manta,1,0,False,698,False
+ASE00622,Pyme,38,Guayaquil,4,0,False,727,False
+ASE00623,Pyme,20,Quito,1,1,False,541,False
+ASE00624,Individual,109,Manta,1,0,False,652,False
+ASE00625,Pyme,93,Cuenca,3,0,False,821,False
+ASE00626,Pyme,24,Manta,3,0,False,638,False
+ASE00627,Individual,109,Ambato,3,0,False,722,False
+ASE00628,Pyme,42,Ambato,4,0,False,620,True
+ASE00629,VIP,99,Ambato,1,2,False,771,False
+ASE00630,Individual,62,Santo Domingo,3,0,False,691,False
+ASE00631,Individual,84,Quito,2,1,False,601,False
+ASE00632,Individual,22,Manta,2,0,True,821,False
+ASE00633,Corporativo,29,Quito,1,1,False,460,False
+ASE00634,Individual,40,Ambato,2,0,False,599,False
+ASE00635,VIP,67,Quito,4,0,False,756,False
+ASE00636,Corporativo,103,Guayaquil,3,0,False,587,False
+ASE00637,Pyme,68,Loja,2,0,False,570,False
+ASE00638,Pyme,102,Guayaquil,4,1,False,558,False
+ASE00639,Individual,71,Quito,4,0,False,635,False
+ASE00640,Individual,120,Cuenca,4,2,False,686,False
+ASE00641,Pyme,1,Manta,3,0,False,564,False
+ASE00642,Individual,130,Manta,3,0,False,714,False
+ASE00643,Individual,23,Guayaquil,4,1,False,721,False
+ASE00644,Individual,37,Manta,3,0,False,734,False
+ASE00645,Individual,110,Santo Domingo,3,0,False,585,False
+ASE00646,Individual,107,Manta,4,0,False,713,False
+ASE00647,Corporativo,92,Cuenca,4,1,False,598,False
+ASE00648,Individual,23,Portoviejo,1,0,False,670,False
+ASE00649,Pyme,22,Loja,1,0,False,696,False
+ASE00650,Individual,97,Quito,3,1,False,829,False
+ASE00651,Pyme,97,Ambato,1,2,False,776,False
+ASE00652,Corporativo,3,Manta,4,0,False,743,False
+ASE00653,Individual,51,Quito,3,0,False,808,False
+ASE00654,Individual,6,Cuenca,2,1,False,602,False
+ASE00655,Corporativo,120,Portoviejo,3,0,True,617,False
+ASE00656,Individual,120,Santo Domingo,4,0,False,685,False
+ASE00657,Corporativo,18,Loja,2,0,False,771,False
+ASE00658,Corporativo,104,Quito,2,0,False,734,False
+ASE00659,VIP,11,Manta,4,1,False,703,False
+ASE00660,Corporativo,43,Guayaquil,2,0,False,813,False
+ASE00661,Individual,108,Manta,3,0,False,724,False
+ASE00662,Pyme,108,Quito,2,0,False,693,False
+ASE00663,Individual,129,Guayaquil,1,0,False,650,False
+ASE00664,Individual,45,Ambato,4,0,False,759,False
+ASE00665,VIP,78,Santo Domingo,2,0,False,599,False
+ASE00666,Individual,80,Quito,3,1,False,736,False
+ASE00667,Individual,49,Loja,1,0,False,743,False
+ASE00668,Corporativo,111,Portoviejo,3,1,False,705,False
+ASE00669,VIP,71,Manta,4,0,False,786,False
+ASE00670,Individual,28,Ambato,2,0,False,835,False
+ASE00671,VIP,60,Quito,1,0,False,605,False
+ASE00672,Pyme,52,Cuenca,2,2,True,737,False
+ASE00673,Pyme,127,Ambato,4,0,False,620,False
+ASE00674,Individual,51,Loja,1,0,False,715,False
+ASE00675,Individual,131,Quito,1,0,False,652,False
+ASE00676,Individual,97,Santo Domingo,4,0,False,637,False
+ASE00677,Individual,66,Loja,1,0,False,660,False
+ASE00678,Individual,31,Cuenca,2,1,False,734,False
+ASE00679,Individual,135,Ambato,2,1,False,697,False
+ASE00680,Individual,89,Cuenca,4,1,False,671,False
+ASE00681,Individual,125,Manta,3,0,False,787,False
+ASE00682,Individual,108,Portoviejo,2,0,False,782,False
+ASE00683,Pyme,65,Guayaquil,4,0,False,698,False
+ASE00684,Individual,34,Cuenca,3,1,False,556,False
+ASE00685,Individual,69,Guayaquil,3,0,False,478,False
+ASE00686,Pyme,53,Loja,4,0,False,655,False
+ASE00687,Corporativo,53,Guayaquil,3,0,False,738,False
+ASE00688,Individual,7,Santo Domingo,1,1,True,590,False
+ASE00689,Individual,80,Loja,3,0,False,788,False
+ASE00690,Corporativo,77,Manta,3,0,False,606,False
+ASE00691,Individual,7,Manta,1,0,False,800,False
+ASE00692,Individual,73,Ambato,1,0,False,793,False
+ASE00693,Pyme,59,Manta,4,0,False,754,False
+ASE00694,Individual,99,Guayaquil,4,0,False,617,False
+ASE00695,Pyme,133,Cuenca,4,2,False,820,False
+ASE00696,Corporativo,78,Ambato,4,1,True,670,False
+ASE00697,Pyme,129,Santo Domingo,2,0,False,670,False
+ASE00698,Individual,124,Quito,2,1,False,685,False
+ASE00699,Pyme,24,Santo Domingo,2,0,True,564,False
+ASE00700,Pyme,121,Manta,2,0,True,746,False
+ASE00701,Individual,26,Guayaquil,1,1,False,788,False
+ASE00702,Individual,17,Santo Domingo,3,1,False,761,False
+ASE00703,VIP,27,Loja,3,0,False,659,False
+ASE00704,Individual,85,Quito,4,0,False,627,False
+ASE00705,Individual,7,Quito,3,0,False,637,False
+ASE00706,Individual,98,Loja,3,0,False,812,False
+ASE00707,Individual,91,Portoviejo,2,3,False,775,False
+ASE00708,Individual,67,Guayaquil,4,0,True,668,False
+ASE00709,Individual,4,Loja,2,0,False,637,False
+ASE00710,Individual,40,Loja,4,0,False,576,True
+ASE00711,Individual,81,Manta,3,0,False,656,False
+ASE00712,VIP,22,Guayaquil,1,2,False,636,False
+ASE00713,Individual,87,Cuenca,4,1,False,798,False
+ASE00714,Corporativo,108,Guayaquil,2,0,False,543,False
+ASE00715,Individual,111,Guayaquil,1,2,False,681,False
+ASE00716,Individual,3,Guayaquil,1,0,False,818,False
+ASE00717,Pyme,69,Guayaquil,3,0,False,685,False
+ASE00718,Pyme,76,Ambato,1,0,False,655,False
+ASE00719,Pyme,46,Ambato,3,0,False,535,False
+ASE00720,Individual,143,Cuenca,1,0,False,764,False
+ASE00721,Corporativo,52,Ambato,3,0,False,670,False
+ASE00722,Pyme,104,Quito,4,0,False,619,False
+ASE00723,VIP,95,Loja,4,0,False,756,False
+ASE00724,VIP,24,Ambato,4,0,False,676,False
+ASE00725,Pyme,9,Ambato,4,1,False,559,False
+ASE00726,Pyme,122,Ambato,4,1,False,719,False
+ASE00727,VIP,37,Santo Domingo,1,0,False,764,False
+ASE00728,Pyme,94,Guayaquil,1,1,True,627,False
+ASE00729,Individual,62,Loja,1,1,False,838,False
+ASE00730,Individual,112,Portoviejo,2,0,False,589,False
+ASE00731,Individual,74,Manta,1,2,False,858,False
+ASE00732,Pyme,39,Manta,2,1,False,651,False
+ASE00733,Pyme,29,Loja,3,0,False,864,False
+ASE00734,Individual,135,Santo Domingo,2,0,False,699,False
+ASE00735,Individual,97,Quito,4,2,False,668,False
+ASE00736,Individual,98,Loja,4,1,False,604,False
+ASE00737,Individual,82,Loja,3,0,False,644,False
+ASE00738,Pyme,34,Manta,3,0,False,559,False
+ASE00739,VIP,36,Cuenca,1,0,False,625,False
+ASE00740,Individual,50,Portoviejo,3,0,False,789,False
+ASE00741,Pyme,134,Loja,2,1,False,617,False
+ASE00742,Individual,26,Manta,4,0,False,792,False
+ASE00743,Pyme,67,Loja,3,0,False,669,False
+ASE00744,Individual,2,Quito,2,0,False,694,False
+ASE00745,Pyme,18,Santo Domingo,4,0,False,692,False
+ASE00746,Individual,11,Ambato,4,0,False,618,False
+ASE00747,Pyme,108,Manta,4,0,False,770,False
+ASE00748,Individual,22,Ambato,4,3,False,645,False
+ASE00749,Individual,29,Quito,1,0,False,624,False
+ASE00750,Corporativo,125,Guayaquil,2,1,False,798,False
+ASE00751,Pyme,104,Guayaquil,3,1,False,640,False
+ASE00752,Individual,88,Loja,3,0,False,583,False
+ASE00753,Corporativo,129,Ambato,4,0,True,638,False
+ASE00754,Individual,64,Santo Domingo,4,1,False,739,False
+ASE00755,Individual,81,Santo Domingo,1,0,False,647,False
+ASE00756,Individual,75,Manta,1,1,False,706,False
+ASE00757,Pyme,125,Quito,1,0,False,739,False
+ASE00758,Corporativo,135,Cuenca,2,0,False,765,False
+ASE00759,Corporativo,42,Quito,1,0,False,815,False
+ASE00760,Pyme,56,Quito,1,0,False,785,False
+ASE00761,Corporativo,92,Santo Domingo,3,1,False,711,False
+ASE00762,Corporativo,58,Loja,4,0,False,622,False
+ASE00763,Individual,25,Manta,4,1,False,674,False
+ASE00764,Pyme,26,Quito,2,0,False,584,False
+ASE00765,VIP,13,Loja,1,0,False,636,False
+ASE00766,Individual,22,Loja,2,0,False,753,False
+ASE00767,Individual,113,Loja,3,0,False,699,False
+ASE00768,Corporativo,4,Cuenca,1,0,False,637,False
+ASE00769,Individual,102,Cuenca,1,0,False,700,False
+ASE00770,Individual,80,Quito,4,0,False,603,False
+ASE00771,Corporativo,134,Quito,4,0,True,765,False
+ASE00772,Pyme,82,Santo Domingo,2,0,False,677,False
+ASE00773,Individual,132,Cuenca,4,0,True,839,True
+ASE00774,Individual,76,Loja,1,0,False,588,False
+ASE00775,Individual,125,Quito,2,0,False,608,False
+ASE00776,Individual,106,Cuenca,2,0,False,640,False
+ASE00777,Pyme,89,Manta,4,0,False,698,False
+ASE00778,Individual,22,Quito,2,1,False,683,False
+ASE00779,Pyme,80,Manta,1,0,False,674,False
+ASE00780,VIP,83,Ambato,3,0,False,777,False
+ASE00781,Pyme,36,Portoviejo,1,0,False,733,False
+ASE00782,Pyme,136,Portoviejo,2,1,False,568,False
+ASE00783,Corporativo,27,Ambato,4,0,False,681,False
+ASE00784,Individual,87,Loja,2,0,False,551,False
+ASE00785,Individual,65,Santo Domingo,1,0,False,828,False
+ASE00786,Pyme,112,Portoviejo,1,0,False,621,False
+ASE00787,Pyme,87,Guayaquil,4,0,False,723,False
+ASE00788,VIP,73,Manta,1,1,False,649,False
+ASE00789,Individual,59,Cuenca,2,0,False,644,False
+ASE00790,Individual,16,Manta,3,1,False,538,False
+ASE00791,Individual,140,Cuenca,3,0,False,655,False
+ASE00792,Individual,141,Cuenca,3,2,False,665,False
+ASE00793,Individual,119,Ambato,3,1,False,712,False
+ASE00794,Individual,50,Quito,1,0,False,786,False
+ASE00795,VIP,90,Portoviejo,4,0,False,809,False
+ASE00796,Pyme,25,Cuenca,3,1,False,900,False
+ASE00797,Individual,59,Ambato,3,0,False,524,False
+ASE00798,Pyme,82,Ambato,4,0,False,864,False
+ASE00799,Individual,9,Santo Domingo,1,1,False,725,False
+ASE00800,Individual,18,Santo Domingo,1,0,False,735,False
+ASE00801,Pyme,129,Santo Domingo,1,1,False,664,False
+ASE00802,Pyme,54,Santo Domingo,4,0,False,685,False
+ASE00803,Pyme,111,Cuenca,4,2,True,739,False
+ASE00804,Individual,79,Quito,1,0,False,722,False
+ASE00805,Individual,49,Guayaquil,1,0,False,608,False
+ASE00806,Individual,2,Loja,4,0,False,618,False
+ASE00807,Pyme,24,Santo Domingo,4,0,False,608,False
+ASE00808,Corporativo,127,Quito,3,2,False,634,False
+ASE00809,Corporativo,110,Guayaquil,4,0,True,579,False
+ASE00810,VIP,35,Santo Domingo,3,0,False,607,False
+ASE00811,Individual,75,Santo Domingo,2,1,False,778,False
+ASE00812,Pyme,83,Cuenca,1,0,False,747,False
+ASE00813,VIP,99,Guayaquil,2,0,False,650,False
+ASE00814,Individual,97,Manta,4,0,False,615,False
+ASE00815,Individual,92,Manta,4,0,False,555,False
+ASE00816,Individual,59,Quito,2,0,False,670,False
+ASE00817,Pyme,93,Portoviejo,4,1,False,519,False
+ASE00818,Pyme,130,Portoviejo,2,1,False,733,False
+ASE00819,Individual,19,Cuenca,1,0,False,684,False
+ASE00820,VIP,112,Santo Domingo,4,2,False,608,False
+ASE00821,Individual,61,Loja,4,0,False,555,False
+ASE00822,Pyme,95,Loja,2,0,False,610,False
+ASE00823,Individual,69,Manta,3,0,False,766,False
+ASE00824,Pyme,85,Manta,4,0,False,742,False
+ASE00825,Individual,93,Cuenca,1,0,False,692,False
+ASE00826,Individual,115,Guayaquil,1,0,False,709,False
+ASE00827,Individual,67,Santo Domingo,1,0,False,705,False
+ASE00828,Pyme,14,Portoviejo,4,3,False,739,False
+ASE00829,Corporativo,8,Manta,1,0,False,566,False
+ASE00830,Individual,126,Ambato,2,1,False,692,False
+ASE00831,VIP,126,Quito,4,1,False,659,True
+ASE00832,Individual,47,Santo Domingo,4,0,False,716,False
+ASE00833,Individual,133,Santo Domingo,3,0,False,636,False
+ASE00834,Individual,8,Loja,1,0,False,659,False
+ASE00835,Individual,121,Quito,4,0,False,701,False
+ASE00836,Individual,53,Santo Domingo,3,0,False,742,False
+ASE00837,Corporativo,38,Cuenca,1,0,False,616,False
+ASE00838,Individual,49,Ambato,4,0,False,724,False
+ASE00839,Pyme,114,Cuenca,2,0,False,666,False
+ASE00840,Individual,143,Cuenca,2,0,False,607,False
+ASE00841,Individual,28,Portoviejo,1,1,False,699,False
+ASE00842,Individual,42,Santo Domingo,1,1,False,625,False
+ASE00843,Individual,34,Manta,4,0,False,592,False
+ASE00844,Individual,50,Cuenca,2,0,False,821,False
+ASE00845,Pyme,39,Santo Domingo,2,1,False,715,False
+ASE00846,Corporativo,120,Manta,3,1,False,601,False
+ASE00847,Individual,125,Portoviejo,2,2,False,752,False
+ASE00848,Individual,116,Portoviejo,1,0,False,706,False
+ASE00849,Pyme,131,Loja,4,0,False,717,False
+ASE00850,Individual,66,Portoviejo,1,0,False,695,False
+ASE00851,Individual,115,Guayaquil,3,0,False,579,False
+ASE00852,VIP,125,Ambato,3,0,False,559,False
+ASE00853,Individual,65,Cuenca,1,0,False,680,False
+ASE00854,Individual,3,Portoviejo,3,0,False,560,False
+ASE00855,Individual,119,Quito,1,1,False,642,False
+ASE00856,Individual,104,Quito,3,2,True,532,False
+ASE00857,Corporativo,127,Manta,3,1,False,639,False
+ASE00858,Pyme,12,Loja,2,1,False,685,False
+ASE00859,Individual,140,Santo Domingo,3,0,False,658,False
+ASE00860,Individual,25,Ambato,3,0,False,721,True
+ASE00861,Pyme,98,Quito,2,0,False,686,False
+ASE00862,Pyme,138,Quito,3,0,False,723,False
+ASE00863,Individual,132,Quito,1,0,False,707,False
+ASE00864,Individual,142,Ambato,3,0,False,732,False
+ASE00865,Pyme,135,Loja,2,1,False,645,False
+ASE00866,Individual,91,Quito,3,0,False,744,False
+ASE00867,Pyme,97,Quito,2,0,False,681,False
+ASE00868,Individual,65,Portoviejo,1,2,False,699,False
+ASE00869,Individual,61,Portoviejo,4,1,False,681,False
+ASE00870,Individual,125,Manta,3,0,False,652,False
+ASE00871,Pyme,59,Loja,3,1,False,721,False
+ASE00872,Individual,60,Quito,1,1,False,548,False
+ASE00873,Individual,34,Loja,3,0,False,588,False
+ASE00874,Individual,79,Manta,2,0,False,539,False
+ASE00875,Individual,134,Cuenca,1,0,False,734,False
+ASE00876,Individual,16,Cuenca,2,1,False,644,False
+ASE00877,Individual,92,Manta,2,1,False,717,False
+ASE00878,Pyme,75,Ambato,1,0,True,834,False
+ASE00879,Individual,103,Santo Domingo,4,0,False,740,False
+ASE00880,Individual,20,Guayaquil,1,2,False,499,False
+ASE00881,Individual,12,Ambato,3,0,False,591,False
+ASE00882,Pyme,46,Cuenca,1,1,True,767,False
+ASE00883,Corporativo,77,Portoviejo,4,1,False,674,False
+ASE00884,Pyme,36,Guayaquil,2,0,False,767,False
+ASE00885,Individual,83,Guayaquil,4,0,False,843,False
+ASE00886,Individual,105,Ambato,3,0,False,616,False
+ASE00887,Individual,3,Guayaquil,1,0,False,881,False
+ASE00888,Individual,93,Santo Domingo,2,0,False,670,False
+ASE00889,Pyme,52,Ambato,4,1,False,676,False
+ASE00890,Individual,120,Portoviejo,3,0,False,749,False
+ASE00891,Individual,135,Santo Domingo,2,0,False,900,False
+ASE00892,Individual,128,Santo Domingo,4,0,False,682,False
+ASE00893,Individual,23,Ambato,3,2,False,827,False
+ASE00894,Corporativo,16,Portoviejo,1,0,False,770,False
+ASE00895,Pyme,115,Cuenca,2,0,False,693,False
+ASE00896,Pyme,142,Loja,2,1,False,722,False
+ASE00897,VIP,38,Guayaquil,4,0,False,609,False
+ASE00898,Pyme,122,Portoviejo,3,0,False,657,False
+ASE00899,Pyme,84,Portoviejo,4,0,False,567,False
+ASE00900,Pyme,51,Loja,1,0,False,752,False
+ASE00901,Pyme,9,Manta,1,2,False,590,False
+ASE00902,VIP,82,Guayaquil,3,0,False,677,False
+ASE00903,Individual,90,Quito,3,0,False,547,False
+ASE00904,Individual,11,Manta,1,0,False,606,False
+ASE00905,Individual,54,Portoviejo,1,0,False,538,False
+ASE00906,VIP,31,Cuenca,4,1,False,678,False
+ASE00907,Individual,16,Guayaquil,2,2,False,612,False
+ASE00908,Corporativo,46,Cuenca,4,0,False,664,False
+ASE00909,Individual,14,Ambato,3,0,False,783,False
+ASE00910,VIP,73,Portoviejo,2,2,False,797,False
+ASE00911,Individual,117,Quito,2,1,False,537,False
+ASE00912,Individual,13,Guayaquil,2,0,True,553,False
+ASE00913,Pyme,108,Santo Domingo,4,0,False,730,False
+ASE00914,Individual,142,Santo Domingo,3,0,False,704,False
+ASE00915,Individual,27,Portoviejo,4,0,True,721,False
+ASE00916,Individual,130,Cuenca,3,0,False,730,False
+ASE00917,Individual,139,Ambato,3,0,False,774,False
+ASE00918,Corporativo,56,Guayaquil,4,0,False,716,False
+ASE00919,Individual,10,Cuenca,3,2,False,720,False
+ASE00920,Pyme,118,Quito,4,0,True,678,False
+ASE00921,Individual,7,Cuenca,2,0,True,591,False
+ASE00922,Individual,73,Cuenca,4,1,False,698,False
+ASE00923,Corporativo,47,Santo Domingo,4,0,False,731,False
+ASE00924,Corporativo,35,Manta,2,0,False,580,False
+ASE00925,Individual,67,Portoviejo,3,0,False,838,False
+ASE00926,Pyme,79,Guayaquil,3,1,False,769,False
+ASE00927,Individual,20,Guayaquil,4,1,False,528,False
+ASE00928,Individual,20,Quito,1,0,False,708,False
+ASE00929,Individual,138,Manta,4,0,False,645,False
+ASE00930,Individual,91,Portoviejo,4,0,False,816,False
+ASE00931,Individual,102,Santo Domingo,2,1,False,770,False
+ASE00932,Pyme,121,Cuenca,2,0,False,765,False
+ASE00933,Individual,27,Portoviejo,4,1,False,699,False
+ASE00934,Corporativo,7,Cuenca,3,0,False,740,False
+ASE00935,Individual,60,Portoviejo,3,0,False,769,False
+ASE00936,Pyme,13,Ambato,2,0,True,566,False
+ASE00937,Individual,31,Loja,1,0,False,691,False
+ASE00938,Pyme,37,Ambato,4,0,False,672,False
+ASE00939,Individual,21,Quito,1,0,False,685,False
+ASE00940,Individual,24,Portoviejo,3,0,False,761,False
+ASE00941,Pyme,135,Cuenca,4,0,False,642,False
+ASE00942,VIP,14,Manta,3,0,False,569,False
+ASE00943,Pyme,37,Loja,3,1,False,573,False
+ASE00944,Individual,108,Manta,2,0,False,744,False
+ASE00945,Individual,30,Manta,1,1,False,574,False
+ASE00946,Individual,35,Cuenca,1,1,False,637,False
+ASE00947,Individual,46,Manta,2,0,False,719,False
+ASE00948,Individual,108,Santo Domingo,3,0,False,605,False
+ASE00949,VIP,128,Cuenca,3,1,False,516,False
+ASE00950,Individual,42,Quito,2,1,False,670,False
+ASE00951,Individual,118,Guayaquil,2,0,False,694,False
+ASE00952,Individual,64,Loja,3,0,False,566,False
+ASE00953,Individual,104,Quito,4,0,False,726,False
+ASE00954,Individual,106,Cuenca,4,0,False,579,False
+ASE00955,Individual,68,Guayaquil,3,2,True,522,False
+ASE00956,Individual,131,Loja,2,0,False,735,False
+ASE00957,Pyme,2,Guayaquil,3,0,False,696,False
+ASE00958,VIP,66,Santo Domingo,1,0,False,690,False
+ASE00959,Individual,40,Ambato,4,2,False,551,False
+ASE00960,Individual,50,Portoviejo,3,2,False,505,False
+ASE00961,Pyme,50,Manta,1,0,False,655,False
+ASE00962,Individual,95,Loja,2,3,False,628,False
+ASE00963,Individual,109,Quito,2,0,False,602,False
+ASE00964,Individual,36,Loja,1,0,False,672,False
+ASE00965,VIP,44,Santo Domingo,4,2,True,742,False
+ASE00966,Pyme,34,Cuenca,3,0,False,584,False
+ASE00967,Individual,129,Ambato,1,0,False,680,False
+ASE00968,Individual,22,Guayaquil,4,2,False,660,False
+ASE00969,Corporativo,129,Quito,1,0,False,861,False
+ASE00970,Individual,41,Santo Domingo,3,0,False,635,False
+ASE00971,Individual,112,Portoviejo,3,0,False,593,False
+ASE00972,Pyme,81,Ambato,4,0,False,687,False
+ASE00973,Pyme,3,Portoviejo,4,0,False,900,False
+ASE00974,Individual,91,Loja,3,0,False,589,False
+ASE00975,Individual,70,Cuenca,2,0,True,609,False
+ASE00976,Individual,134,Guayaquil,4,0,False,663,False
+ASE00977,VIP,49,Ambato,4,2,False,580,False
+ASE00978,Individual,42,Loja,4,1,False,743,False
+ASE00979,Individual,47,Loja,3,0,False,598,False
+ASE00980,Pyme,108,Loja,3,0,False,691,False
+ASE00981,Corporativo,10,Guayaquil,4,0,False,660,False
+ASE00982,Pyme,91,Ambato,3,1,True,759,False
+ASE00983,Individual,57,Ambato,3,1,False,788,False
+ASE00984,Individual,136,Santo Domingo,1,0,False,711,False
+ASE00985,Individual,69,Manta,3,2,False,612,False
+ASE00986,Pyme,138,Santo Domingo,3,0,True,698,False
+ASE00987,Individual,137,Portoviejo,2,0,False,639,False
+ASE00988,VIP,68,Santo Domingo,3,0,False,699,False
+ASE00989,VIP,32,Manta,4,0,False,646,False
+ASE00990,Pyme,58,Cuenca,4,1,False,671,False
+ASE00991,Individual,40,Ambato,4,1,False,633,False
+ASE00992,Corporativo,120,Quito,4,1,False,695,False
+ASE00993,Pyme,141,Portoviejo,1,1,False,850,False
+ASE00994,Pyme,4,Manta,4,3,False,816,False
+ASE00995,Individual,51,Loja,4,0,True,661,False
+ASE00996,Individual,106,Guayaquil,1,0,False,705,False
+ASE00997,Pyme,127,Loja,3,0,False,542,False
+ASE00998,Individual,121,Portoviejo,3,1,False,744,False
+ASE00999,Individual,65,Ambato,2,0,True,763,False
+ASE01000,Individual,128,Cuenca,3,0,False,550,False
+ASE01001,Pyme,102,Quito,1,0,True,572,False
+ASE01002,Individual,3,Guayaquil,1,0,False,561,False
+ASE01003,Pyme,123,Santo Domingo,2,2,False,667,False
+ASE01004,Individual,88,Santo Domingo,4,0,False,603,False
+ASE01005,Pyme,139,Guayaquil,2,0,False,731,False
+ASE01006,Individual,58,Manta,4,0,False,712,False
+ASE01007,VIP,36,Santo Domingo,3,0,False,558,False
+ASE01008,Individual,10,Loja,2,0,False,600,False
+ASE01009,Pyme,18,Portoviejo,2,1,False,650,False
+ASE01010,Individual,114,Portoviejo,1,0,False,653,False
+ASE01011,Pyme,94,Guayaquil,4,0,False,757,False
+ASE01012,Individual,59,Manta,4,0,False,729,False
+ASE01013,Individual,92,Quito,3,1,False,830,False
+ASE01014,Corporativo,83,Quito,2,2,True,494,False
+ASE01015,Individual,44,Quito,2,0,False,900,False
+ASE01016,Individual,53,Ambato,2,1,False,736,False
+ASE01017,Individual,19,Quito,4,0,False,662,False
+ASE01018,Individual,43,Quito,1,1,False,598,False
+ASE01019,Pyme,134,Cuenca,1,0,False,744,False
+ASE01020,VIP,115,Santo Domingo,4,3,False,805,False
+ASE01021,Individual,62,Manta,2,1,False,743,False
+ASE01022,Corporativo,119,Loja,1,3,False,770,False
+ASE01023,Individual,42,Portoviejo,1,0,True,683,False
+ASE01024,Individual,22,Portoviejo,3,0,False,648,False
+ASE01025,Individual,24,Quito,3,1,False,613,False
+ASE01026,Individual,73,Ambato,1,0,False,524,False
+ASE01027,Pyme,104,Santo Domingo,4,1,False,666,False
+ASE01028,Individual,21,Quito,2,0,False,776,False
+ASE01029,VIP,141,Guayaquil,2,0,False,852,False
+ASE01030,Pyme,17,Manta,3,0,False,684,False
+ASE01031,Individual,29,Santo Domingo,2,0,False,548,False
+ASE01032,Individual,19,Ambato,4,0,False,655,False
+ASE01033,Individual,97,Santo Domingo,1,0,False,719,False
+ASE01034,Pyme,113,Cuenca,2,0,False,822,False
+ASE01035,Corporativo,36,Portoviejo,4,0,False,699,False
+ASE01036,Pyme,113,Manta,2,1,False,792,False
+ASE01037,Individual,22,Ambato,3,1,False,741,False
+ASE01038,Individual,64,Santo Domingo,2,0,False,722,False
+ASE01039,Pyme,51,Loja,3,0,False,714,False
+ASE01040,Individual,26,Manta,3,1,False,709,False
+ASE01041,Corporativo,106,Guayaquil,1,2,False,662,False
+ASE01042,Individual,4,Guayaquil,3,1,False,682,False
+ASE01043,Individual,7,Manta,3,0,False,641,False
+ASE01044,Pyme,12,Cuenca,3,2,False,748,False
+ASE01045,Corporativo,10,Santo Domingo,4,0,False,560,False
+ASE01046,Individual,132,Quito,1,0,False,611,False
+ASE01047,Individual,31,Guayaquil,2,0,False,759,False
+ASE01048,Individual,47,Guayaquil,3,0,True,604,False
+ASE01049,Corporativo,100,Loja,1,2,False,718,False
+ASE01050,Corporativo,18,Santo Domingo,1,0,False,649,True
+ASE01051,Individual,30,Quito,2,0,False,567,False
+ASE01052,Individual,133,Manta,1,0,False,684,False
+ASE01053,Corporativo,135,Cuenca,4,0,False,795,False
+ASE01054,Individual,133,Manta,1,0,False,660,False
+ASE01055,Individual,32,Guayaquil,2,1,True,748,False
+ASE01056,Individual,63,Guayaquil,1,1,False,756,False
+ASE01057,Pyme,84,Cuenca,1,1,False,565,False
+ASE01058,Pyme,48,Cuenca,2,0,False,753,False
+ASE01059,Individual,10,Guayaquil,2,0,False,636,False
+ASE01060,Individual,33,Guayaquil,2,0,False,767,False
+ASE01061,Pyme,4,Loja,1,0,False,655,False
+ASE01062,Pyme,83,Guayaquil,1,0,False,741,False
+ASE01063,Pyme,142,Quito,3,0,False,900,False
+ASE01064,Pyme,34,Portoviejo,4,0,False,638,False
+ASE01065,Pyme,9,Loja,4,0,False,586,False
+ASE01066,Pyme,35,Santo Domingo,4,1,False,694,False
+ASE01067,Individual,87,Manta,3,0,True,747,False
+ASE01068,Individual,133,Cuenca,3,3,False,819,False
+ASE01069,Individual,139,Ambato,4,0,False,809,False
+ASE01070,Individual,9,Portoviejo,1,3,False,662,False
+ASE01071,Individual,15,Quito,1,0,False,649,False
+ASE01072,Corporativo,28,Manta,2,1,False,574,False
+ASE01073,Individual,46,Manta,1,1,False,613,False
+ASE01074,Pyme,12,Ambato,3,0,False,680,False
+ASE01075,Individual,65,Cuenca,3,1,False,776,False
+ASE01076,Individual,6,Santo Domingo,1,0,False,810,False
+ASE01077,Individual,143,Loja,3,1,False,605,False
+ASE01078,Individual,15,Quito,2,0,False,628,False
+ASE01079,Individual,86,Cuenca,1,2,False,694,False
+ASE01080,Individual,132,Portoviejo,1,0,False,716,False
+ASE01081,VIP,77,Loja,2,1,False,729,False
+ASE01082,Individual,136,Santo Domingo,1,0,False,560,False
+ASE01083,Individual,49,Portoviejo,2,0,False,582,False
+ASE01084,Individual,141,Portoviejo,2,0,False,758,False
+ASE01085,Individual,14,Cuenca,2,0,False,782,False
+ASE01086,Individual,50,Cuenca,4,0,False,627,False
+ASE01087,Individual,87,Cuenca,2,0,False,689,False
+ASE01088,Individual,140,Guayaquil,2,1,False,751,False
+ASE01089,Individual,127,Ambato,1,0,False,710,False
+ASE01090,Pyme,132,Portoviejo,4,0,True,599,False
+ASE01091,VIP,60,Manta,3,1,False,703,False
+ASE01092,Individual,47,Portoviejo,3,0,False,587,False
+ASE01093,Individual,126,Portoviejo,1,0,False,723,False
+ASE01094,Individual,84,Manta,3,1,False,655,False
+ASE01095,Individual,7,Manta,2,1,False,618,False
+ASE01096,Individual,91,Cuenca,2,0,False,685,False
+ASE01097,Pyme,89,Santo Domingo,3,1,False,621,False
+ASE01098,Individual,26,Guayaquil,2,0,False,583,True
+ASE01099,Pyme,80,Cuenca,1,0,True,731,False
+ASE01100,Individual,111,Cuenca,4,0,False,622,False
+ASE01101,Individual,90,Loja,3,0,False,791,False
+ASE01102,Pyme,88,Portoviejo,2,0,False,775,False
+ASE01103,Individual,10,Guayaquil,4,2,False,752,False
+ASE01104,Corporativo,46,Santo Domingo,1,0,False,564,False
+ASE01105,Pyme,87,Cuenca,1,0,False,731,False
+ASE01106,Pyme,106,Loja,3,1,False,605,False
+ASE01107,Individual,88,Cuenca,4,1,False,766,False
+ASE01108,Individual,65,Cuenca,4,0,False,593,False
+ASE01109,Individual,118,Loja,1,0,False,658,False
+ASE01110,Individual,19,Loja,3,0,False,738,False
+ASE01111,Corporativo,44,Guayaquil,3,1,False,637,False
+ASE01112,Corporativo,61,Manta,2,1,False,646,False
+ASE01113,Individual,143,Manta,3,2,False,691,False
+ASE01114,Pyme,17,Cuenca,4,0,False,666,False
+ASE01115,Pyme,84,Portoviejo,1,1,False,701,False
+ASE01116,Individual,59,Manta,4,1,False,699,False
+ASE01117,Individual,30,Manta,3,0,False,572,False
+ASE01118,Individual,36,Cuenca,3,2,False,883,False
+ASE01119,Individual,68,Cuenca,3,0,False,778,False
+ASE01120,Pyme,11,Cuenca,2,0,False,724,False
+ASE01121,Pyme,84,Loja,1,0,False,621,False
+ASE01122,Individual,21,Loja,1,0,False,764,True
+ASE01123,Corporativo,108,Manta,4,0,False,642,False
+ASE01124,Individual,15,Portoviejo,3,1,True,687,False
+ASE01125,Individual,26,Portoviejo,1,1,False,663,False
+ASE01126,Individual,107,Santo Domingo,1,1,False,699,False
+ASE01127,Individual,102,Guayaquil,4,0,False,827,False
+ASE01128,Corporativo,125,Ambato,2,1,False,647,False
+ASE01129,Pyme,34,Portoviejo,4,1,False,795,False
+ASE01130,Individual,37,Santo Domingo,3,1,False,723,False
+ASE01131,Corporativo,42,Ambato,3,0,False,610,False
+ASE01132,VIP,60,Portoviejo,3,0,False,877,False
+ASE01133,Individual,139,Cuenca,2,0,False,746,False
+ASE01134,Pyme,129,Portoviejo,4,0,False,558,False
+ASE01135,VIP,140,Santo Domingo,4,0,False,653,False
+ASE01136,Individual,49,Santo Domingo,1,0,False,608,False
+ASE01137,Individual,139,Quito,2,1,False,611,False
+ASE01138,Pyme,90,Loja,3,2,False,613,False
+ASE01139,Individual,128,Guayaquil,1,0,False,686,False
+ASE01140,Individual,104,Cuenca,3,0,False,696,False
+ASE01141,Individual,114,Santo Domingo,1,0,True,743,False
+ASE01142,Corporativo,86,Manta,2,2,False,686,False
+ASE01143,Corporativo,135,Santo Domingo,2,2,False,686,False
+ASE01144,Individual,142,Loja,3,0,True,806,False
+ASE01145,Pyme,87,Manta,2,0,False,626,False
+ASE01146,Pyme,9,Portoviejo,3,0,False,724,False
+ASE01147,Individual,49,Ambato,3,1,True,769,False
+ASE01148,Individual,16,Guayaquil,4,1,False,770,False
+ASE01149,Individual,139,Quito,4,0,False,618,False
+ASE01150,Pyme,142,Santo Domingo,2,0,False,647,False
+ASE01151,Individual,17,Manta,3,0,False,676,False
+ASE01152,Pyme,81,Portoviejo,2,3,False,740,False
+ASE01153,Pyme,86,Portoviejo,2,0,False,774,False
+ASE01154,VIP,54,Quito,2,0,False,671,False
+ASE01155,Pyme,67,Manta,3,2,False,806,False
+ASE01156,Individual,135,Ambato,1,0,False,734,False
+ASE01157,Individual,26,Guayaquil,3,0,False,622,False
+ASE01158,Individual,131,Loja,4,0,False,759,False
+ASE01159,Individual,64,Ambato,2,1,False,536,False
+ASE01160,Individual,127,Cuenca,2,0,False,671,False
+ASE01161,Individual,132,Guayaquil,3,2,False,517,False
+ASE01162,Individual,5,Ambato,3,1,False,693,False
+ASE01163,Individual,56,Loja,1,0,True,771,False
+ASE01164,Individual,59,Cuenca,3,0,False,742,False
+ASE01165,Individual,41,Ambato,2,0,True,488,False
+ASE01166,Corporativo,120,Loja,2,0,False,708,False
+ASE01167,Individual,33,Ambato,3,0,False,736,False
+ASE01168,Corporativo,61,Manta,3,2,False,751,False
+ASE01169,Individual,101,Cuenca,3,0,False,738,False
+ASE01170,Individual,99,Cuenca,2,1,False,750,False
+ASE01171,Individual,8,Santo Domingo,4,0,False,565,False
+ASE01172,Pyme,118,Guayaquil,1,1,False,677,False
+ASE01173,Corporativo,140,Santo Domingo,4,0,False,629,False
+ASE01174,Individual,97,Cuenca,1,0,False,677,False
+ASE01175,Pyme,81,Portoviejo,4,0,True,703,False
+ASE01176,Individual,41,Guayaquil,4,0,False,611,False
+ASE01177,Pyme,8,Guayaquil,1,0,False,640,False
+ASE01178,Individual,103,Manta,3,2,False,730,False
+ASE01179,Individual,35,Manta,3,1,False,636,False
+ASE01180,Individual,135,Portoviejo,2,0,False,646,False
+ASE01181,Individual,71,Portoviejo,1,0,True,688,False
+ASE01182,Pyme,62,Ambato,1,0,False,791,False
+ASE01183,Individual,30,Portoviejo,1,1,False,654,False
+ASE01184,Individual,45,Manta,1,0,False,550,False
+ASE01185,Individual,140,Portoviejo,4,0,False,603,False
+ASE01186,Individual,92,Portoviejo,2,0,False,693,False
+ASE01187,VIP,77,Portoviejo,2,0,False,539,False
+ASE01188,Pyme,35,Manta,3,0,False,611,False
+ASE01189,Pyme,55,Cuenca,3,0,False,609,False
+ASE01190,Individual,48,Loja,1,0,False,845,False
+ASE01191,Individual,114,Cuenca,4,1,False,747,False
+ASE01192,Individual,54,Portoviejo,3,1,False,614,False
+ASE01193,Pyme,69,Portoviejo,3,0,False,603,False
+ASE01194,Individual,120,Manta,1,0,False,577,False
+ASE01195,Individual,36,Manta,4,2,False,688,False
+ASE01196,Pyme,107,Ambato,3,0,True,676,False
+ASE01197,Individual,34,Manta,3,0,True,560,False
+ASE01198,Individual,123,Cuenca,2,0,False,709,False
+ASE01199,Individual,49,Quito,3,3,False,772,False
+ASE01200,Individual,1,Santo Domingo,1,2,False,724,False
+ASE01201,Individual,65,Loja,1,0,False,682,False
+ASE01202,Individual,26,Santo Domingo,4,0,False,797,False
+ASE01203,VIP,67,Guayaquil,3,2,False,708,False
+ASE01204,Pyme,131,Quito,2,0,False,703,False
+ASE01205,Individual,57,Quito,4,1,False,744,False
+ASE01206,Pyme,86,Ambato,4,1,False,562,False
+ASE01207,Individual,56,Loja,3,0,False,809,False
+ASE01208,Pyme,136,Quito,1,1,False,695,False
+ASE01209,Individual,68,Ambato,3,1,False,675,False
+ASE01210,Pyme,56,Ambato,4,3,False,740,False
+ASE01211,VIP,38,Portoviejo,3,0,False,591,False
+ASE01212,VIP,30,Santo Domingo,4,1,False,610,False
+ASE01213,Individual,69,Quito,3,0,False,716,False
+ASE01214,Individual,93,Ambato,2,1,True,724,False
+ASE01215,Individual,122,Quito,2,0,False,569,False
+ASE01216,Individual,30,Portoviejo,3,0,False,667,False
+ASE01217,Individual,31,Manta,1,0,False,605,False
+ASE01218,Individual,41,Cuenca,3,0,False,646,False
+ASE01219,Corporativo,71,Ambato,3,0,False,594,False
+ASE01220,Individual,59,Santo Domingo,1,2,False,745,False
+ASE01221,Individual,22,Ambato,2,0,False,698,False
+ASE01222,Pyme,109,Manta,3,0,False,594,False
+ASE01223,Pyme,82,Santo Domingo,3,0,False,715,False
+ASE01224,Individual,78,Manta,4,0,False,679,False
+ASE01225,Individual,8,Ambato,4,0,False,676,False
+ASE01226,Individual,81,Manta,4,0,False,559,False
+ASE01227,Pyme,85,Quito,2,0,False,585,False
+ASE01228,Individual,70,Loja,3,0,False,657,False
+ASE01229,Pyme,40,Santo Domingo,2,0,False,602,False
+ASE01230,Individual,136,Guayaquil,1,0,False,641,False
+ASE01231,Individual,96,Santo Domingo,3,0,False,724,False
+ASE01232,VIP,143,Cuenca,1,0,False,739,False
+ASE01233,Individual,97,Portoviejo,2,0,False,667,False
+ASE01234,Pyme,72,Portoviejo,2,1,True,648,False
+ASE01235,Individual,31,Cuenca,4,3,False,526,False
+ASE01236,Individual,78,Quito,3,0,False,671,False
+ASE01237,Individual,86,Loja,4,1,True,638,False
+ASE01238,Individual,2,Portoviejo,1,0,False,644,False
+ASE01239,Individual,69,Guayaquil,1,0,False,729,False
+ASE01240,Individual,110,Ambato,3,1,False,567,False
+ASE01241,Pyme,29,Manta,1,0,False,736,False
+ASE01242,Pyme,101,Quito,3,0,False,592,False
+ASE01243,Corporativo,134,Santo Domingo,3,0,False,556,False
+ASE01244,Individual,11,Cuenca,3,1,False,601,False
+ASE01245,Corporativo,130,Portoviejo,2,0,False,585,False
+ASE01246,Corporativo,19,Ambato,3,1,False,668,False
+ASE01247,Individual,55,Manta,1,0,False,829,False
+ASE01248,Individual,9,Manta,4,0,False,818,False
+ASE01249,Individual,118,Guayaquil,2,0,False,652,False
+ASE01250,Pyme,62,Cuenca,4,0,False,661,False
+ASE01251,Individual,71,Santo Domingo,3,0,False,786,False
+ASE01252,Individual,82,Santo Domingo,1,1,False,760,False
+ASE01253,Corporativo,82,Ambato,2,0,False,608,False
+ASE01254,Pyme,12,Portoviejo,4,0,False,723,False
+ASE01255,Individual,21,Santo Domingo,3,0,False,705,False
+ASE01256,Pyme,136,Quito,4,0,True,772,False
+ASE01257,Individual,83,Ambato,1,0,False,896,False
+ASE01258,Individual,8,Quito,2,2,False,668,False
+ASE01259,Individual,24,Portoviejo,2,1,False,741,False
+ASE01260,Individual,23,Portoviejo,1,3,False,685,False
+ASE01261,VIP,29,Guayaquil,1,0,False,696,False
+ASE01262,Pyme,113,Portoviejo,1,0,False,610,False
+ASE01263,Individual,22,Ambato,3,0,False,653,False
+ASE01264,Individual,94,Quito,2,0,False,722,False
+ASE01265,Individual,98,Santo Domingo,1,0,False,609,False
+ASE01266,Individual,122,Guayaquil,3,0,False,712,False
+ASE01267,Pyme,99,Santo Domingo,2,0,False,704,False
+ASE01268,Individual,130,Cuenca,3,2,False,663,False
+ASE01269,Pyme,26,Cuenca,2,0,False,852,False
+ASE01270,Individual,141,Santo Domingo,1,2,False,762,False
+ASE01271,Pyme,64,Cuenca,3,0,False,746,False
+ASE01272,Individual,87,Loja,1,0,False,771,False
+ASE01273,Individual,56,Portoviejo,2,0,False,691,False
+ASE01274,Individual,83,Santo Domingo,1,0,False,649,False
+ASE01275,Corporativo,85,Quito,3,0,False,730,False
+ASE01276,Pyme,3,Ambato,3,0,False,707,False
+ASE01277,Individual,23,Cuenca,1,0,False,745,False
+ASE01278,Individual,68,Loja,3,1,True,696,False
+ASE01279,Individual,130,Manta,3,2,False,662,False
+ASE01280,Pyme,41,Santo Domingo,2,0,False,642,False
+ASE01281,VIP,21,Loja,1,1,False,582,False
+ASE01282,Pyme,9,Loja,3,0,False,582,False
+ASE01283,Pyme,140,Quito,4,0,True,784,False
+ASE01284,Individual,89,Cuenca,1,1,False,684,False
+ASE01285,Pyme,102,Guayaquil,4,0,False,703,False
+ASE01286,Individual,7,Guayaquil,3,0,False,621,False
+ASE01287,Pyme,67,Guayaquil,1,0,False,630,False
+ASE01288,Individual,91,Loja,2,1,False,721,False
+ASE01289,Pyme,140,Loja,2,0,False,695,False
+ASE01290,Individual,138,Santo Domingo,3,0,False,803,False
+ASE01291,Individual,132,Guayaquil,4,0,False,489,False
+ASE01292,Individual,60,Cuenca,2,2,False,690,False
+ASE01293,Individual,62,Santo Domingo,2,0,False,707,False
+ASE01294,Individual,94,Ambato,4,0,False,635,False
+ASE01295,Individual,143,Guayaquil,1,0,False,731,False
+ASE01296,Pyme,2,Quito,4,0,False,647,False
+ASE01297,Individual,58,Ambato,4,1,False,681,False
+ASE01298,Pyme,51,Ambato,2,1,False,828,False
+ASE01299,Pyme,132,Loja,1,0,False,586,False
+ASE01300,VIP,16,Guayaquil,3,2,False,718,False
+ASE01301,Corporativo,33,Quito,1,0,False,633,False
+ASE01302,VIP,37,Quito,2,2,False,574,False
+ASE01303,Corporativo,17,Cuenca,3,2,False,714,False
+ASE01304,Corporativo,4,Loja,1,0,False,480,False
+ASE01305,VIP,67,Santo Domingo,1,0,False,709,False
+ASE01306,VIP,71,Portoviejo,1,0,False,548,False
+ASE01307,Individual,3,Loja,1,2,False,666,False
+ASE01308,Individual,112,Ambato,3,1,False,611,False
+ASE01309,Corporativo,44,Portoviejo,3,0,False,748,False
+ASE01310,Individual,105,Cuenca,4,1,False,685,False
+ASE01311,Corporativo,129,Guayaquil,1,0,False,706,False
+ASE01312,VIP,141,Loja,2,1,False,553,False
+ASE01313,Pyme,101,Santo Domingo,4,0,False,774,False
+ASE01314,Individual,129,Cuenca,2,0,False,613,False
+ASE01315,Pyme,68,Guayaquil,4,0,False,785,False
+ASE01316,Corporativo,102,Quito,2,1,False,590,False
+ASE01317,Individual,116,Manta,4,2,False,769,False
+ASE01318,Corporativo,109,Quito,1,1,False,748,False
+ASE01319,Pyme,77,Guayaquil,3,2,False,770,False
+ASE01320,Corporativo,84,Quito,4,0,False,590,False
+ASE01321,Individual,108,Guayaquil,4,0,False,642,False
+ASE01322,Corporativo,3,Ambato,3,1,False,678,False
+ASE01323,Individual,143,Cuenca,1,1,False,732,False
+ASE01324,Pyme,110,Santo Domingo,4,0,False,839,False
+ASE01325,Corporativo,135,Loja,1,0,False,660,False
+ASE01326,Individual,88,Portoviejo,3,0,False,674,False
+ASE01327,Individual,89,Quito,1,0,True,646,False
+ASE01328,VIP,134,Cuenca,3,0,False,776,False
+ASE01329,Individual,63,Santo Domingo,3,0,False,622,False
+ASE01330,Individual,27,Guayaquil,3,0,False,614,False
+ASE01331,Corporativo,66,Guayaquil,3,0,False,736,False
+ASE01332,Pyme,134,Loja,4,0,False,652,False
+ASE01333,Corporativo,35,Ambato,4,0,False,834,False
+ASE01334,Pyme,24,Quito,4,1,False,683,False
+ASE01335,Individual,82,Loja,3,1,False,500,False
+ASE01336,Individual,10,Ambato,3,0,True,640,False
+ASE01337,Individual,89,Portoviejo,1,0,False,531,False
+ASE01338,Individual,91,Cuenca,4,0,False,661,False
+ASE01339,Individual,51,Manta,2,0,False,645,False
+ASE01340,Individual,47,Loja,2,0,False,653,False
+ASE01341,Individual,29,Manta,3,0,False,542,False
+ASE01342,Individual,77,Ambato,4,1,True,714,False
+ASE01343,Individual,3,Portoviejo,1,1,False,580,False
+ASE01344,Individual,54,Manta,1,0,False,845,False
+ASE01345,Pyme,14,Ambato,4,0,False,795,False
+ASE01346,Individual,26,Cuenca,3,1,False,553,False
+ASE01347,Individual,36,Cuenca,4,0,False,697,False
+ASE01348,Individual,123,Portoviejo,4,0,True,656,False
+ASE01349,Individual,64,Santo Domingo,3,1,False,741,False
+ASE01350,Individual,115,Ambato,1,0,False,677,False
+ASE01351,Individual,121,Guayaquil,1,0,False,699,False
+ASE01352,Individual,41,Guayaquil,1,0,False,585,False
+ASE01353,Individual,21,Ambato,4,0,False,556,False
+ASE01354,Individual,48,Cuenca,2,1,False,522,False
+ASE01355,Individual,95,Guayaquil,3,0,False,750,False
+ASE01356,Pyme,110,Loja,4,0,False,708,False
+ASE01357,Individual,115,Cuenca,1,0,False,718,False
+ASE01358,Individual,66,Cuenca,2,0,False,662,False
+ASE01359,Pyme,60,Portoviejo,1,0,False,688,False
+ASE01360,Pyme,101,Ambato,2,0,False,604,False
+ASE01361,Pyme,102,Guayaquil,2,3,False,716,False
+ASE01362,Individual,132,Manta,1,0,False,588,False
+ASE01363,Individual,104,Loja,1,0,False,644,False
+ASE01364,Corporativo,120,Ambato,4,2,False,657,False
+ASE01365,Pyme,70,Guayaquil,1,1,False,632,False
+ASE01366,VIP,86,Santo Domingo,4,0,False,601,False
+ASE01367,Individual,33,Quito,2,1,False,698,False
+ASE01368,Individual,113,Quito,3,0,False,681,False
+ASE01369,Corporativo,94,Guayaquil,2,0,True,672,False
+ASE01370,Individual,27,Santo Domingo,3,0,False,680,False
+ASE01371,VIP,61,Quito,1,0,True,690,False
+ASE01372,Pyme,121,Santo Domingo,3,1,False,644,False
+ASE01373,Individual,101,Portoviejo,4,0,False,515,False
+ASE01374,Pyme,36,Portoviejo,4,1,False,699,False
+ASE01375,Individual,119,Santo Domingo,3,0,False,517,False
+ASE01376,Pyme,61,Guayaquil,2,0,False,730,False
+ASE01377,Pyme,93,Loja,1,0,False,693,False
+ASE01378,Pyme,88,Loja,4,0,False,591,False
+ASE01379,Individual,26,Santo Domingo,1,0,False,607,False
+ASE01380,Individual,47,Portoviejo,1,1,False,645,False
+ASE01381,Individual,131,Santo Domingo,1,0,False,747,False
+ASE01382,Pyme,119,Cuenca,1,0,False,758,False
+ASE01383,Corporativo,15,Guayaquil,1,2,False,822,False
+ASE01384,Individual,85,Guayaquil,4,0,False,737,False
+ASE01385,Individual,108,Loja,3,0,False,598,False
+ASE01386,Corporativo,136,Manta,2,2,False,598,False
+ASE01387,Individual,76,Guayaquil,4,0,False,839,False
+ASE01388,Pyme,40,Guayaquil,2,0,False,795,False
+ASE01389,Corporativo,121,Loja,3,2,False,698,False
+ASE01390,Pyme,101,Manta,1,0,False,808,False
+ASE01391,Individual,133,Cuenca,2,0,False,578,False
+ASE01392,Pyme,23,Guayaquil,4,0,False,829,True
+ASE01393,Individual,65,Santo Domingo,3,0,False,721,False
+ASE01394,Individual,25,Ambato,4,0,False,716,False
+ASE01395,Corporativo,10,Loja,4,0,False,650,False
+ASE01396,Pyme,74,Portoviejo,3,0,False,546,False
+ASE01397,Individual,99,Ambato,3,3,False,708,False
+ASE01398,Pyme,129,Quito,4,1,True,855,False
+ASE01399,Individual,67,Manta,1,0,False,656,False
+ASE01400,Pyme,68,Ambato,4,0,False,624,False
+ASE01401,Pyme,79,Portoviejo,4,0,False,653,False
+ASE01402,Pyme,80,Quito,1,0,False,685,False
+ASE01403,Pyme,45,Quito,2,0,False,593,False
+ASE01404,Individual,136,Quito,3,0,False,732,False
+ASE01405,Individual,118,Loja,1,0,False,615,False
+ASE01406,Individual,30,Cuenca,4,2,False,785,False
+ASE01407,Individual,139,Loja,1,0,False,555,False
+ASE01408,Individual,121,Quito,4,0,False,757,False
+ASE01409,Individual,93,Quito,3,0,False,619,False
+ASE01410,Individual,110,Manta,3,1,True,693,False
+ASE01411,Individual,102,Santo Domingo,3,0,False,704,False
+ASE01412,Corporativo,96,Portoviejo,2,0,False,674,False
+ASE01413,Individual,79,Manta,2,1,False,647,False
+ASE01414,Individual,55,Manta,3,0,False,779,False
+ASE01415,Pyme,12,Quito,3,2,False,606,False
+ASE01416,Individual,124,Portoviejo,3,2,False,781,False
+ASE01417,Individual,59,Ambato,4,0,False,483,False
+ASE01418,Individual,139,Loja,1,0,False,699,False
+ASE01419,Corporativo,134,Loja,4,0,False,558,False
+ASE01420,Individual,56,Santo Domingo,2,1,False,674,False
+ASE01421,Individual,116,Guayaquil,1,0,False,560,False
+ASE01422,Individual,60,Guayaquil,2,0,False,588,False
+ASE01423,Pyme,68,Guayaquil,3,2,False,596,False
+ASE01424,Corporativo,106,Portoviejo,4,2,False,628,False
+ASE01425,Individual,133,Guayaquil,1,0,False,504,False
+ASE01426,VIP,76,Guayaquil,2,0,False,697,False
+ASE01427,Pyme,122,Loja,1,0,False,647,False
+ASE01428,VIP,30,Portoviejo,2,2,False,644,False
+ASE01429,Corporativo,50,Ambato,2,0,False,700,False
+ASE01430,Corporativo,128,Manta,3,1,False,587,False
+ASE01431,Individual,136,Loja,2,1,False,688,False
+ASE01432,Corporativo,97,Guayaquil,3,0,False,698,False
+ASE01433,Pyme,37,Portoviejo,4,0,False,766,False
+ASE01434,Individual,64,Santo Domingo,2,0,False,752,False
+ASE01435,Individual,77,Quito,1,1,False,655,False
+ASE01436,Individual,59,Manta,1,3,False,711,False
+ASE01437,Individual,80,Guayaquil,2,0,False,702,False
+ASE01438,Individual,91,Portoviejo,4,1,False,692,False
+ASE01439,Individual,25,Loja,2,0,False,512,False
+ASE01440,Individual,45,Loja,1,1,False,596,False
+ASE01441,Individual,110,Manta,1,0,False,696,False
+ASE01442,Individual,89,Portoviejo,4,0,False,622,False
+ASE01443,Individual,15,Portoviejo,3,1,False,627,False
+ASE01444,Corporativo,17,Loja,2,1,False,618,False
+ASE01445,Pyme,76,Guayaquil,4,0,False,613,False
+ASE01446,Pyme,56,Guayaquil,2,0,False,688,False
+ASE01447,VIP,48,Santo Domingo,1,0,False,801,False
+ASE01448,Individual,116,Guayaquil,2,1,False,728,False
+ASE01449,Corporativo,98,Guayaquil,1,0,False,771,False
+ASE01450,Pyme,20,Quito,1,0,False,579,False
+ASE01451,Individual,5,Cuenca,1,0,False,841,False
+ASE01452,Pyme,101,Ambato,3,0,False,732,False
+ASE01453,Individual,116,Cuenca,3,0,False,585,False
+ASE01454,Individual,103,Portoviejo,3,1,True,650,False
+ASE01455,Individual,106,Quito,2,0,False,759,False
+ASE01456,Corporativo,106,Quito,1,0,False,633,False
+ASE01457,Individual,72,Ambato,4,0,False,597,False
+ASE01458,Pyme,5,Guayaquil,1,1,False,575,False
+ASE01459,Individual,50,Santo Domingo,2,1,False,667,False
+ASE01460,Individual,119,Portoviejo,3,0,False,772,False
+ASE01461,Individual,65,Ambato,4,2,True,664,False
+ASE01462,Individual,38,Santo Domingo,4,0,False,648,False
+ASE01463,Pyme,93,Manta,2,0,False,776,False
+ASE01464,Individual,25,Quito,2,0,False,671,False
+ASE01465,Pyme,22,Ambato,4,0,False,701,False
+ASE01466,Individual,15,Manta,4,0,True,639,False
+ASE01467,Individual,126,Cuenca,4,0,False,522,False
+ASE01468,Individual,86,Loja,3,1,True,715,False
+ASE01469,VIP,33,Portoviejo,2,0,True,618,False
+ASE01470,Individual,103,Loja,1,1,False,789,False
+ASE01471,Individual,11,Quito,2,1,False,578,False
+ASE01472,Individual,92,Portoviejo,1,0,False,569,False
+ASE01473,Individual,69,Manta,4,1,True,765,False
+ASE01474,Individual,133,Ambato,4,0,False,731,False
+ASE01475,Individual,77,Quito,4,0,False,632,False
+ASE01476,Individual,56,Manta,4,0,False,621,False
+ASE01477,VIP,88,Quito,3,0,False,615,False
+ASE01478,Pyme,15,Ambato,3,0,False,736,False
+ASE01479,Pyme,76,Guayaquil,1,1,False,714,False
+ASE01480,Individual,42,Quito,3,0,False,778,False
+ASE01481,Individual,37,Portoviejo,4,0,False,671,False
+ASE01482,Individual,29,Guayaquil,2,1,False,655,False
+ASE01483,Corporativo,67,Santo Domingo,3,2,False,608,False
+ASE01484,Individual,104,Portoviejo,1,0,False,626,False
+ASE01485,Individual,29,Guayaquil,3,0,False,703,False
+ASE01486,Individual,111,Loja,3,0,False,591,False
+ASE01487,Individual,87,Quito,3,1,False,588,False
+ASE01488,VIP,69,Santo Domingo,2,1,False,701,False
+ASE01489,Individual,127,Ambato,3,0,True,660,False
+ASE01490,Individual,38,Manta,1,2,False,648,False
+ASE01491,Pyme,11,Santo Domingo,3,0,True,632,False
+ASE01492,Individual,66,Portoviejo,2,0,False,601,False
+ASE01493,Corporativo,11,Quito,3,2,False,646,False
+ASE01494,Pyme,96,Santo Domingo,3,1,False,645,False
+ASE01495,Individual,23,Manta,3,0,False,767,False
+ASE01496,Individual,25,Santo Domingo,1,0,False,734,False
+ASE01497,Individual,133,Loja,1,0,False,614,False
+ASE01498,Individual,75,Manta,4,0,True,608,False
+ASE01499,Individual,84,Guayaquil,4,0,False,700,False
+ASE01500,Pyme,34,Cuenca,2,0,True,672,False
+ASE01501,Individual,84,Quito,1,0,False,786,False
+ASE01502,Individual,110,Cuenca,2,2,False,589,False
+ASE01503,Individual,83,Loja,3,0,False,709,False
+ASE01504,Pyme,76,Cuenca,2,0,False,573,False
+ASE01505,Pyme,47,Ambato,3,0,False,734,False
+ASE01506,Individual,70,Guayaquil,1,0,False,698,False
+ASE01507,Pyme,24,Santo Domingo,1,0,False,748,False
+ASE01508,Individual,74,Quito,2,0,False,677,False
+ASE01509,Pyme,53,Manta,4,0,False,731,False
+ASE01510,Individual,50,Portoviejo,2,0,False,695,False
+ASE01511,Individual,56,Guayaquil,2,0,False,682,False
+ASE01512,Corporativo,123,Manta,2,0,False,791,False
+ASE01513,Corporativo,118,Manta,4,0,False,782,False
+ASE01514,Individual,4,Cuenca,3,0,False,794,False
+ASE01515,Individual,89,Cuenca,2,0,False,734,False
+ASE01516,Individual,39,Manta,3,0,False,662,False
+ASE01517,Individual,36,Guayaquil,4,1,True,613,False
+ASE01518,Individual,45,Cuenca,2,3,False,660,False
+ASE01519,Individual,52,Quito,1,0,False,593,False
+ASE01520,Individual,26,Santo Domingo,4,2,False,624,False
+ASE01521,Individual,97,Guayaquil,4,0,False,689,False
+ASE01522,Individual,99,Guayaquil,3,0,False,674,False
+ASE01523,Corporativo,132,Santo Domingo,1,0,False,687,False
+ASE01524,Pyme,4,Cuenca,4,0,False,701,False
+ASE01525,Pyme,14,Manta,1,0,False,800,False
+ASE01526,Pyme,88,Loja,3,0,False,664,False
+ASE01527,Individual,65,Loja,1,2,False,547,False
+ASE01528,Pyme,106,Manta,2,1,True,707,False
+ASE01529,Corporativo,72,Quito,1,1,False,725,False
+ASE01530,Corporativo,40,Quito,4,1,False,734,False
+ASE01531,Individual,8,Guayaquil,1,0,False,886,False
+ASE01532,Corporativo,40,Loja,3,0,False,564,False
+ASE01533,Pyme,3,Santo Domingo,4,0,True,613,False
+ASE01534,Individual,66,Santo Domingo,4,0,False,702,False
+ASE01535,Individual,45,Portoviejo,4,0,False,728,False
+ASE01536,Individual,49,Guayaquil,3,0,False,738,False
+ASE01537,Individual,119,Cuenca,3,0,False,809,False
+ASE01538,Individual,39,Santo Domingo,4,0,False,623,False
+ASE01539,Pyme,126,Santo Domingo,1,0,False,758,False
+ASE01540,Individual,93,Manta,3,0,False,692,False
+ASE01541,Individual,94,Guayaquil,2,3,True,811,False
+ASE01542,Individual,40,Loja,3,1,False,635,False
+ASE01543,Individual,127,Manta,4,0,False,677,False
+ASE01544,Pyme,100,Loja,2,0,False,654,False
+ASE01545,Individual,113,Manta,4,0,False,632,False
+ASE01546,Individual,53,Cuenca,4,0,False,795,False
+ASE01547,Pyme,19,Santo Domingo,2,0,False,725,False
+ASE01548,Corporativo,121,Manta,4,0,False,785,False
+ASE01549,Individual,18,Quito,4,0,False,802,False
+ASE01550,Individual,136,Cuenca,2,3,False,672,False
+ASE01551,Individual,119,Manta,4,1,False,752,False
+ASE01552,Individual,106,Manta,1,0,False,777,False
+ASE01553,Individual,64,Loja,4,1,False,755,False
+ASE01554,Pyme,51,Cuenca,1,0,False,810,False
+ASE01555,Individual,76,Cuenca,1,0,False,735,False
+ASE01556,Individual,87,Cuenca,1,0,False,533,False
+ASE01557,Individual,33,Ambato,2,0,False,795,False
+ASE01558,Individual,112,Guayaquil,2,0,False,498,False
+ASE01559,Pyme,109,Cuenca,1,0,False,755,False
+ASE01560,Individual,52,Guayaquil,1,1,False,799,False
+ASE01561,Individual,120,Portoviejo,1,0,False,582,False
+ASE01562,Pyme,79,Loja,2,0,False,574,False
+ASE01563,Individual,34,Cuenca,4,0,False,724,False
+ASE01564,Pyme,18,Manta,3,3,True,756,False
+ASE01565,Individual,65,Manta,3,0,False,706,False
+ASE01566,Pyme,70,Cuenca,1,1,False,580,False
+ASE01567,Individual,117,Cuenca,3,0,False,829,False
+ASE01568,Individual,59,Guayaquil,3,0,False,741,False
+ASE01569,Pyme,75,Loja,4,1,False,569,False
+ASE01570,Individual,40,Portoviejo,4,0,True,764,False
+ASE01571,Pyme,124,Quito,3,0,False,469,True
+ASE01572,Corporativo,33,Ambato,1,0,False,736,False
+ASE01573,Individual,67,Manta,2,0,False,530,False
+ASE01574,Individual,18,Cuenca,1,0,False,735,False
+ASE01575,Pyme,109,Santo Domingo,4,1,False,719,False
+ASE01576,Individual,13,Cuenca,3,0,False,795,False
+ASE01577,Individual,36,Manta,3,1,False,711,False
+ASE01578,Individual,4,Portoviejo,1,0,False,653,False
+ASE01579,Individual,31,Quito,3,0,False,582,False
+ASE01580,Individual,17,Ambato,3,0,False,605,False
+ASE01581,Pyme,75,Loja,4,0,True,773,False
+ASE01582,Pyme,140,Quito,3,0,False,703,False
+ASE01583,Pyme,82,Loja,2,0,False,738,False
+ASE01584,Corporativo,25,Manta,1,0,False,713,False
+ASE01585,Corporativo,34,Santo Domingo,4,1,False,595,False
+ASE01586,Individual,56,Portoviejo,3,0,True,703,False
+ASE01587,Pyme,58,Portoviejo,1,0,False,649,False
+ASE01588,Individual,142,Manta,3,0,False,524,False
+ASE01589,Individual,57,Ambato,2,2,False,758,False
+ASE01590,Pyme,58,Ambato,3,2,False,642,False
+ASE01591,Individual,97,Quito,2,1,False,659,False
+ASE01592,Individual,124,Portoviejo,4,0,False,741,False
+ASE01593,Individual,9,Portoviejo,3,0,False,668,False
+ASE01594,Pyme,38,Portoviejo,1,0,False,676,False
+ASE01595,Corporativo,108,Manta,3,0,False,832,False
+ASE01596,Pyme,137,Portoviejo,4,0,False,714,False
+ASE01597,Pyme,42,Guayaquil,2,0,False,771,False
+ASE01598,Individual,64,Santo Domingo,3,0,False,456,False
+ASE01599,Individual,38,Cuenca,1,1,False,692,False
+ASE01600,Individual,95,Quito,1,0,False,730,False
+ASE01601,Pyme,117,Quito,1,0,False,659,False
+ASE01602,Individual,46,Loja,4,0,False,804,False
+ASE01603,Individual,15,Portoviejo,4,0,False,599,False
+ASE01604,VIP,30,Manta,3,0,False,735,False
+ASE01605,Individual,68,Portoviejo,4,0,False,666,False
+ASE01606,Pyme,29,Cuenca,2,0,False,568,False
+ASE01607,Individual,117,Manta,1,0,False,685,False
+ASE01608,Corporativo,34,Ambato,4,0,False,656,False
+ASE01609,Individual,124,Santo Domingo,1,3,False,754,False
+ASE01610,Pyme,79,Loja,3,0,False,676,False
+ASE01611,VIP,112,Guayaquil,1,1,False,778,False
+ASE01612,Pyme,81,Portoviejo,2,0,False,608,False
+ASE01613,Individual,51,Cuenca,4,0,False,661,False
+ASE01614,VIP,100,Santo Domingo,4,0,False,509,False
+ASE01615,Pyme,108,Manta,2,0,False,749,False
+ASE01616,Pyme,58,Quito,3,0,False,522,False
+ASE01617,Individual,113,Ambato,2,0,True,802,False
+ASE01618,Pyme,20,Guayaquil,3,0,False,685,False
+ASE01619,Corporativo,8,Ambato,2,3,False,618,False
+ASE01620,Pyme,89,Portoviejo,4,1,False,736,False
+ASE01621,Individual,15,Santo Domingo,1,0,False,706,False
+ASE01622,VIP,16,Manta,4,0,False,525,False
+ASE01623,Individual,33,Santo Domingo,2,0,False,750,False
+ASE01624,Individual,135,Guayaquil,1,0,False,855,False
+ASE01625,VIP,123,Manta,2,2,False,531,False
+ASE01626,Individual,109,Loja,3,3,False,702,False
+ASE01627,Individual,140,Loja,3,0,False,801,False
+ASE01628,Individual,82,Loja,2,0,False,657,False
+ASE01629,VIP,21,Quito,3,0,False,519,False
+ASE01630,Corporativo,16,Manta,2,1,False,692,False
+ASE01631,Individual,66,Guayaquil,2,0,False,757,False
+ASE01632,Individual,68,Cuenca,1,1,False,610,False
+ASE01633,Individual,66,Ambato,3,1,False,477,False
+ASE01634,Individual,22,Guayaquil,1,0,False,520,False
+ASE01635,Individual,35,Ambato,1,0,False,564,False
+ASE01636,Individual,141,Loja,4,0,False,762,False
+ASE01637,Pyme,51,Loja,1,2,False,621,False
+ASE01638,Individual,60,Santo Domingo,4,1,False,657,False
+ASE01639,Individual,102,Ambato,4,0,False,719,False
+ASE01640,Pyme,94,Ambato,1,0,False,505,False
+ASE01641,Individual,96,Guayaquil,4,0,False,658,False
+ASE01642,Individual,17,Manta,3,2,False,645,False
+ASE01643,Pyme,51,Loja,3,1,False,684,False
+ASE01644,Individual,62,Quito,3,1,False,671,False
+ASE01645,Individual,65,Quito,2,0,False,630,False
+ASE01646,Pyme,24,Manta,4,0,False,634,False
+ASE01647,Individual,15,Loja,2,1,False,680,False
+ASE01648,Individual,83,Quito,2,0,False,617,False
+ASE01649,Individual,118,Loja,2,2,False,809,True
+ASE01650,VIP,141,Santo Domingo,2,0,False,786,False
+ASE01651,Individual,6,Quito,2,1,False,728,False
+ASE01652,VIP,63,Guayaquil,1,1,False,661,False
+ASE01653,Pyme,131,Quito,2,2,False,663,False
+ASE01654,VIP,102,Guayaquil,1,1,False,758,False
+ASE01655,Individual,33,Ambato,1,0,False,692,False
+ASE01656,Individual,13,Guayaquil,1,0,True,610,False
+ASE01657,Individual,33,Manta,2,0,False,711,False
+ASE01658,VIP,36,Portoviejo,2,0,False,716,False
+ASE01659,Individual,136,Santo Domingo,1,0,False,714,False
+ASE01660,Individual,18,Manta,2,0,False,598,False
+ASE01661,Individual,39,Quito,4,0,False,588,False
+ASE01662,Corporativo,26,Cuenca,2,0,False,627,False
+ASE01663,Individual,107,Loja,3,0,False,596,False
+ASE01664,Individual,24,Cuenca,1,0,False,570,False
+ASE01665,Individual,28,Santo Domingo,4,0,False,751,False
+ASE01666,Pyme,93,Quito,3,0,False,651,False
+ASE01667,Individual,60,Cuenca,2,0,False,657,False
+ASE01668,Individual,67,Portoviejo,3,1,False,673,False
+ASE01669,Individual,104,Quito,3,0,False,504,False
+ASE01670,Individual,83,Guayaquil,2,1,False,729,False
+ASE01671,Individual,129,Quito,1,2,False,659,False
+ASE01672,Pyme,88,Santo Domingo,2,0,False,589,False
+ASE01673,Corporativo,18,Quito,2,0,False,647,False
+ASE01674,Individual,48,Santo Domingo,3,0,False,752,False
+ASE01675,Pyme,32,Guayaquil,3,0,False,664,False
+ASE01676,Individual,122,Cuenca,4,0,False,799,False
+ASE01677,Individual,62,Quito,4,0,False,793,False
+ASE01678,Individual,75,Ambato,2,2,False,813,False
+ASE01679,Individual,114,Quito,3,0,False,723,False
+ASE01680,Individual,126,Cuenca,3,1,False,740,False
+ASE01681,Pyme,85,Cuenca,1,0,False,530,False
+ASE01682,Individual,114,Quito,4,2,False,643,False
+ASE01683,VIP,10,Manta,3,0,False,764,False
+ASE01684,Individual,101,Guayaquil,3,0,False,721,False
+ASE01685,Individual,71,Portoviejo,2,0,False,494,False
+ASE01686,Individual,73,Portoviejo,4,0,False,658,False
+ASE01687,Pyme,132,Manta,1,1,False,633,False
+ASE01688,Pyme,120,Guayaquil,4,0,True,706,False
+ASE01689,Individual,26,Ambato,2,0,False,635,False
+ASE01690,Individual,98,Loja,2,0,False,649,False
+ASE01691,Individual,58,Manta,4,1,False,681,False
+ASE01692,Individual,107,Loja,4,0,False,667,False
+ASE01693,Individual,21,Cuenca,3,1,False,710,False
+ASE01694,Individual,9,Santo Domingo,1,1,False,580,False
+ASE01695,Pyme,39,Ambato,4,1,False,690,False
+ASE01696,Individual,57,Santo Domingo,3,0,False,707,False
+ASE01697,Corporativo,134,Portoviejo,3,0,False,585,False
+ASE01698,Individual,94,Manta,2,0,False,671,False
+ASE01699,Individual,139,Santo Domingo,2,0,False,776,False
+ASE01700,Pyme,11,Loja,2,0,False,708,False

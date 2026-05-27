@@ -1,0 +1,115 @@
+id_proveedor,nombre,tipo,ramo,ciudad,antiguedad_meses,hotspot_demo,lista_restrictiva,reclamos_asociados,monto_promedio_reclamado,porcentaje_casos_observados
+PRV0001,Taller VEH 01,Taller,Vehiculos,Manta,50,True,True,82,22026.8,70.73
+PRV0002,Taller VEH 02,Taller,Vehiculos,Ambato,8,True,False,59,16656.75,61.02
+PRV0003,Taller VEH 03,Taller,Vehiculos,Loja,44,True,False,60,15804.76,66.67
+PRV0004,Taller VEH 04,Taller,Vehiculos,Santo Domingo,102,True,False,53,17938.51,73.58
+PRV0005,Taller VEH 05,Taller,Vehiculos,Guayaquil,165,False,False,27,12296.62,14.81
+PRV0006,Taller VEH 06,Taller,Vehiculos,Quito,161,False,False,19,11424.77,5.26
+PRV0007,Taller VEH 07,Taller,Vehiculos,Santo Domingo,138,False,False,32,10654.96,12.5
+PRV0008,Taller VEH 08,Taller,Vehiculos,Ambato,104,False,False,25,8591.71,12.0
+PRV0009,Taller VEH 09,Taller,Vehiculos,Loja,45,False,False,22,11105.75,18.18
+PRV0010,Taller VEH 10,Taller,Vehiculos,Quito,58,False,False,19,12706.29,31.58
+PRV0011,Taller VEH 11,Taller,Vehiculos,Cuenca,161,False,False,18,7715.31,0.0
+PRV0012,Taller VEH 12,Taller,Vehiculos,Manta,95,False,False,15,11058.6,13.33
+PRV0013,Taller VEH 13,Taller,Vehiculos,Santo Domingo,136,False,False,13,8338.49,23.08
+PRV0014,Taller VEH 14,Taller,Vehiculos,Santo Domingo,129,False,False,13,14137.05,23.08
+PRV0015,Taller VEH 15,Taller,Vehiculos,Loja,48,False,False,16,7817.99,0.0
+PRV0016,Taller VEH 16,Taller,Vehiculos,Santo Domingo,29,False,False,23,9464.85,13.04
+PRV0017,Taller VEH 17,Taller,Vehiculos,Santo Domingo,130,False,False,24,8986.39,8.33
+PRV0018,Taller VEH 18,Taller,Vehiculos,Guayaquil,16,False,False,25,10839.31,12.0
+PRV0019,Taller VEH 19,Taller,Vehiculos,Portoviejo,74,False,False,23,8669.27,8.7
+PRV0020,Taller VEH 20,Taller,Vehiculos,Santo Domingo,4,False,False,11,10268.0,18.18
+PRV0021,Taller VEH 21,Taller,Vehiculos,Portoviejo,136,False,False,23,11918.24,17.39
+PRV0022,Taller VEH 22,Taller,Vehiculos,Quito,47,False,False,14,11626.7,35.71
+PRV0023,Taller VEH 23,Taller,Vehiculos,Ambato,54,False,False,21,7985.77,14.29
+PRV0024,Taller VEH 24,Taller,Vehiculos,Quito,115,False,False,12,8012.37,0.0
+PRV0025,Taller VEH 25,Taller,Vehiculos,Ambato,174,False,False,23,11963.91,13.04
+PRV0026,Taller VEH 26,Taller,Vehiculos,Santo Domingo,4,False,False,22,8228.16,9.09
+PRV0027,Taller VEH 27,Taller,Vehiculos,Guayaquil,63,False,False,15,11217.42,13.33
+PRV0028,Taller VEH 28,Taller,Vehiculos,Loja,123,False,False,25,7798.95,8.0
+PRV0029,Taller VEH 29,Taller,Vehiculos,Quito,66,False,False,14,9654.8,7.14
+PRV0030,Taller VEH 30,Taller,Vehiculos,Portoviejo,11,False,False,22,12002.51,18.18
+PRV0031,Taller VEH 31,Taller,Vehiculos,Manta,27,False,False,26,8817.88,11.54
+PRV0032,Taller VEH 32,Taller,Vehiculos,Portoviejo,95,False,False,25,14154.35,20.0
+PRV0033,Taller VEH 33,Taller,Vehiculos,Cuenca,164,False,False,16,7748.76,6.25
+PRV0034,Taller VEH 34,Taller,Vehiculos,Manta,17,False,False,16,8036.46,12.5
+PRV0035,Taller VEH 35,Taller,Vehiculos,Loja,134,False,False,20,7579.19,0.0
+PRV0036,Taller VEH 36,Taller,Vehiculos,Santo Domingo,54,False,False,21,9236.06,9.52
+PRV0037,Taller VEH 37,Taller,Vehiculos,Portoviejo,146,False,False,21,9568.26,19.05
+PRV0038,Taller VEH 38,Taller,Vehiculos,Ambato,124,False,False,17,8216.58,5.88
+PRV0039,Taller VEH 39,Taller,Vehiculos,Manta,77,False,False,15,5187.07,6.67
+PRV0040,Taller VEH 40,Taller,Vehiculos,Portoviejo,62,False,False,10,5444.35,10.0
+PRV0041,Taller VEH 41,Taller,Vehiculos,Loja,97,False,False,22,7778.87,4.55
+PRV0042,Taller VEH 42,Taller,Vehiculos,Guayaquil,96,False,False,21,8974.94,9.52
+PRV0043,Clinica SAL 01,Clinica,Salud,Quito,21,True,True,61,11019.73,70.49
+PRV0044,Clinica SAL 02,Clinica,Salud,Portoviejo,42,True,False,51,7492.07,66.67
+PRV0045,Clinica SAL 03,Clinica,Salud,Manta,123,True,False,73,8945.77,67.12
+PRV0046,Clinica SAL 04,Clinica,Salud,Portoviejo,5,True,False,52,7386.58,55.77
+PRV0047,Clinica SAL 05,Clinica,Salud,Manta,130,False,False,22,4006.88,9.09
+PRV0048,Clinica SAL 06,Clinica,Salud,Ambato,99,False,False,17,3968.01,11.76
+PRV0049,Clinica SAL 07,Clinica,Salud,Ambato,154,False,False,27,3399.85,7.41
+PRV0050,Clinica SAL 08,Clinica,Salud,Quito,140,False,False,19,3904.49,5.26
+PRV0051,Clinica SAL 09,Clinica,Salud,Santo Domingo,172,False,False,32,3970.8,9.38
+PRV0052,Clinica SAL 10,Clinica,Salud,Portoviejo,99,False,False,18,3466.79,11.11
+PRV0053,Clinica SAL 11,Clinica,Salud,Santo Domingo,139,False,False,19,3590.83,5.26
+PRV0054,Clinica SAL 12,Clinica,Salud,Manta,162,False,False,23,3107.29,4.35
+PRV0055,Clinica SAL 13,Clinica,Salud,Loja,104,False,False,28,3094.0,7.14
+PRV0056,Clinica SAL 14,Clinica,Salud,Cuenca,9,False,False,26,3296.63,7.69
+PRV0057,Clinica SAL 15,Clinica,Salud,Guayaquil,135,False,False,24,4208.83,12.5
+PRV0058,Clinica SAL 16,Clinica,Salud,Guayaquil,152,False,False,19,3282.21,10.53
+PRV0059,Clinica SAL 17,Clinica,Salud,Manta,95,False,False,17,3669.38,11.76
+PRV0060,Clinica SAL 18,Clinica,Salud,Manta,127,False,False,21,3970.62,14.29
+PRV0061,Clinica SAL 19,Clinica,Salud,Portoviejo,63,False,False,26,3678.17,3.85
+PRV0062,Clinica SAL 20,Clinica,Salud,Portoviejo,70,False,False,18,2825.26,5.56
+PRV0063,Clinica SAL 21,Clinica,Salud,Ambato,173,False,False,28,3331.54,10.71
+PRV0064,Clinica SAL 22,Clinica,Salud,Ambato,77,False,False,21,3140.61,4.76
+PRV0065,Clinica SAL 23,Clinica,Salud,Ambato,42,False,False,32,4616.04,12.5
+PRV0066,Clinica SAL 24,Clinica,Salud,Portoviejo,34,False,False,28,4077.28,10.71
+PRV0067,Clinica SAL 25,Clinica,Salud,Ambato,55,False,False,20,4103.37,10.0
+PRV0068,Clinica SAL 26,Clinica,Salud,Portoviejo,114,False,False,29,2459.97,3.45
+PRV0069,Clinica SAL 27,Clinica,Salud,Quito,96,False,False,12,6297.41,33.33
+PRV0070,Clinica SAL 28,Clinica,Salud,Loja,77,False,False,24,3613.28,4.17
+PRV0071,Clinica SAL 29,Clinica,Salud,Guayaquil,158,False,False,22,3873.28,9.09
+PRV0072,Clinica SAL 30,Clinica,Salud,Guayaquil,110,False,False,20,4109.26,10.0
+PRV0073,Clinica SAL 31,Clinica,Salud,Quito,58,False,False,25,3619.05,8.0
+PRV0074,Clinica SAL 32,Clinica,Salud,Ambato,4,False,False,22,4187.64,9.09
+PRV0075,Clinica SAL 33,Clinica,Salud,Guayaquil,164,False,False,22,5341.34,18.18
+PRV0076,Clinica SAL 34,Clinica,Salud,Portoviejo,23,False,False,16,4907.65,6.25
+PRV0077,Clinica SAL 35,Clinica,Salud,Quito,165,False,False,25,3202.4,4.0
+PRV0078,Clinica SAL 36,Clinica,Salud,Cuenca,149,False,False,23,4829.75,17.39
+PRV0079,Clinica SAL 37,Clinica,Salud,Quito,150,False,False,19,4184.18,5.26
+PRV0080,Clinica SAL 38,Clinica,Salud,Quito,82,False,False,19,3620.48,5.26
+PRV0081,Contratista HOG 01,Contratista,Hogar,Guayaquil,179,True,True,70,25386.38,72.86
+PRV0082,Contratista HOG 02,Contratista,Hogar,Ambato,119,True,False,72,27162.4,65.28
+PRV0083,Contratista HOG 03,Contratista,Hogar,Loja,158,True,False,64,23389.1,65.62
+PRV0084,Contratista HOG 04,Contratista,Hogar,Ambato,112,True,False,65,19829.03,60.0
+PRV0085,Contratista HOG 05,Contratista,Hogar,Quito,134,False,False,22,13655.93,18.18
+PRV0086,Contratista HOG 06,Contratista,Hogar,Manta,59,False,False,18,9683.04,11.11
+PRV0087,Contratista HOG 07,Contratista,Hogar,Santo Domingo,173,False,False,33,16146.18,21.21
+PRV0088,Contratista HOG 08,Contratista,Hogar,Santo Domingo,62,False,False,13,10661.86,7.69
+PRV0089,Contratista HOG 09,Contratista,Hogar,Guayaquil,65,False,False,31,7407.29,3.23
+PRV0090,Contratista HOG 10,Contratista,Hogar,Quito,65,False,False,27,10484.45,11.11
+PRV0091,Contratista HOG 11,Contratista,Hogar,Santo Domingo,29,False,False,24,7005.03,12.5
+PRV0092,Contratista HOG 12,Contratista,Hogar,Quito,28,False,False,19,11041.48,15.79
+PRV0093,Contratista HOG 13,Contratista,Hogar,Portoviejo,14,False,False,23,10170.15,0.0
+PRV0094,Contratista HOG 14,Contratista,Hogar,Manta,148,False,False,31,12321.84,19.35
+PRV0095,Contratista HOG 15,Contratista,Hogar,Quito,136,False,False,28,9764.97,7.14
+PRV0096,Contratista HOG 16,Contratista,Hogar,Ambato,90,False,False,24,11863.97,8.33
+PRV0097,Contratista HOG 17,Contratista,Hogar,Ambato,71,False,False,19,7447.66,5.26
+PRV0098,Contratista HOG 18,Contratista,Hogar,Ambato,96,False,False,18,14403.89,11.11
+PRV0099,Contratista HOG 19,Contratista,Hogar,Ambato,103,False,False,23,12823.52,17.39
+PRV0100,Contratista HOG 20,Contratista,Hogar,Portoviejo,27,False,False,28,10714.5,14.29
+PRV0101,Contratista HOG 21,Contratista,Hogar,Quito,135,False,False,26,13329.99,23.08
+PRV0102,Contratista HOG 22,Contratista,Hogar,Cuenca,51,False,False,34,12637.74,5.88
+PRV0103,Contratista HOG 23,Contratista,Hogar,Manta,63,False,False,30,13543.36,16.67
+PRV0104,Contratista HOG 24,Contratista,Hogar,Manta,16,False,False,19,9915.97,15.79
+PRV0105,Contratista HOG 25,Contratista,Hogar,Quito,69,False,False,22,14034.43,27.27
+PRV0106,Contratista HOG 26,Contratista,Hogar,Portoviejo,69,False,False,18,13452.1,22.22
+PRV0107,Contratista HOG 27,Contratista,Hogar,Manta,126,False,False,24,9161.28,4.17
+PRV0108,Contratista HOG 28,Contratista,Hogar,Guayaquil,42,False,False,31,10650.79,16.13
+PRV0109,Contratista HOG 29,Contratista,Hogar,Manta,41,False,False,38,10001.26,5.26
+PRV0110,Contratista HOG 30,Contratista,Hogar,Portoviejo,114,False,False,20,9595.2,5.0
+PRV0111,Contratista HOG 31,Contratista,Hogar,Ambato,34,False,False,26,11296.59,11.54
+PRV0112,Contratista HOG 32,Contratista,Hogar,Loja,136,False,False,22,10390.45,13.64
+PRV0113,Contratista HOG 33,Contratista,Hogar,Quito,133,False,False,19,9367.35,10.53
+PRV0114,Contratista HOG 34,Contratista,Hogar,Cuenca,22,False,False,19,8074.83,0.0

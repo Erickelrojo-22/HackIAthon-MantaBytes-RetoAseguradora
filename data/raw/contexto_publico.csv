@@ -1,0 +1,2 @@
+fuente,url,indicador,uso_en_prototipo,nota
+SCVS - Portal de informacion de seguros,https://appscvsmovil.supercias.gob.ec/PortalInformacion/seguros.html,Primas y siniestros agregados por ramo,Contexto ejecutivo y calibracion manual de narrativa; no alimenta el score.,Actualizar valores agregados antes del pitch si el equipo descarga cifras vigentes.
