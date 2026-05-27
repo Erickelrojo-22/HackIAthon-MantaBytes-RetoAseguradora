@@ -7,11 +7,17 @@ from typing import Any
 
 from fraudia_claims.agent_tools import (
     aggregate_alerts,
+    executive_report,
     get_claim_detail,
-    get_impact_summary,
     get_relationship_network,
+    get_model_metrics,
+    list_amount_outliers,
+    list_policy_edge_cases,
     list_risk_cases,
+    provider_red_alert_pareto,
+    repeated_claim_patterns,
     score_candidate_claim,
+    top_insured_frequency,
 )
 from fraudia_claims.config import DEFAULT_DB_PATH
 from fraudia_claims.offline_agent import answer_offline
@@ -65,15 +71,67 @@ TOOLS = [
     },
     {
         "type": "function",
-        "name": "score_candidate_claim",
-        "description": "Calcula un score temporal para un siniestro nuevo sin persistirlo.",
-        "parameters": {"type": "object", "properties": {}, "additionalProperties": True},
+        "name": "get_model_metrics",
+        "description": "Devuelve metricas reproducibles del modelo supervisado entrenado con etiqueta sintetica.",
+        "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
         "type": "function",
-        "name": "get_impact_summary",
-        "description": "Devuelve KPIs ejecutivos e impacto potencial simulado.",
+        "name": "provider_red_alert_pareto",
+        "description": "Lista proveedores que explican aproximadamente el 80 por ciento acumulado de alertas rojas.",
         "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    {
+        "type": "function",
+        "name": "top_insured_frequency",
+        "description": "Lista asegurados anonimos con mayor frecuencia de siniestros.",
+        "parameters": {
+            "type": "object",
+            "properties": {"limit": {"type": "integer", "minimum": 1, "maximum": 20}},
+            "additionalProperties": False,
+        },
+    },
+    {
+        "type": "function",
+        "name": "list_amount_outliers",
+        "description": "Lista siniestros con montos atipicos o cercanos a suma asegurada.",
+        "parameters": {
+            "type": "object",
+            "properties": {"limit": {"type": "integer", "minimum": 1, "maximum": 20}},
+            "additionalProperties": False,
+        },
+    },
+    {
+        "type": "function",
+        "name": "list_policy_edge_cases",
+        "description": "Lista siniestros ocurridos cerca del inicio o fin de vigencia de la poliza.",
+        "parameters": {
+            "type": "object",
+            "properties": {"limit": {"type": "integer", "minimum": 1, "maximum": 20}},
+            "additionalProperties": False,
+        },
+    },
+    {
+        "type": "function",
+        "name": "repeated_claim_patterns",
+        "description": "Lista reclamos con narrativas similares o patrones textuales repetidos.",
+        "parameters": {
+            "type": "object",
+            "properties": {"limit": {"type": "integer", "minimum": 1, "maximum": 20}},
+            "additionalProperties": False,
+        },
+    },
+    {
+        "type": "function",
+        "name": "executive_report",
+        "description": "Devuelve resumen ejecutivo, exposicion y ahorro potencial simulado.",
+        "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    {
+        "type": "function",
+        "name": "score_candidate_claim",
+        "description": "Calcula un score temporal para un siniestro nuevo sin persistirlo.",
+        "parameters": {"type": "object", "properties": {}, "additionalProperties": True},
     },
 ]
 
@@ -87,10 +145,22 @@ def _dispatch(name: str, arguments: dict[str, Any], db_path: Path) -> Any:
         return aggregate_alerts(str(arguments["group_by"]), db_path=db_path)
     if name == "get_relationship_network":
         return get_relationship_network(limit=int(arguments.get("limit", 60)), db_path=db_path)
+    if name == "get_model_metrics":
+        return get_model_metrics(db_path=db_path)
+    if name == "provider_red_alert_pareto":
+        return provider_red_alert_pareto(db_path=db_path)
+    if name == "top_insured_frequency":
+        return top_insured_frequency(limit=int(arguments.get("limit", 10)), db_path=db_path)
+    if name == "list_amount_outliers":
+        return list_amount_outliers(limit=int(arguments.get("limit", 10)), db_path=db_path)
+    if name == "list_policy_edge_cases":
+        return list_policy_edge_cases(limit=int(arguments.get("limit", 10)), db_path=db_path)
+    if name == "repeated_claim_patterns":
+        return repeated_claim_patterns(limit=int(arguments.get("limit", 10)), db_path=db_path)
+    if name == "executive_report":
+        return executive_report(db_path=db_path)
     if name == "score_candidate_claim":
         return score_candidate_claim(arguments)
-    if name == "get_impact_summary":
-        return get_impact_summary(db_path)
     raise ValueError(f"Herramienta no soportada: {name}")
 
 
@@ -145,12 +215,5 @@ def ask_with_openai(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
         return answer_offline(question, db_path)
 
 
-def ask_agent(
-    question: str,
-    db_path: Path = DEFAULT_DB_PATH,
-    session_cases: list[dict[str, Any]] | None = None,
-) -> str:
-    normalized = question.lower()
-    if "ultimo caso" in normalized or "caso evaluado" in normalized or "caso en vivo" in normalized:
-        return answer_offline(question, db_path, session_cases=session_cases)
+def ask_agent(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
     return ask_with_openai(question, db_path)

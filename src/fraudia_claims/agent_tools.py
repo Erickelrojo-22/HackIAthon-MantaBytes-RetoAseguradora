@@ -4,7 +4,6 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from fraudia_claims.analytics import impact_summary
 from fraudia_claims.config import DEFAULT_DB_PATH
 from fraudia_claims.scoring import level_from_score
 
@@ -56,6 +55,8 @@ def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict
             sc.score_reglas,
             sc.score_anomalia,
             sc.score_nlp,
+            sc.score_modelo,
+            sc.probabilidad_modelo,
             sc.nivel_riesgo,
             sc.accion_sugerida,
             sc.similitud_narrativa,
@@ -163,6 +164,201 @@ def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PAT
         return _rows(conn.execute(query))
 
 
+def get_model_metrics(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
+    query = """
+        SELECT modelo, metrica, valor, detalle, fecha_generacion
+        FROM metricas_modelo
+        ORDER BY
+            CASE metrica
+                WHEN 'status' THEN 0
+                WHEN 'precision' THEN 1
+                WHEN 'recall' THEN 2
+                WHEN 'f1' THEN 3
+                WHEN 'auc_roc' THEN 4
+                ELSE 5
+            END,
+            metrica
+    """
+    with _connect(db_path) as conn:
+        try:
+            return _rows(conn.execute(query))
+        except sqlite3.OperationalError:
+            return []
+
+
+def provider_red_alert_pareto(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
+    query = """
+        WITH provider_red AS (
+            SELECT
+                pr.nombre AS proveedor,
+                pr.tipo,
+                COUNT(*) AS alertas_rojas,
+                ROUND(AVG(sc.score_final), 2) AS score_promedio
+            FROM siniestros si
+            JOIN scores sc ON sc.id_siniestro = si.id_siniestro
+            LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
+            WHERE sc.nivel_riesgo = 'Rojo'
+            GROUP BY pr.nombre, pr.tipo
+        ),
+        ranked AS (
+            SELECT
+                proveedor,
+                tipo,
+                alertas_rojas,
+                score_promedio,
+                SUM(alertas_rojas) OVER () AS total_rojas,
+                SUM(alertas_rojas) OVER (ORDER BY alertas_rojas DESC, score_promedio DESC) AS acumulado
+            FROM provider_red
+        )
+        SELECT
+            proveedor,
+            tipo,
+            alertas_rojas,
+            score_promedio,
+            ROUND(100.0 * alertas_rojas / NULLIF(total_rojas, 0), 2) AS porcentaje_rojas,
+            ROUND(100.0 * acumulado / NULLIF(total_rojas, 0), 2) AS porcentaje_acumulado
+        FROM ranked
+        WHERE 100.0 * (acumulado - alertas_rojas) / NULLIF(total_rojas, 0) < 80
+        ORDER BY alertas_rojas DESC, score_promedio DESC
+    """
+    with _connect(db_path) as conn:
+        return _rows(conn.execute(query))
+
+
+def top_insured_frequency(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
+    query = """
+        SELECT
+            si.id_asegurado,
+            COUNT(*) AS total_siniestros,
+            SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS casos_rojos,
+            ROUND(AVG(sc.score_final), 2) AS score_promedio,
+            ROUND(SUM(si.monto_reclamado), 2) AS monto_total_reclamado
+        FROM siniestros si
+        JOIN scores sc ON sc.id_siniestro = si.id_siniestro
+        GROUP BY si.id_asegurado
+        HAVING total_siniestros > 1
+        ORDER BY total_siniestros DESC, casos_rojos DESC, score_promedio DESC
+        LIMIT ?
+    """
+    with _connect(db_path) as conn:
+        return _rows(conn.execute(query, [int(limit)]))
+
+
+def list_amount_outliers(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
+    query = """
+        SELECT
+            sc.id_siniestro,
+            sc.score_final,
+            sc.nivel_riesgo,
+            si.ramo,
+            si.cobertura,
+            si.monto_reclamado,
+            ROUND(sc.monto_reclamado / NULLIF(po.suma_asegurada, 0), 3) AS ratio_suma,
+            sc.explicacion_resumen
+        FROM scores sc
+        JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
+        JOIN polizas po ON po.id_poliza = si.id_poliza
+        WHERE sc.score_final >= 41
+           OR sc.monto_reclamado / NULLIF(po.suma_asegurada, 0) >= 0.80
+        ORDER BY ratio_suma DESC, sc.score_final DESC
+        LIMIT ?
+    """
+    with _connect(db_path) as conn:
+        return _rows(conn.execute(query, [int(limit)]))
+
+
+def list_policy_edge_cases(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
+    query = """
+        SELECT
+            sc.id_siniestro,
+            sc.score_final,
+            sc.nivel_riesgo,
+            si.ramo,
+            si.cobertura,
+            si.fecha_ocurrencia,
+            si.dias_desde_inicio_poliza,
+            si.dias_desde_fin_poliza,
+            sc.explicacion_resumen
+        FROM scores sc
+        JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
+        WHERE si.dias_desde_inicio_poliza <= 30
+           OR si.dias_desde_fin_poliza <= 30
+        ORDER BY
+            CASE WHEN si.dias_desde_inicio_poliza <= si.dias_desde_fin_poliza
+                THEN si.dias_desde_inicio_poliza
+                ELSE si.dias_desde_fin_poliza
+            END ASC,
+            sc.score_final DESC
+        LIMIT ?
+    """
+    with _connect(db_path) as conn:
+        return _rows(conn.execute(query, [int(limit)]))
+
+
+def repeated_claim_patterns(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
+    query = """
+        SELECT
+            sc.id_siniestro,
+            sc.score_final,
+            sc.nivel_riesgo,
+            si.ramo,
+            si.cobertura,
+            ROUND(sc.similitud_narrativa, 4) AS similitud_narrativa,
+            sc.siniestro_similar,
+            si.descripcion
+        FROM scores sc
+        JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
+        WHERE sc.similitud_narrativa >= 0.70
+           OR sc.siniestro_similar <> ''
+        ORDER BY sc.similitud_narrativa DESC, sc.score_final DESC
+        LIMIT ?
+    """
+    with _connect(db_path) as conn:
+        return _rows(conn.execute(query, [int(limit)]))
+
+
+def executive_report(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
+    with _connect(db_path) as conn:
+        summary = dict(
+            conn.execute(
+                """
+                SELECT
+                    COUNT(*) AS total_siniestros,
+                    SUM(CASE WHEN nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS rojos,
+                    SUM(CASE WHEN nivel_riesgo = 'Amarillo' THEN 1 ELSE 0 END) AS amarillos,
+                    SUM(CASE WHEN nivel_riesgo = 'Verde' THEN 1 ELSE 0 END) AS verdes,
+                    ROUND(AVG(score_final), 2) AS score_promedio
+                FROM scores
+                """
+            ).fetchone()
+        )
+        amounts = dict(
+            conn.execute(
+                """
+                SELECT
+                    ROUND(SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN si.monto_reclamado ELSE 0 END), 2) AS monto_rojo,
+                    ROUND(SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN si.monto_reclamado ELSE 0 END), 2) AS monto_revision
+                FROM scores sc
+                JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
+                """
+            ).fetchone()
+        )
+    monto_revision = float(amounts.get("monto_revision") or 0)
+    return {
+        "resumen": summary,
+        "exposicion": amounts,
+        "ahorro_potencial_simulado": {
+            "base_revision_rojo_amarillo": round(monto_revision, 2),
+            "tasa_evitable_demo": 0.12,
+            "monto_estimado": round(monto_revision * 0.12, 2),
+            "nota": "Simulacion ejecutiva para priorizacion; no representa ahorro contable real.",
+        },
+        "top_casos": list_risk_cases(limit=10, db_path=db_path),
+        "proveedores_80_20": provider_red_alert_pareto(db_path=db_path),
+        "metricas_modelo": get_model_metrics(db_path=db_path),
+    }
+
+
 def get_relationship_network(limit: int = 60, db_path: Path = DEFAULT_DB_PATH) -> dict[str, list[dict[str, Any]]]:
     query = """
         SELECT
@@ -219,10 +415,6 @@ def get_relationship_network(limit: int = 60, db_path: Path = DEFAULT_DB_PATH) -
             edges.append({"source": insured, "target": claim, "relacion": "reporta"})
             edges.append({"source": provider, "target": claim, "relacion": "atiende"})
     return {"nodes": list(nodes.values()), "edges": edges}
-
-
-def get_impact_summary(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
-    return impact_summary(db_path)
 
 
 def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
@@ -285,18 +477,18 @@ def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
     if critical and score < 76:
         score = 76
     level = level_from_score(score)
-    explanation = " | ".join(f"{alert['descripcion']} ({alert['puntos']} pts)" for alert in alerts[:3])
     return {
         "score_final": int(score),
         "nivel_riesgo": level,
         "score_reglas": int(points),
         "score_anomalia": 0,
         "score_nlp": 0,
+        "probabilidad_modelo": 0.0,
+        "score_modelo": 0,
         "accion_sugerida": {
             "Verde": "Continuar flujo normal.",
             "Amarillo": "Escalar a revision documental.",
             "Rojo": "Escalar a revision especializada de campo.",
         }[level],
         "alertas": alerts,
-        "explicacion_resumen": explanation or "Sin alertas materiales; mantener flujo normal con controles habituales.",
     }

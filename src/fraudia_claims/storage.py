@@ -20,6 +20,8 @@ BASE_TABLES = [
     "documentos",
 ]
 
+REQUIRED_SQLITE_TABLES = [*BASE_TABLES, "scores", "alertas", "metricas_modelo"]
+
 
 def save_tables_to_csv(tables: dict[str, pd.DataFrame], directory: Path = SYNTHETIC_DIR) -> None:
     directory.mkdir(parents=True, exist_ok=True)
@@ -60,10 +62,17 @@ def initialize_demo_data(
     db_path: Path = DEFAULT_DB_PATH,
 ) -> Path:
     if db_path.exists() and not force:
-        return db_path
+        with sqlite3.connect(db_path) as conn:
+            existing = {
+                row[0]
+                for row in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+            }
+        if set(REQUIRED_SQLITE_TABLES).issubset(existing):
+            return db_path
     tables = generate_all(SyntheticConfig(n_per_ramo=n_per_ramo))
-    scores, alerts = score_claims(tables)
+    scores, alerts, metrics = score_claims(tables, include_metrics=True)
     tables["scores"] = scores
     tables["alertas"] = alerts
+    tables["metricas_modelo"] = metrics
     save_tables_to_csv(tables)
     return save_tables_to_sqlite(tables, db_path)

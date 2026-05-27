@@ -1,0 +1,11 @@
+modelo,metrica,valor,detalle,fecha_generacion
+RandomForestClassifier,status,ok,Modelo entrenado con etiqueta sintética; no representa validación legal ni productiva.,2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,accuracy,0.968,Proporción de predicciones correctas en holdout sintético.,2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,precision,0.7066666666666667,"De los casos marcados como fraude simulado, cuántos lo eran.",2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,recall,0.9636363636363636,"De los fraudes simulados, cuántos fueron detectados.",2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,f1,0.8153846153846154,Balance entre precision y recall.,2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,auc_roc,0.9919947678221059,Separación de clases sobre etiqueta sintética.,2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,matriz_confusion_tn,673,Verdaderos negativos en holdout sintético.,2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,matriz_confusion_fp,22,Falsos positivos en holdout sintético.,2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,matriz_confusion_fn,2,Falsos negativos en holdout sintético.,2026-05-27T23:03:20.950438+00:00
+RandomForestClassifier,matriz_confusion_tp,53,Verdaderos positivos en holdout sintético.,2026-05-27T23:03:20.950438+00:00

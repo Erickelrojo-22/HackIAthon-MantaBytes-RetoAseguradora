@@ -10,10 +10,12 @@
 - `documentos`: metadatos de entrega, legibilidad, inconsistencias y adulteracion simulada.
 - `scores`: score final y desglose por reglas, anomalias y NLP.
 - `alertas`: regla, categoria, severidad, puntos, evidencia y criticidad.
+- `metricas_modelo`: metricas reproducibles del modelo supervisado demo.
 
 ## Privacidad
 
 Todos los identificadores son ficticios. No se usan datos personales reales ni informacion confidencial de aseguradoras.
+La etiqueta de fraude es sintetica y se usa solo para demo, entrenamiento y metricas.
 
 ## Contexto publico
 

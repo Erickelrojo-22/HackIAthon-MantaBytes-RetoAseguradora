@@ -3,7 +3,7 @@
 ## Formula
 
 ```text
-score_final = min(100, min(puntos_reglas, 60) + puntos_anomalia + puntos_nlp)
+score_final = min(100, min(puntos_reglas, 60) + puntos_anomalia + puntos_nlp + puntos_modelo)
 ```
 
 Si una regla critica se activa, el caso escala como minimo a `76` puntos.
@@ -33,3 +33,5 @@ Si una regla critica se activa, el caso escala como minimo a `76` puntos.
 
 - Anomalias: `IsolationForest` por ramo, con fallback robusto si no esta instalado.
 - NLP: TF-IDF por ramo, con fallback para narrativas clonadas.
+- Modelo supervisado: `RandomForestClassifier` con etiqueta sintetica `etiqueta_fraude_simulada`, probabilidad trazada y metricas `precision`, `recall`, `f1`, `auc_roc` y matriz de confusion.
+- El score supervisado aporta hasta 15 puntos y no reemplaza las reglas criticas ni la revision humana.

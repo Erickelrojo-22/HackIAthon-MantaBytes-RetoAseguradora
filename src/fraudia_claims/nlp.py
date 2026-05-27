@@ -45,7 +45,7 @@ def compute_text_similarity(features: pd.DataFrame) -> pd.DataFrame:
         else:
             max_sim, match_idx = _fallback_similarity(texts)
 
-        points = np.where(max_sim > 0.85, 20, np.where(max_sim >= 0.70, 10, 0))
+        points = np.where(max_sim > 0.85, 8, np.where(max_sim >= 0.70, 4, 0))
         matched_claim = []
         for idx in match_idx:
             if idx is None or idx < 0:

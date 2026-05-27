@@ -23,6 +23,15 @@ class GenerationTests(unittest.TestCase):
         self.assertFalse(alerts.empty)
         self.assertTrue(set(scores["nivel_riesgo"]).issubset({"Verde", "Amarillo", "Rojo"}))
 
+    def test_supervised_metrics_are_generated(self) -> None:
+        tables = generate_all(SyntheticConfig(n_per_ramo=60, seed=2026))
+        scores, alerts, metrics = score_claims(tables, include_metrics=True)
+        self.assertIn("probabilidad_modelo", scores.columns)
+        self.assertIn("score_modelo", scores.columns)
+        self.assertFalse(alerts.empty)
+        self.assertIn("f1", set(metrics["metrica"]))
+        self.assertIn("auc_roc", set(metrics["metrica"]))
+
 
 if __name__ == "__main__":
     unittest.main()
