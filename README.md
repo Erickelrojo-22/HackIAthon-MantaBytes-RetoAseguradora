@@ -176,3 +176,11 @@ tests/
 ```
 
 La documentacion tecnica vive en `docs/` y el guion del pitch en `presentation/pitch.md`.
+
+Documentos utiles:
+
+- `docs/arquitectura.md`
+- `docs/modelo_datos.md`
+- `docs/reglas_negocio.md`
+- `docs/uso_ia.md`
+- `docs/despliegue.md`

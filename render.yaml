@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: fraudia-claims
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run src/fraudia_claims/app/main.py --server.address 0.0.0.0 --server.port $PORT --server.headless true
+    healthCheckPath: /
+    envVars:
+      - key: FRAUDIA_DB_BACKEND
+        value: postgres
+      - key: FRAUDIA_DATABASE_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        sync: false
+      - key: FRAUDIA_DATA_SOURCE
+        value: demo
