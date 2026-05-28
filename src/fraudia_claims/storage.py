@@ -15,6 +15,8 @@ from fraudia_claims.database import (
     table_names,
     write_frame,
 )
+from fraudia_claims.audit import ensure_audit_table
+from fraudia_claims.reviews import ensure_review_tables
 from fraudia_claims.scoring import score_claims
 from fraudia_claims.synthetic_data import SyntheticConfig, generate_all
 
@@ -56,6 +58,11 @@ def create_indexes(db_path: Path = DEFAULT_DB_PATH) -> None:
     ]
     for statement in statements:
         execute_statement(statement, db_path=db_path)
+
+
+def ensure_operational_tables(db_path: Path = DEFAULT_DB_PATH) -> None:
+    ensure_review_tables(db_path)
+    ensure_audit_table(db_path)
 
 
 def save_tables_to_database(tables: dict[str, pd.DataFrame], db_path: Path = DEFAULT_DB_PATH) -> Path:
@@ -114,6 +121,7 @@ def initialize_demo_data(
                 columns = table_columns(table, db_path)
                 has_columns = has_columns and required_columns.issubset(columns)
         if has_tables and has_columns:
+            ensure_operational_tables(db_path)
             return db_path
     tables = _load_source_tables(n_per_ramo)
     scores, alerts, metrics = score_claims(tables, include_metrics=True)
@@ -122,4 +130,6 @@ def initialize_demo_data(
     tables["metricas_modelo"] = metrics
     if os.getenv("FRAUDIA_DATA_SOURCE", DATA_SOURCE).strip().lower() in ("", "demo"):
         save_tables_to_csv(tables)
-    return save_tables_to_database(tables, db_path)
+    path = save_tables_to_database(tables, db_path)
+    ensure_operational_tables(db_path)
+    return path

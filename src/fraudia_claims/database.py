@@ -181,3 +181,27 @@ def execute_statement(statement: str, db_path: Path = DEFAULT_DB_PATH) -> None:
             conn.execute(text(statement))
     finally:
         engine.dispose()
+
+
+def execute_write(
+    statement: str,
+    params: dict[str, Any] | None = None,
+    db_path: Path = DEFAULT_DB_PATH,
+) -> None:
+    settings = database_settings(db_path)
+    params = params or {}
+    if settings.backend == "sqlite":
+        conn = _sqlite_connection(db_path)
+        try:
+            conn.execute(statement, params)
+            conn.commit()
+        finally:
+            conn.close()
+        return
+    engine = get_engine(db_path)
+    assert text is not None
+    try:
+        with engine.begin() as conn:
+            conn.execute(text(statement), params)
+    finally:
+        engine.dispose()

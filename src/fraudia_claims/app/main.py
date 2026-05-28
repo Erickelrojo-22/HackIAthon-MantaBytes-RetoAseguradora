@@ -18,8 +18,10 @@ from fraudia_claims.app.pages import (
     page_demo_guiada,
     page_detalle,
     page_image_analysis,
+    page_jury_test,
     page_methodology,
     page_network,
+    page_audit,
     page_report,
     page_resumen,
 )
@@ -40,11 +42,13 @@ PAGES = [
     "Resumen",
     "Bandeja de revision",
     "Detalle del siniestro",
+    "Prueba del jurado",
     "Evaluar caso nuevo",
     "Analisis de imagenes",
     "Red de relaciones",
     "Agente IA",
     "Reporte ejecutivo",
+    "Auditoria",
     "Metodologia y limitaciones",
 ]
 
@@ -65,6 +69,19 @@ def sidebar() -> str:
     team_brand_sidebar()
     st.sidebar.title("FraudIA Claims")
     st.sidebar.caption("Agente explicable para alertas de posible fraude en siniestros.")
+    st.sidebar.write("### Login demo")
+    role = st.sidebar.selectbox("Rol", ["Analista", "Jefatura", "Auditoria"])
+    email_by_role = {
+        "Analista": "analista@fraudia.demo",
+        "Jefatura": "jefatura@fraudia.demo",
+        "Auditoria": "auditoria@fraudia.demo",
+    }
+    st.session_state["demo_user"] = {
+        "email": email_by_role[role],
+        "name": f"{role} Demo",
+        "role": role,
+    }
+    st.sidebar.caption(f"Sesion activa: {st.session_state['demo_user']['email']}")
     page = st.sidebar.radio("Navegacion", PAGES)
     st.sidebar.divider()
     if st.sidebar.button("Regenerar dataset demo"):
@@ -87,6 +104,8 @@ def main() -> None:
         page_bandeja(table)
     elif page == "Detalle del siniestro":
         page_detalle(table, db_path)
+    elif page == "Prueba del jurado":
+        page_jury_test()
     elif page == "Evaluar caso nuevo":
         page_case_form()
     elif page == "Analisis de imagenes":
@@ -97,6 +116,8 @@ def main() -> None:
         page_agent(db_path)
     elif page == "Reporte ejecutivo":
         page_report(db_path)
+    elif page == "Auditoria":
+        page_audit(db_path)
     elif page == "Metodologia y limitaciones":
         page_methodology()
 
