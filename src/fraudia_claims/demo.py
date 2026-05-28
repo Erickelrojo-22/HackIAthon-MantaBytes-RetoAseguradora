@@ -7,6 +7,7 @@ import pandas as pd
 
 from fraudia_claims.analytics import executive_kpis, provider_pareto, top_cases
 from fraudia_claims.config import DEFAULT_DB_PATH
+from fraudia_claims.database import execute_one
 from fraudia_claims.agent_tools import get_claim_detail
 
 
@@ -92,8 +93,6 @@ def _green_demo_case(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
 
 
 def _level_demo_case(level: str, db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
-    import sqlite3
-
     order = "sc.score_final ASC, si.monto_reclamado ASC" if level == "Verde" else "sc.score_final DESC, si.monto_reclamado DESC"
     query = """
         SELECT
@@ -109,14 +108,11 @@ def _level_demo_case(level: str, db_path: Path = DEFAULT_DB_PATH) -> dict[str, A
         FROM scores sc
         JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
-        WHERE sc.nivel_riesgo = ?
+        WHERE sc.nivel_riesgo = :level
         ORDER BY """ + order + """
         LIMIT 1
     """
-    with sqlite3.connect(db_path) as conn:
-        conn.row_factory = sqlite3.Row
-        row = conn.execute(query, [level]).fetchone()
-    return dict(row) if row else {}
+    return execute_one(query, {"level": level}, db_path=db_path) or {}
 
 
 def demo_questions() -> list[str]:

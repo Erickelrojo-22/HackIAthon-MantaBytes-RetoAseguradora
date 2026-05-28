@@ -1,30 +1,20 @@
 from __future__ import annotations
 
-import sqlite3
 from pathlib import Path
 from typing import Any
 
 from fraudia_claims.config import DEFAULT_DB_PATH
+from fraudia_claims.database import execute_one, execute_rows
 from fraudia_claims.scoring import level_from_score
-
-
-def _connect(db_path: Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def _rows(cursor: sqlite3.Cursor) -> list[dict[str, Any]]:
-    return [dict(row) for row in cursor.fetchall()]
 
 
 def list_risk_cases(limit: int = 10, level: str | None = None, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
     level_clause = ""
-    params: list[Any] = []
+    params: dict[str, Any] = {}
     if level:
-        level_clause = "WHERE sc.nivel_riesgo = ?"
-        params.append(level)
-    params.append(int(limit))
+        level_clause = "WHERE sc.nivel_riesgo = :level"
+        params["level"] = level
+    params["limit"] = int(limit)
     query = f"""
         SELECT
             sc.id_siniestro,
@@ -41,10 +31,9 @@ def list_risk_cases(limit: int = 10, level: str | None = None, db_path: Path = D
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
         {level_clause}
         ORDER BY sc.score_final DESC, si.monto_reclamado DESC
-        LIMIT ?
+        LIMIT :limit
     """
-    with _connect(db_path) as conn:
-        return _rows(conn.execute(query, params))
+    return execute_rows(query, params, db_path=db_path)
 
 
 def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
@@ -68,36 +57,32 @@ def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict
         FROM siniestros si
         JOIN scores sc ON sc.id_siniestro = si.id_siniestro
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
-        WHERE si.id_siniestro = ?
+        WHERE si.id_siniestro = :claim_id
     """
-    with _connect(db_path) as conn:
-        row = conn.execute(query, [id_siniestro]).fetchone()
-        if row is None:
-            return {"error": f"No existe el siniestro {id_siniestro}."}
-        detail = dict(row)
-        detail["alertas"] = _rows(
-            conn.execute(
-                """
-                SELECT codigo, categoria, severidad, puntos, descripcion, evidencia, es_critica
-                FROM alertas
-                WHERE id_siniestro = ?
-                ORDER BY puntos DESC, codigo
-                """,
-                [id_siniestro],
-            )
-        )
-        detail["documentos"] = _rows(
-            conn.execute(
-                """
-                SELECT tipo_documento, entregado, legible, inconsistencia_detectada, adulteracion_confirmada, observacion
-                FROM documentos
-                WHERE id_siniestro = ?
-                ORDER BY tipo_documento
-                """,
-                [id_siniestro],
-            )
-        )
-        return detail
+    detail = execute_one(query, {"claim_id": id_siniestro}, db_path=db_path)
+    if detail is None:
+        return {"error": f"No existe el siniestro {id_siniestro}."}
+    detail["alertas"] = execute_rows(
+        """
+        SELECT codigo, categoria, severidad, puntos, descripcion, evidencia, es_critica
+        FROM alertas
+        WHERE id_siniestro = :claim_id
+        ORDER BY puntos DESC, codigo
+        """,
+        {"claim_id": id_siniestro},
+        db_path=db_path,
+    )
+    detail["documentos"] = execute_rows(
+        """
+        SELECT tipo_documento, entregado, legible, inconsistencia_detectada, adulteracion_confirmada, observacion
+        FROM documentos
+        WHERE id_siniestro = :claim_id
+        ORDER BY tipo_documento
+        """,
+        {"claim_id": id_siniestro},
+        db_path=db_path,
+    )
+    return detail
 
 
 def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -113,7 +98,7 @@ def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PAT
             JOIN scores sc ON sc.id_siniestro = si.id_siniestro
             LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
             GROUP BY pr.nombre, pr.tipo
-            HAVING alertas_rojas > 0
+            HAVING SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) > 0
             ORDER BY alertas_rojas DESC, score_promedio DESC
             LIMIT 15
         """
@@ -160,8 +145,7 @@ def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PAT
         """
     else:
         raise ValueError(f"Agrupacion no soportada: {group_by}")
-    with _connect(db_path) as conn:
-        return _rows(conn.execute(query))
+    return execute_rows(query, db_path=db_path)
 
 
 def get_model_metrics(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -179,11 +163,10 @@ def get_model_metrics(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
             END,
             metrica
     """
-    with _connect(db_path) as conn:
-        try:
-            return _rows(conn.execute(query))
-        except sqlite3.OperationalError:
-            return []
+    try:
+        return execute_rows(query, db_path=db_path)
+    except Exception:
+        return []
 
 
 def provider_red_alert_pareto(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -221,8 +204,7 @@ def provider_red_alert_pareto(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str,
         WHERE 100.0 * (acumulado - alertas_rojas) / NULLIF(total_rojas, 0) < 80
         ORDER BY alertas_rojas DESC, score_promedio DESC
     """
-    with _connect(db_path) as conn:
-        return _rows(conn.execute(query))
+    return execute_rows(query, db_path=db_path)
 
 
 def top_insured_frequency(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -236,12 +218,11 @@ def top_insured_frequency(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> l
         FROM siniestros si
         JOIN scores sc ON sc.id_siniestro = si.id_siniestro
         GROUP BY si.id_asegurado
-        HAVING total_siniestros > 1
+        HAVING COUNT(*) > 1
         ORDER BY total_siniestros DESC, casos_rojos DESC, score_promedio DESC
-        LIMIT ?
+        LIMIT :limit
     """
-    with _connect(db_path) as conn:
-        return _rows(conn.execute(query, [int(limit)]))
+    return execute_rows(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def list_amount_outliers(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -261,10 +242,9 @@ def list_amount_outliers(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> li
         WHERE sc.score_final >= 41
            OR sc.monto_reclamado / NULLIF(po.suma_asegurada, 0) >= 0.80
         ORDER BY ratio_suma DESC, sc.score_final DESC
-        LIMIT ?
+        LIMIT :limit
     """
-    with _connect(db_path) as conn:
-        return _rows(conn.execute(query, [int(limit)]))
+    return execute_rows(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def list_policy_edge_cases(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -289,10 +269,9 @@ def list_policy_edge_cases(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> 
                 ELSE si.dias_desde_fin_poliza
             END ASC,
             sc.score_final DESC
-        LIMIT ?
+        LIMIT :limit
     """
-    with _connect(db_path) as conn:
-        return _rows(conn.execute(query, [int(limit)]))
+    return execute_rows(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def repeated_claim_patterns(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -311,38 +290,34 @@ def repeated_claim_patterns(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) ->
         WHERE sc.similitud_narrativa >= 0.70
            OR sc.siniestro_similar <> ''
         ORDER BY sc.similitud_narrativa DESC, sc.score_final DESC
-        LIMIT ?
+        LIMIT :limit
     """
-    with _connect(db_path) as conn:
-        return _rows(conn.execute(query, [int(limit)]))
+    return execute_rows(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def executive_report(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
-    with _connect(db_path) as conn:
-        summary = dict(
-            conn.execute(
-                """
-                SELECT
-                    COUNT(*) AS total_siniestros,
-                    SUM(CASE WHEN nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS rojos,
-                    SUM(CASE WHEN nivel_riesgo = 'Amarillo' THEN 1 ELSE 0 END) AS amarillos,
-                    SUM(CASE WHEN nivel_riesgo = 'Verde' THEN 1 ELSE 0 END) AS verdes,
-                    ROUND(AVG(score_final), 2) AS score_promedio
-                FROM scores
-                """
-            ).fetchone()
-        )
-        amounts = dict(
-            conn.execute(
-                """
-                SELECT
-                    ROUND(SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN si.monto_reclamado ELSE 0 END), 2) AS monto_rojo,
-                    ROUND(SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN si.monto_reclamado ELSE 0 END), 2) AS monto_revision
-                FROM scores sc
-                JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
-                """
-            ).fetchone()
-        )
+    summary = execute_one(
+        """
+        SELECT
+            COUNT(*) AS total_siniestros,
+            SUM(CASE WHEN nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS rojos,
+            SUM(CASE WHEN nivel_riesgo = 'Amarillo' THEN 1 ELSE 0 END) AS amarillos,
+            SUM(CASE WHEN nivel_riesgo = 'Verde' THEN 1 ELSE 0 END) AS verdes,
+            ROUND(AVG(score_final), 2) AS score_promedio
+        FROM scores
+        """,
+        db_path=db_path,
+    ) or {}
+    amounts = execute_one(
+        """
+        SELECT
+            ROUND(SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN si.monto_reclamado ELSE 0 END), 2) AS monto_rojo,
+            ROUND(SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN si.monto_reclamado ELSE 0 END), 2) AS monto_revision
+        FROM scores sc
+        JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
+        """,
+        db_path=db_path,
+    ) or {}
     monto_revision = float(amounts.get("monto_revision") or 0)
     return {
         "resumen": summary,
@@ -373,47 +348,46 @@ def get_relationship_network(limit: int = 60, db_path: Path = DEFAULT_DB_PATH) -
         JOIN scores sc ON sc.id_siniestro = si.id_siniestro
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
         ORDER BY sc.score_final DESC
-        LIMIT ?
+        LIMIT :limit
     """
     nodes: dict[str, dict[str, Any]] = {}
     edges: list[dict[str, Any]] = []
-    with _connect(db_path) as conn:
-        for row in conn.execute(query, [int(limit)]):
-            claim = f"claim:{row['id_siniestro']}"
-            insured = f"insured:{row['id_asegurado']}"
-            provider = f"provider:{row['id_proveedor']}"
-            nodes[claim] = {
-                "id": claim,
-                "label": row["id_siniestro"],
-                "tipo": "Siniestro",
+    for row in execute_rows(query, {"limit": int(limit)}, db_path=db_path):
+        claim = f"claim:{row['id_siniestro']}"
+        insured = f"insured:{row['id_asegurado']}"
+        provider = f"provider:{row['id_proveedor']}"
+        nodes[claim] = {
+            "id": claim,
+            "label": row["id_siniestro"],
+            "tipo": "Siniestro",
+            "score": row["score_final"],
+            "nivel": row["nivel_riesgo"],
+            "ramo": row["ramo"],
+        }
+        nodes.setdefault(
+            insured,
+            {
+                "id": insured,
+                "label": row["id_asegurado"],
+                "tipo": "Asegurado",
                 "score": row["score_final"],
                 "nivel": row["nivel_riesgo"],
                 "ramo": row["ramo"],
-            }
-            nodes.setdefault(
-                insured,
-                {
-                    "id": insured,
-                    "label": row["id_asegurado"],
-                    "tipo": "Asegurado",
-                    "score": row["score_final"],
-                    "nivel": row["nivel_riesgo"],
-                    "ramo": row["ramo"],
-                },
-            )
-            nodes.setdefault(
-                provider,
-                {
-                    "id": provider,
-                    "label": row["proveedor"],
-                    "tipo": "Proveedor",
-                    "score": row["score_final"],
-                    "nivel": row["nivel_riesgo"],
-                    "ramo": row["ramo"],
-                },
-            )
-            edges.append({"source": insured, "target": claim, "relacion": "reporta"})
-            edges.append({"source": provider, "target": claim, "relacion": "atiende"})
+            },
+        )
+        nodes.setdefault(
+            provider,
+            {
+                "id": provider,
+                "label": row["proveedor"],
+                "tipo": "Proveedor",
+                "score": row["score_final"],
+                "nivel": row["nivel_riesgo"],
+                "ramo": row["ramo"],
+            },
+        )
+        edges.append({"source": insured, "target": claim, "relacion": "reporta"})
+        edges.append({"source": provider, "target": claim, "relacion": "atiende"})
     return {"nodes": list(nodes.values()), "edges": edges}
 
 

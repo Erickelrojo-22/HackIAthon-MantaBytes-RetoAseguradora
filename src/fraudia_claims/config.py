@@ -9,6 +9,10 @@ RAW_DIR = DATA_DIR / "raw"
 SYNTHETIC_DIR = DATA_DIR / "synthetic"
 PROCESSED_DIR = DATA_DIR / "processed"
 DEFAULT_DB_PATH = Path(os.getenv("FRAUDIA_DB_PATH", PROCESSED_DIR / "fraudia_claims.db"))
+DB_BACKEND = os.getenv("FRAUDIA_DB_BACKEND", "sqlite")
+DATABASE_URL = os.getenv("FRAUDIA_DATABASE_URL", "")
+DATA_SOURCE = os.getenv("FRAUDIA_DATA_SOURCE", "demo")
+COMPANY_DATA_DIR = Path(os.getenv("FRAUDIA_COMPANY_DATA_DIR", DATA_DIR / "company_synthetic"))
 
 SEED = 2026
 RAMOS = ("Vehiculos", "Salud", "Hogar")
