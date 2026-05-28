@@ -75,6 +75,14 @@ Si las variables no existen, la app funciona en modo offline. El LLM no modifica
 .\.venv\Scripts\python -m unittest discover -s tests
 ```
 
+Prueba automatizada completa en Windows:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_project_tests.ps1
+```
+
+El script crea/usa `.venv`, instala dependencias, valida datos, ejecuta tests y verifica API + Streamlit.
+
 ## Demo sugerida
 
 1. Mostrar resumen y explicar que los resultados son alertas, no acusaciones.
