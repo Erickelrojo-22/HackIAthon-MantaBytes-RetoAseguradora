@@ -45,3 +45,9 @@ Si existen `OPENAI_API_KEY` y `OPENAI_MODEL`, el agente usa la Responses API con
 El modelo no escribe en la base ni modifica scores. Si la API falla, el sistema responde offline.
 
 Los casos evaluados en vivo no se entregan como herramienta persistente al LLM. Si el usuario pregunta por el ultimo caso temporal, la respuesta se resuelve localmente para evitar que el modelo invente o altere datos.
+
+## Vision opcional
+
+`vision.py` permite analizar fotos de siniestros con la Responses API cuando existen `OPENAI_API_KEY` y `OPENAI_MODEL`. La imagen se envia como `input_image` codificada en data URL, siguiendo el flujo de Vision de OpenAI.
+
+El resultado queda solo en `st.session_state` durante la demo. No se persiste la imagen, no modifica `scores` y siempre se presenta como apoyo para revision humana, no como conclusion de fraude.

@@ -13,6 +13,7 @@ Importante: FraudIA genera **alertas de revision humana**. No acusa fraude, no r
 - Semaforo: Verde `0-40`, Amarillo `41-75`, Rojo `76-100`.
 - Dashboard Streamlit con demo guiada, resumen ejecutivo, bandeja, detalle, red de relaciones, caso nuevo y reporte descargable.
 - Agente offline con preguntas frecuentes del reto y explicacion del ultimo caso evaluado en vivo.
+- Analisis opcional de imagenes con OpenAI Vision en sesion, sin modificar scores.
 - API minima FastAPI para integracion futura.
 - Integracion OpenAI opcional con herramientas locales de solo lectura.
 
