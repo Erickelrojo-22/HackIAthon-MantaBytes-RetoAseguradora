@@ -6,18 +6,37 @@ La ruta mas simple es:
 
 1. GitHub como repositorio principal.
 2. Render Web Service para Streamlit.
-3. Render PostgreSQL o Supabase PostgreSQL para la base.
-4. Variables de entorno configuradas como secretos.
+3. SQLite demo incluido para que el jurado no dependa de una base externa.
+4. `OPENAI_API_KEY` configurada como secreto del servicio.
 
-El archivo `render.yaml` deja preparado el servicio web. En Render se debe conectar el repositorio y definir los secretos:
+El archivo `render.yaml` deja preparado el servicio web para demo publica. En Render se debe conectar el repositorio y definir solo este secreto:
 
-- `FRAUDIA_DB_BACKEND=postgres`
-- `FRAUDIA_DATABASE_URL=postgresql+psycopg://...`
 - `OPENAI_API_KEY`
-- `OPENAI_MODEL`
+
+El resto queda versionado sin credenciales:
+
+- `OPENAI_MODEL=gpt-5.4-mini`
+- `FRAUDIA_DB_BACKEND=sqlite`
+- `FRAUDIA_DB_PATH=data/processed/fraudia_claims.db`
 - `FRAUDIA_DATA_SOURCE=demo`
 
 No se debe subir `.env`, credenciales ni datasets empresariales no autorizados.
+
+## Link para jurado
+
+Para el dia de la presentacion, el flujo recomendado es:
+
+1. Hacer push del repositorio a GitHub.
+2. Crear el Web Service en Render desde ese repo.
+3. En `Environment`, agregar `OPENAI_API_KEY` como secret.
+4. Desplegar y probar `Agente IA` con la pregunta: `Que proveedores concentran el 80% de las alertas rojas?`
+5. Probar `Analisis de imagenes` con una imagen `jpg`, `png` o `webp`.
+
+Los jurados no necesitan conocer ni configurar la API key; solo abren el URL publico del despliegue.
+
+## Alternativa Streamlit Cloud
+
+Si se usa Streamlit Cloud, copiar el contenido de `.streamlit/secrets.example.toml` en la seccion `Secrets` de la app y reemplazar `OPENAI_API_KEY` por la key real. El proyecto tambien lee `st.secrets`, asi que no hace falta crear `.env` en la nube.
 
 ## Inicializacion de datos
 

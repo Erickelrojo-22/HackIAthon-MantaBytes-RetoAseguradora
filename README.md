@@ -115,14 +115,18 @@ Tambien puedes usar `Run and Debug > FraudIA: Streamlit` para levantar la app de
 
 ## Modo OpenAI opcional
 
-Copia `.env.example` a `.env` o exporta variables de entorno:
+Copia `.env.example` a `.env` y agrega la API key localmente:
 
 ```powershell
-$env:OPENAI_API_KEY="tu_api_key"
-$env:OPENAI_MODEL="modelo_configurado_por_el_equipo"
+Copy-Item .env.example .env
+notepad .env
 ```
 
+El modelo recomendado para la demo queda preconfigurado como `gpt-5.4-mini`. Cada integrante debe poner su propia `OPENAI_API_KEY` en su archivo `.env` local, o usar variables de entorno del despliegue. No subas `.env` ni credenciales reales al repositorio.
+
 Si las variables no existen, la app funciona en modo offline. El LLM no modifica scores persistidos; solo redacta respuestas usando herramientas locales.
+
+Para que jurados o invitados prueben la IA sin configurar nada, despliega el proyecto y guarda `OPENAI_API_KEY` como secreto del servidor. En Render, `render.yaml` ya deja `OPENAI_MODEL=gpt-5.4-mini` y SQLite demo preconfigurados; solo falta agregar el secreto `OPENAI_API_KEY` en el panel de Environment. En Streamlit Cloud, copia `.streamlit/secrets.example.toml` en la seccion Secrets y reemplaza el placeholder por la key real.
 
 ## Pruebas
 

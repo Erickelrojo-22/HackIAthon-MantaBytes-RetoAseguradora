@@ -3,7 +3,34 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(PROJECT_ROOT / ".env")
+
+
+def _load_streamlit_secrets() -> None:
+    try:
+        import streamlit as st
+
+        secrets = dict(st.secrets)
+    except Exception:
+        return
+    for key in (
+        "OPENAI_API_KEY",
+        "OPENAI_MODEL",
+        "FRAUDIA_DB_BACKEND",
+        "FRAUDIA_DB_PATH",
+        "FRAUDIA_DATABASE_URL",
+        "FRAUDIA_DATA_SOURCE",
+        "FRAUDIA_COMPANY_DATA_DIR",
+    ):
+        if not os.getenv(key) and key in secrets:
+            os.environ[key] = str(secrets[key])
+
+
+_load_streamlit_secrets()
+
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DIR = DATA_DIR / "raw"
 SYNTHETIC_DIR = DATA_DIR / "synthetic"

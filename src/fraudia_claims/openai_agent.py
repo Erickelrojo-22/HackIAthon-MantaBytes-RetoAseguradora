@@ -174,18 +174,38 @@ def ask_with_openai(
     db_path: Path = DEFAULT_DB_PATH,
     session_cases: list[dict[str, Any]] | None = None,
 ) -> str:
+    answer, _source = ask_with_openai_status(question, db_path, session_cases=session_cases)
+    return answer
+
+
+def _with_disclaimer(answer: str) -> str:
+    required = "alerta de revision humana"
+    normalized = answer.lower()
+    if required in normalized or "revision humana" in normalized:
+        return answer
+    return (
+        answer.rstrip()
+        + "\n\nNota: este score es una alerta de revision humana; no es una acusacion ni una decision automatica."
+    )
+
+
+def ask_with_openai_status(
+    question: str,
+    db_path: Path = DEFAULT_DB_PATH,
+    session_cases: list[dict[str, Any]] | None = None,
+) -> tuple[str, str]:
     if _should_answer_from_session(question):
-        return answer_offline(question, db_path, session_cases=session_cases)
+        return answer_offline(question, db_path, session_cases=session_cases), "Sesion local"
 
     api_key = os.getenv("OPENAI_API_KEY")
     model = os.getenv("OPENAI_MODEL")
     if not api_key or not model:
-        return answer_offline(question, db_path, session_cases=session_cases)
+        return answer_offline(question, db_path, session_cases=session_cases), "Offline: faltan credenciales OpenAI"
 
     try:
         from openai import OpenAI
     except Exception:
-        return answer_offline(question, db_path, session_cases=session_cases)
+        return answer_offline(question, db_path, session_cases=session_cases), "Offline: paquete openai no disponible"
 
     client = OpenAI(api_key=api_key)
     instructions = (
@@ -222,9 +242,11 @@ def ask_with_openai(
                 tools=TOOLS,
             )
         text = getattr(response, "output_text", None)
-        return text.strip() if text else answer_offline(question, db_path, session_cases=session_cases)
-    except Exception:
-        return answer_offline(question, db_path, session_cases=session_cases)
+        if text:
+            return _with_disclaimer(text.strip()), f"OpenAI activo ({model})"
+        return answer_offline(question, db_path, session_cases=session_cases), "Offline: respuesta OpenAI vacia"
+    except Exception as exc:
+        return answer_offline(question, db_path, session_cases=session_cases), f"Offline: fallo OpenAI ({type(exc).__name__})"
 
 
 def ask_agent(
@@ -233,3 +255,11 @@ def ask_agent(
     session_cases: list[dict[str, Any]] | None = None,
 ) -> str:
     return ask_with_openai(question, db_path, session_cases=session_cases)
+
+
+def ask_agent_with_status(
+    question: str,
+    db_path: Path = DEFAULT_DB_PATH,
+    session_cases: list[dict[str, Any]] | None = None,
+) -> tuple[str, str]:
+    return ask_with_openai_status(question, db_path, session_cases=session_cases)

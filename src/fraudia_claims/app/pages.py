@@ -31,7 +31,7 @@ from fraudia_claims.config import DEFAULT_DB_PATH, SCVS_CONTEXT_URL
 from fraudia_claims.demo import GUIDED_DEMO_STEPS, demo_questions, featured_claims, session_cases_frame
 from fraudia_claims.network import build_plotly_figure, graph_payload
 from fraudia_claims.offline_agent import answer_offline
-from fraudia_claims.openai_agent import ask_agent
+from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.reports import build_executive_report_html
 from fraudia_claims.utils import money
 from fraudia_claims.vision import analyze_claim_image, image_analysis_available
@@ -447,8 +447,7 @@ def page_agent(db_path: Path = DEFAULT_DB_PATH) -> None:
     if st.button("Preguntar"):
         with st.spinner("Consultando agente..."):
             if use_openai:
-                answer = ask_agent(custom, db_path, session_cases=_session_cases())
-                source = "OpenAI opcional con fallback offline"
+                answer, source = ask_agent_with_status(custom, db_path, session_cases=_session_cases())
             else:
                 answer = answer_offline(custom, db_path, session_cases=_session_cases())
                 source = "Offline"
