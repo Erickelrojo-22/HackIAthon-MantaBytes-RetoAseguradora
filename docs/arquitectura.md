@@ -17,6 +17,7 @@ flowchart LR
     F --> H["Red de relaciones"]
     F --> I["Agente IA offline/OpenAI opcional"]
     F --> K["API minima FastAPI"]
+    G --> L["Reporte ejecutivo HTML"]
 ```
 
 ## Componentes
@@ -29,7 +30,8 @@ flowchart LR
 - `scoring.py`: combina reglas, anomalias y NLP en el semaforo oficial.
 - `agent_tools.py`: expone consultas seguras de solo lectura y scoring temporal.
 - `offline_agent.py` y `openai_agent.py`: responden preguntas del jurado.
-- `app/main.py`: interfaz Streamlit para demo.
+- `app/main.py`: orquestador Streamlit liviano.
+- `app/pages.py`: paginas de demo guiada, dashboard, bandeja, detalle, caso nuevo, agente y reporte.
 - `api.py`: API minima para integracion futura.
 
 ## Decisiones
@@ -38,3 +40,4 @@ flowchart LR
 - CSV permite inspeccion y regeneracion de datos.
 - El LLM queda fuera del calculo del score para mantener trazabilidad.
 - Las metricas supervisadas se calculan con etiqueta sintetica; sirven para demo tecnica, no para prometer desempeno real.
+- Los casos nuevos evaluados en vivo se guardan solo en sesion y no modifican SQLite.

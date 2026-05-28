@@ -19,10 +19,24 @@ class ReportTests(unittest.TestCase):
         initialize_demo_data(force=False)
 
     def test_report_contains_core_sections_and_disclaimer(self) -> None:
-        html = build_executive_report_html()
+        html = build_executive_report_html(
+            [
+                {
+                    "id_temporal": "TMP001",
+                    "ramo": "Vehiculos",
+                    "cobertura": "Robo",
+                    "score_final": 41,
+                    "nivel_riesgo": "Amarillo",
+                    "monto_reclamado": 1200,
+                    "alertas": [],
+                }
+            ]
+        )
         self.assertIn("Reporte Ejecutivo FraudIA Claims", html)
         self.assertIn("Top 10 casos para revision", html)
         self.assertIn("Proveedores con mayor concentracion", html)
+        self.assertIn("Casos evaluados en vivo", html)
+        self.assertIn("TMP001", html)
         self.assertIn(DISCLAIMER, html)
 
 

@@ -67,8 +67,45 @@ def _claim_answer(claim_id: str, db_path: Path) -> str:
     )
 
 
-def answer_offline(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
+def _session_case_answer(session_cases: list[dict] | None) -> str:
+    if not session_cases:
+        return (
+            "Todavia no hay casos evaluados en vivo en esta sesion. "
+            "Para la prueba del jurado, carga un caso en 'Evaluar caso nuevo' y luego vuelve a preguntarme."
+        )
+    case = session_cases[-1]
+    alerts = "\n".join(
+        f"- {alert.get('codigo')}: {alert.get('descripcion')} ({alert.get('puntos')} pts). Evidencia: {alert.get('evidencia')}"
+        for alert in case.get("alertas", [])[:8]
+    )
+    return (
+        "### Ultimo caso evaluado en vivo\n"
+        f"- ID temporal: **{case.get('id_temporal', 'TMP')}**\n"
+        f"- Nivel: **{case.get('nivel_riesgo', '')}**\n"
+        f"- Score: **{case.get('score_final', 0)}** "
+        f"(reglas {case.get('score_reglas', 0)}, anomalia {case.get('score_anomalia', 0)}, NLP {case.get('score_nlp', 0)})\n"
+        f"- Ramo/cobertura: {case.get('ramo', '')} / {case.get('cobertura', '')}\n"
+        f"- Monto reclamado: {money(case.get('monto_reclamado', 0))}\n"
+        f"- Accion sugerida: {case.get('accion_sugerida', 'Revision humana')}\n\n"
+        "Este resultado es una alerta temporal de revision humana y no modifica la base historica.\n\n"
+        f"Alertas principales:\n{alerts if alerts else '- Sin alertas materiales.'}"
+    )
+
+
+def answer_offline(
+    question: str,
+    db_path: Path = DEFAULT_DB_PATH,
+    session_cases: list[dict] | None = None,
+) -> str:
     text = normalize_text(question)
+    if (
+        "ultimo caso" in text
+        or "caso evaluado" in text
+        or "evaluado en vivo" in text
+        or "caso nuevo" in text and "explica" in text
+    ):
+        return _session_case_answer(session_cases)
+
     claim_match = re.search(r"sin\d{5}", text)
     if claim_match and ("por que" in text or "explica" in text or "detalle" in text):
         return _claim_answer(claim_match.group(0).upper(), db_path)
@@ -92,7 +129,7 @@ def answer_offline(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
 
     if "ramo" in text or "ramos" in text:
         rows = aggregate_alerts("ramo", db_path=db_path)
-        return "Ramos con mayor proporcion de casos en rojo:\n\n" + _table(
+        return "Ramos con mayor proporcion de casos en rojo para revision humana:\n\n" + _table(
             rows,
             ["grupo", "total_siniestros", "alertas_rojas", "porcentaje_rojo", "score_promedio"],
         )
@@ -124,21 +161,21 @@ def answer_offline(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
 
     if "asegurado" in text and ("frecuencia" in text or "reclamo" in text or "siniestro" in text):
         rows = top_insured_frequency(db_path=db_path)
-        return "Asegurados anonimos con mayor frecuencia de reclamos:\n\n" + _table(
+        return "Asegurados anonimos con mayor frecuencia de reclamos para priorizar revision humana:\n\n" + _table(
             rows,
             ["id_asegurado", "total_siniestros", "casos_rojos", "score_promedio", "monto_total_reclamado"],
         )
 
     if "monto" in text and ("atipico" in text or "alto" in text or "suma asegurada" in text):
         rows = list_amount_outliers(db_path=db_path)
-        return "Siniestros con montos atipicos o cercanos a la suma asegurada:\n\n" + _table(
+        return "Siniestros con montos atipicos o cercanos a la suma asegurada para revision humana:\n\n" + _table(
             rows,
             ["id_siniestro", "score_final", "nivel_riesgo", "ramo", "cobertura", "monto_reclamado", "ratio_suma"],
         )
 
     if ("inicio" in text or "fin" in text or "vigencia" in text or "poliza" in text) and ("cerca" in text or "ocurrieron" in text):
         rows = list_policy_edge_cases(db_path=db_path)
-        return "Siniestros ocurridos cerca del inicio o fin de vigencia:\n\n" + _table(
+        return "Siniestros ocurridos cerca del inicio o fin de vigencia para revision humana:\n\n" + _table(
             rows,
             [
                 "id_siniestro",
@@ -152,7 +189,7 @@ def answer_offline(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
 
     if ("patron" in text or "repiten" in text or "repetidos" in text or "narrativa" in text) and "resumen" not in text:
         rows = repeated_claim_patterns(db_path=db_path)
-        return "Patrones repetidos encontrados en narrativas de reclamos:\n\n" + _table(
+        return "Patrones repetidos encontrados en narrativas de reclamos para revision humana:\n\n" + _table(
             rows,
             ["id_siniestro", "score_final", "nivel_riesgo", "ramo", "similitud_narrativa", "siniestro_similar"],
         )

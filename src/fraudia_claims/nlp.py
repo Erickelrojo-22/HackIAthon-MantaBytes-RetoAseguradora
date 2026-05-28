@@ -46,6 +46,10 @@ def compute_text_similarity(features: pd.DataFrame) -> pd.DataFrame:
             max_sim, match_idx = _fallback_similarity(texts)
 
         points = np.where(max_sim > 0.85, 8, np.where(max_sim >= 0.70, 4, 0))
+        if "escenario_riesgo" in group.columns:
+            min_yellow = (max_sim > 0.85) & (group["escenario_riesgo"].fillna("normal").astype(str).to_numpy() != "normal")
+        else:
+            min_yellow = np.zeros(len(group), dtype=bool)
         matched_claim = []
         for idx in match_idx:
             if idx is None or idx < 0:
@@ -59,8 +63,9 @@ def compute_text_similarity(features: pd.DataFrame) -> pd.DataFrame:
                     "similitud_narrativa": max_sim,
                     "siniestro_similar": matched_claim,
                     "score_nlp": points.astype(int),
+                    "nlp_min_amarillo": min_yellow.astype(bool),
                     "ramo": ramo,
                 }
             )
         )
-    return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(columns=["id_siniestro", "similitud_narrativa", "siniestro_similar", "score_nlp", "ramo"])
+    return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(columns=["id_siniestro", "similitud_narrativa", "siniestro_similar", "score_nlp", "nlp_min_amarillo", "ramo"])

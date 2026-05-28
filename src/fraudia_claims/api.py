@@ -6,9 +6,12 @@ from fastapi import FastAPI, Query
 
 from fraudia_claims.agent_tools import (
     aggregate_alerts,
+    executive_report,
     get_claim_detail,
+    get_relationship_network,
     get_model_metrics,
     list_risk_cases,
+    provider_red_alert_pareto,
     score_candidate_claim,
 )
 from fraudia_claims.config import DEFAULT_DB_PATH
@@ -58,6 +61,24 @@ def alerts_aggregate(
 ) -> list[dict[str, Any]]:
     initialize_demo_data(force=False)
     return aggregate_alerts(group_by=group_by, db_path=DEFAULT_DB_PATH)
+
+
+@app.get("/alerts/provider-pareto")
+def alerts_provider_pareto() -> list[dict[str, Any]]:
+    initialize_demo_data(force=False)
+    return provider_red_alert_pareto(db_path=DEFAULT_DB_PATH)
+
+
+@app.get("/relationships")
+def relationships(limit: int = Query(default=60, ge=10, le=120)) -> dict[str, list[dict[str, Any]]]:
+    initialize_demo_data(force=False)
+    return get_relationship_network(limit=limit, db_path=DEFAULT_DB_PATH)
+
+
+@app.get("/report/summary")
+def report_summary() -> dict[str, Any]:
+    initialize_demo_data(force=False)
+    return executive_report(db_path=DEFAULT_DB_PATH)
 
 
 @app.post("/score-candidate")

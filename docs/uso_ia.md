@@ -23,6 +23,7 @@ El modo offline responde consultas frecuentes:
 - Proveedores que concentran aproximadamente el 80% de alertas rojas.
 - Metricas del modelo supervisado.
 - Resumen ejecutivo.
+- Explicacion del ultimo caso evaluado en vivo, usando datos temporales de sesion.
 
 ## OpenAI opcional
 
@@ -42,3 +43,5 @@ Si existen `OPENAI_API_KEY` y `OPENAI_MODEL`, el agente usa la Responses API con
 - `executive_report`
 
 El modelo no escribe en la base ni modifica scores. Si la API falla, el sistema responde offline.
+
+Los casos evaluados en vivo no se entregan como herramienta persistente al LLM. Si el usuario pregunta por el ultimo caso temporal, la respuesta se resuelve localmente para evitar que el modelo invente o altere datos.

@@ -17,6 +17,13 @@
 Todos los identificadores son ficticios. No se usan datos personales reales ni informacion confidencial de aseguradoras.
 La etiqueta de fraude es sintetica y se usa solo para demo, entrenamiento y metricas.
 
+## Alineacion con la guia del reto
+
+- Beneficiarios: se representan en `siniestros.beneficiario` y se relacionan con `proveedores`.
+- Conductores: se representan con `siniestros.id_conductor` para reglas de frecuencia vehicular.
+- No se crea tabla separada de beneficiarios o conductores en esta version para mantener la demo liviana y reproducible.
+- Los documentos son metadatos simulados; no se almacenan archivos reales ni OCR.
+
 ## Contexto publico
 
 `contexto_publico.csv` referencia el portal publico de la SCVS para indicadores agregados. Ese contexto no alimenta el score ni etiqueta casos.

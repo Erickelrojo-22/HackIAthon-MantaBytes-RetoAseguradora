@@ -288,26 +288,32 @@ def page_case_form() -> None:
     st.title("Evaluar caso nuevo")
     st.caption("Calcula un score temporal sin modificar SQLite. Ideal para la prueba de fuego del jurado.")
     with st.form("candidate"):
+        preset_fire_test = st.checkbox(
+            "Usar preset de prueba: siniestro ocurrido 24 horas despues del inicio de poliza",
+            value=True,
+        )
         c1, c2, c3 = st.columns(3)
-        ramo = c1.selectbox("Ramo", ["Vehiculos", "Salud", "Hogar"])
+        default_ramo_index = 0 if preset_fire_test else 2
+        ramo = c1.selectbox("Ramo", ["Vehiculos", "Salud", "Hogar"], index=default_ramo_index)
         coverage_options = {
             "Vehiculos": ["Choque", "Robo", "Responsabilidad Civil", "Perdida Total por Robo"],
             "Salud": ["Consulta Especializada", "Cirugia Ambulatoria", "Hospitalizacion", "Medicamentos"],
             "Hogar": ["Incendio", "Danio Agua", "Robo Hogar", "Responsabilidad Civil"],
         }
-        cobertura = c2.selectbox("Cobertura", coverage_options[ramo])
-        monto = c3.number_input("Monto reclamado", min_value=0.0, value=28000.0, step=500.0)
+        default_coverage_index = 3 if preset_fire_test and ramo == "Vehiculos" else 0
+        cobertura = c2.selectbox("Cobertura", coverage_options[ramo], index=default_coverage_index)
+        monto = c3.number_input("Monto reclamado", min_value=0.0, value=28000.0 if preset_fire_test else 900.0, step=500.0)
         c4, c5, c6 = st.columns(3)
-        suma = c4.number_input("Suma asegurada", min_value=1.0, value=30000.0, step=500.0)
-        dias_inicio = c5.number_input("Dias desde inicio de poliza", min_value=0, value=1, step=1)
+        suma = c4.number_input("Suma asegurada", min_value=1.0, value=30000.0 if preset_fire_test else 40000.0, step=500.0)
+        dias_inicio = c5.number_input("Dias desde inicio de poliza", min_value=0, value=1 if preset_fire_test else 120, step=1)
         dias_fin = c6.number_input("Dias hasta fin de poliza", min_value=0, value=364, step=1)
         c7, c8, c9 = st.columns(3)
-        dias_reporte = c7.number_input("Dias entre ocurrencia y reporte", min_value=0, value=5, step=1)
-        denuncia_horas = c8.number_input("Horas hasta denuncia", min_value=0, value=72, step=1)
+        dias_reporte = c7.number_input("Dias entre ocurrencia y reporte", min_value=0, value=5 if preset_fire_test else 1, step=1)
+        denuncia_horas = c8.number_input("Horas hasta denuncia", min_value=0, value=120 if preset_fire_test else 8, step=1)
         proveedor_lista = c9.checkbox("Proveedor en lista restrictiva simulada")
         d1, d2, d3, d4 = st.columns(4)
-        docs_ok = d1.checkbox("Documentos completos", value=False)
-        docs_bad = d2.checkbox("Documentos inconsistentes", value=True)
+        docs_ok = d1.checkbox("Documentos completos", value=not preset_fire_test)
+        docs_bad = d2.checkbox("Documentos inconsistentes", value=preset_fire_test)
         altered = d3.checkbox("Adulteracion documental")
         no_third = d4.checkbox("Sin tercero identificado", value=True)
         impossible = st.checkbox("Dinamica fisicamente imposible")
@@ -347,6 +353,7 @@ def page_case_form() -> None:
         cases.append(result)
         st.success(f"Nivel {risk_badge(result['nivel_riesgo'])} | Score {result['score_final']}")
         st.write("**Accion sugerida:**", result["accion_sugerida"])
+        st.write("**Explicacion:**", result["explicacion_resumen"])
         st.markdown(alerts_markdown(result["alertas"]))
 
     live = _session_cases()
@@ -442,10 +449,10 @@ def page_methodology() -> None:
 - No afirma desempeno real con etiquetas sinteticas.
 
 ### Score
-`score_final = min(100, min(puntos_reglas, 60) + puntos_anomalia + puntos_nlp)`.
+`score_final = min(100, min(puntos_reglas, 60) + puntos_anomalia + puntos_nlp + puntos_modelo)`.
 Las reglas criticas elevan el caso a rojo como minimo, para forzar revision especializada.
 
 ### Uso de IA
-El LLM opcional solo redacta y consulta herramientas locales. El score base se calcula fuera del LLM y queda trazado en tablas.
+El LLM opcional solo redacta y consulta herramientas locales. El score base se calcula fuera del LLM y queda trazado en tablas. El modelo supervisado usa etiqueta sintetica solo para demo.
         """
     )

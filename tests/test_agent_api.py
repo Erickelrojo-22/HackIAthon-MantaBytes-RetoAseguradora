@@ -42,6 +42,19 @@ class AgentAndApiTests(unittest.TestCase):
         self.assertEqual(metrics.status_code, 200)
         self.assertTrue(any(row["metrica"] == "f1" for row in metrics.json()))
 
+        pareto = client.get("/alerts/provider-pareto")
+        self.assertEqual(pareto.status_code, 200)
+        self.assertIsInstance(pareto.json(), list)
+
+        relationships = client.get("/relationships?limit=20")
+        self.assertEqual(relationships.status_code, 200)
+        self.assertIn("nodes", relationships.json())
+        self.assertIn("edges", relationships.json())
+
+        report = client.get("/report/summary")
+        self.assertEqual(report.status_code, 200)
+        self.assertIn("resumen", report.json())
+
         candidate = client.post(
             "/score-candidate",
             json={

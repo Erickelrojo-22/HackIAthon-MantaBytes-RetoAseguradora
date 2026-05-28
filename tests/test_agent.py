@@ -22,13 +22,50 @@ class AgentTests(unittest.TestCase):
         questions = [
             "Cuales son los 10 siniestros con mayor riesgo?",
             "Que proveedores concentran mas alertas rojas?",
+            "Que ramos tienen mayor porcentaje de casos sospechosos?",
+            "Que ciudades presentan mayor concentracion de alertas?",
+            "Que asegurados tienen mayor frecuencia de reclamos?",
             "Que documentos faltan en los casos criticos?",
+            "Que casos tienen montos atipicos?",
+            "Que siniestros ocurrieron cerca del inicio de la poliza?",
+            "Que patrones se repiten en los reclamos sospechosos?",
             "Cual es el ahorro potencial simulado?",
+            "Genera un resumen ejecutivo de los casos criticos.",
+            "Recomienda que casos deberia revisar primero el analista.",
         ]
         for question in questions:
             answer = answer_offline(question)
             self.assertGreater(len(answer), 80)
             self.assertIn("revision", answer.lower())
+
+    def test_agent_explains_last_session_case(self) -> None:
+        answer = answer_offline(
+            "Explica el ultimo caso evaluado en vivo",
+            session_cases=[
+                {
+                    "id_temporal": "TMP001",
+                    "ramo": "Vehiculos",
+                    "cobertura": "Robo",
+                    "score_final": 41,
+                    "score_reglas": 8,
+                    "score_anomalia": 0,
+                    "score_nlp": 0,
+                    "nivel_riesgo": "Amarillo",
+                    "monto_reclamado": 1200,
+                    "accion_sugerida": "Escalar a revision documental.",
+                    "alertas": [
+                        {
+                            "codigo": "RF-05",
+                            "descripcion": "Siniestro muy cercano al borde de vigencia.",
+                            "puntos": 8,
+                            "evidencia": "1 dias al borde.",
+                        }
+                    ],
+                }
+            ],
+        )
+        self.assertIn("TMP001", answer)
+        self.assertIn("revision humana", answer.lower())
 
 
 if __name__ == "__main__":

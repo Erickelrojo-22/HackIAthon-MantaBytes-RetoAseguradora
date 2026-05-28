@@ -22,6 +22,11 @@ BASE_TABLES = [
 
 REQUIRED_SQLITE_TABLES = [*BASE_TABLES, "scores", "alertas", "metricas_modelo"]
 
+REQUIRED_SQLITE_COLUMNS = {
+    "scores": {"score_final", "nivel_riesgo", "score_modelo", "regla_min_amarillo", "nlp_min_amarillo"},
+    "siniestros": {"beneficiario", "id_conductor"},
+}
+
 
 def save_tables_to_csv(tables: dict[str, pd.DataFrame], directory: Path = SYNTHETIC_DIR) -> None:
     directory.mkdir(parents=True, exist_ok=True)
@@ -67,7 +72,13 @@ def initialize_demo_data(
                 row[0]
                 for row in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
             }
-        if set(REQUIRED_SQLITE_TABLES).issubset(existing):
+            has_tables = set(REQUIRED_SQLITE_TABLES).issubset(existing)
+            has_columns = True
+            if has_tables:
+                for table, required_columns in REQUIRED_SQLITE_COLUMNS.items():
+                    columns = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+                    has_columns = has_columns and required_columns.issubset(columns)
+        if has_tables and has_columns:
             return db_path
     tables = generate_all(SyntheticConfig(n_per_ramo=n_per_ramo))
     scores, alerts, metrics = score_claims(tables, include_metrics=True)
