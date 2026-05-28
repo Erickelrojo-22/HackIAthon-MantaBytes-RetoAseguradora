@@ -123,3 +123,4 @@ tests/
 ```
 
 La documentacion tecnica vive en `docs/` y el guion del pitch en `presentation/pitch.md`.
+Para revisar cumplimiento directo contra el PDF del reto, ver `docs/matriz_cumplimiento_pdf.md`.

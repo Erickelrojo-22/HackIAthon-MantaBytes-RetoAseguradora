@@ -59,18 +59,64 @@ GUIDED_DEMO_STEPS = [
 def featured_claims(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
     top = top_cases(25, db_path)
     red = top[top["nivel_riesgo"] == "Rojo"]
-    yellow = top[top["nivel_riesgo"] == "Amarillo"]
+    yellow_case = _level_demo_case("Amarillo", db_path)
+    green = _level_demo_case("Verde", db_path)
     red_case = red.iloc[0].to_dict() if not red.empty else top.iloc[0].to_dict()
-    yellow_case = yellow.iloc[0].to_dict() if not yellow.empty else {}
     providers = provider_pareto(5, db_path)
     provider = providers.iloc[0].to_dict() if not providers.empty else {}
     return {
         "caso_rojo": red_case,
         "detalle_rojo": get_claim_detail(str(red_case["id_siniestro"]), db_path) if red_case else {},
         "caso_amarillo": yellow_case,
+        "caso_verde": green,
+        "prueba_fuego": {
+            "ramo": "Vehiculos",
+            "cobertura": "Perdida Total por Robo",
+            "monto_reclamado": 29500,
+            "suma_asegurada": 30000,
+            "dias_desde_inicio_poliza": 1,
+            "dias_desde_fin_poliza": 364,
+            "dias_entre_ocurrencia_reporte": 5,
+            "denuncia_horas": 72,
+            "documentos_completos": False,
+            "documentos_inconsistentes": True,
+            "tercero_identificado": False,
+        },
         "proveedor_recurrente": provider,
         "kpis": executive_kpis(db_path),
     }
+
+
+def _green_demo_case(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
+    return _level_demo_case("Verde", db_path)
+
+
+def _level_demo_case(level: str, db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
+    import sqlite3
+
+    order = "sc.score_final ASC, si.monto_reclamado ASC" if level == "Verde" else "sc.score_final DESC, si.monto_reclamado DESC"
+    query = """
+        SELECT
+            sc.id_siniestro,
+            sc.score_final,
+            sc.nivel_riesgo,
+            si.ramo,
+            si.cobertura,
+            si.sucursal AS ciudad,
+            si.monto_reclamado,
+            pr.nombre AS proveedor,
+            sc.explicacion_resumen
+        FROM scores sc
+        JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
+        LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
+        WHERE sc.nivel_riesgo = ?
+        ORDER BY """ + order + """
+        LIMIT 1
+    """
+    with sqlite3.connect(db_path) as conn:
+        conn.row_factory = sqlite3.Row
+        row = conn.execute(query, [level]).fetchone()
+    return dict(row) if row else {}
 
 
 def demo_questions() -> list[str]:
