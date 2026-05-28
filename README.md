@@ -58,6 +58,23 @@ Endpoints principales:
 - `POST /score-candidate`
 - `GET /metrics`
 
+## Ejecutar en VS Code
+
+1. Abre esta carpeta en VS Code.
+2. Acepta el interprete recomendado: `.venv\Scripts\python.exe`.
+3. Ve a `Terminal > Run Task...`.
+4. Ejecuta `FraudIA: Run Streamlit app`.
+5. Abre `http://127.0.0.1:8501` en el navegador.
+
+Tareas disponibles:
+
+- `FraudIA: Run Streamlit app`
+- `FraudIA: Generate demo data`
+- `FraudIA: Run tests`
+- `FraudIA: Compile check`
+
+Tambien puedes usar `Run and Debug > FraudIA: Streamlit` para levantar la app desde el depurador.
+
 ## Modo OpenAI opcional
 
 Copia `.env.example` a `.env` o exporta variables de entorno:
