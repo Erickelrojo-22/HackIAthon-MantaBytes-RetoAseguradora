@@ -33,6 +33,8 @@ from fraudia_claims.network import build_plotly_figure, graph_payload
 from fraudia_claims.offline_agent import answer_offline
 from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.reports import build_executive_report_html
+from fraudia_claims.audit import list_audit_events
+from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.utils import money
 from fraudia_claims.vision import analyze_claim_image, image_analysis_available
 
@@ -48,6 +50,13 @@ def _session_cases() -> list[dict[str, Any]]:
 
 def _set_selected_claim(claim_id: str) -> None:
     st.session_state["selected_claim_id"] = claim_id
+
+
+def _demo_user() -> dict[str, str]:
+    return st.session_state.get(
+        "demo_user",
+        {"email": "analista@fraudia.demo", "name": "Analista Demo", "role": "Analista"},
+    )
 
 
 def summary_risk_frames(scores: pd.DataFrame, claims: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -290,6 +299,44 @@ def page_detalle(table: TableLoader, db_path: Path = DEFAULT_DB_PATH) -> None:
     with st.expander("Descripcion del reclamo"):
         st.write(detail["descripcion"])
 
+    st.write("### Agente IA para este expediente")
+    q1, q2 = st.columns(2)
+    if q1.button("Explicar este caso con IA"):
+        question = f"Explica el siniestro {claim_id} para una revision humana ejecutiva."
+        answer, source = ask_agent_with_status(question, db_path)
+        st.info(f"Fuente: {source}")
+        st.markdown(answer)
+    if q2.button("Generar preguntas sugeridas"):
+        questions = [
+            f"Explica por que el siniestro {claim_id} fue priorizado.",
+            f"Que documentos observados tiene el siniestro {claim_id}?",
+            f"Que accion humana recomiendas para {claim_id} sin acusar fraude?",
+            f"Que patrones similares existen para {claim_id}?",
+        ]
+        for question in questions:
+            st.code(question)
+
+    st.write("### Revision humana")
+    user = _demo_user()
+    with st.form(f"review-{claim_id}"):
+        status = st.selectbox("Decision humana", REVIEW_STATUSES)
+        comentario = st.text_area("Comentario del analista", value="Revision registrada desde la demo.")
+        submitted = st.form_submit_button("Guardar decision humana")
+    if submitted:
+        decision = create_review_decision(
+            claim_id,
+            status,
+            comentario,
+            user["email"],
+            user["role"],
+            db_path=db_path,
+        )
+        st.success(f"Decision registrada: {decision['status']} ({decision['id_decision']})")
+
+    history = list_review_history(claim_id, db_path)
+    st.write("#### Historial de revision")
+    show_dataframe(pd.DataFrame(history), "Este caso aun no tiene decisiones humanas registradas.")
+
 
 def page_case_form() -> None:
     st.title("Evaluar caso nuevo")
@@ -367,6 +414,27 @@ def page_case_form() -> None:
     st.write("### Casos evaluados en vivo")
     frame = pd.DataFrame([session_case_summary(case, idx) for idx, case in enumerate(live, start=1)])
     show_dataframe(frame, "Todavia no hay casos evaluados en vivo.")
+
+
+def page_jury_test() -> None:
+    st.title("Prueba del jurado")
+    st.caption("Flujo controlado: cargar caso, ejecutar score temporal, explicar con IA y remarcar que no es acusacion.")
+    ethical_notice()
+    page_case_form()
+    cases = _session_cases()
+    if not cases:
+        return
+    latest = cases[-1]
+    st.write("### Explicacion ejecutiva del ultimo caso")
+    if st.button("Explicar ultimo caso temporal con IA/offline"):
+        answer, source = ask_agent_with_status("Explica el ultimo caso evaluado en vivo.", session_cases=cases)
+        st.info(f"Fuente: {source}")
+        st.markdown(answer)
+    st.write("### Mensaje etico para jurado")
+    st.info(
+        f"El caso {latest.get('id_temporal')} tiene nivel {latest.get('nivel_riesgo')} como alerta de revision humana. "
+        "No es acusacion de fraude, no rechaza pagos y no modifica la base historica."
+    )
 
 
 def page_network(db_path: Path = DEFAULT_DB_PATH) -> None:
@@ -486,6 +554,25 @@ def page_report(db_path: Path = DEFAULT_DB_PATH) -> None:
         show_dataframe(provider_pareto(10, db_path))
         st.write("### Casos evaluados en vivo")
         show_dataframe(session_cases_frame(_session_cases()), "No hay casos temporales en sesion.")
+
+
+def page_audit(db_path: Path = DEFAULT_DB_PATH) -> None:
+    st.title("Auditoria")
+    st.caption("Trazabilidad de consultas, decisiones y acciones relevantes de la demo.")
+    user = _demo_user()
+    st.info(f"Sesion demo: {user['email']} | Rol: {user['role']}")
+    c1, c2, c3 = st.columns(3)
+    action = c1.text_input("Accion", value="")
+    resource_type = c2.text_input("Tipo recurso", value="")
+    resource_id = c3.text_input("ID recurso", value="")
+    events = list_audit_events(
+        action=action or None,
+        resource_type=resource_type or None,
+        resource_id=resource_id or None,
+        limit=100,
+        db_path=db_path,
+    )
+    show_dataframe(pd.DataFrame(events), "Todavia no hay eventos de auditoria.")
 
 
 def page_methodology() -> None:

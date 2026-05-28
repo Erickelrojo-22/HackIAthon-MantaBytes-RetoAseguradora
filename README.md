@@ -189,3 +189,4 @@ Documentos utiles:
 - `docs/reglas_negocio.md`
 - `docs/uso_ia.md`
 - `docs/despliegue.md`
+- `docs/api_frontend.md`
