@@ -2,7 +2,14 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import FastAPI, Query
+import json
+import tempfile
+from pathlib import Path
+
+import pandas as pd
+from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
 
 from fraudia_claims.agent_tools import (
     aggregate_alerts,
@@ -14,8 +21,14 @@ from fraudia_claims.agent_tools import (
     provider_red_alert_pareto,
     score_candidate_claim,
 )
+from fraudia_claims.analytics import city_concentration, executive_kpis, provider_pareto, risk_matrix
+from fraudia_claims.audit import list_audit_events, log_event
+from fraudia_claims.auth import DemoUser, authenticate_demo_user, current_user, optional_user, require_roles, user_to_dict
 from fraudia_claims.config import DEFAULT_DB_PATH
-from fraudia_claims.storage import database_status, initialize_demo_data
+from fraudia_claims.ingestion import REQUIRED_COLUMNS, data_quality_report, validate_company_tables
+from fraudia_claims.openai_agent import ask_agent_with_status
+from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
+from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
 
 
 app = FastAPI(
@@ -24,10 +37,41 @@ app = FastAPI(
     description="API minima para integrar el scoring explicable de siniestros.",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+class LoginPayload(BaseModel):
+    email: str
+    password: str
+
+
+class ReviewDecisionPayload(BaseModel):
+    status: str = Field(pattern="^(En revision|Descartado|Escalado|Confirmado para investigacion)$")
+    comentario: str = ""
+
+
+class AgentQuestionPayload(BaseModel):
+    question: str
+    id_siniestro: str | None = None
+    scope: str = "general"
+
 
 @app.on_event("startup")
 def startup() -> None:
     initialize_demo_data(force=False)
+    ensure_operational_tables(DEFAULT_DB_PATH)
+
+
+@app.post("/auth/login")
+def login(payload: LoginPayload) -> dict[str, Any]:
+    token, user = authenticate_demo_user(payload.email, payload.password)
+    return {"access_token": token, "user": user_to_dict(user)}
 
 
 @app.get("/health")
@@ -51,9 +95,185 @@ def claims_risk(
 
 
 @app.get("/claims/{id_siniestro}")
-def claim_detail(id_siniestro: str) -> dict[str, Any]:
+def claim_detail(id_siniestro: str, user: DemoUser | None = Depends(optional_user)) -> dict[str, Any]:
     initialize_demo_data(force=False)
-    return get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    if user is not None and "error" not in detail:
+        log_event(user.email, user.role, "claim.detail.viewed", "claim", id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    return detail
+
+
+@app.get("/dashboard/kpis")
+def dashboard_kpis(user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria"))) -> dict[str, Any]:
+    initialize_demo_data(force=False)
+    kpis = executive_kpis(DEFAULT_DB_PATH)
+    providers = provider_pareto(5, DEFAULT_DB_PATH).to_dict(orient="records")
+    cities = city_concentration(5, DEFAULT_DB_PATH).to_dict(orient="records")
+    matrix = risk_matrix(DEFAULT_DB_PATH).to_dict(orient="records")
+    log_event(user.email, user.role, "dashboard.kpis.viewed", "dashboard", "kpis", db_path=DEFAULT_DB_PATH)
+    return {"kpis": kpis, "proveedores_criticos": providers, "ciudades_criticas": cities, "matriz_riesgo": matrix}
+
+
+@app.post("/claims/{id_siniestro}/review-decision")
+def review_decision(
+    id_siniestro: str,
+    payload: ReviewDecisionPayload,
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura")),
+) -> dict[str, Any]:
+    initialize_demo_data(force=False)
+    detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    if "error" in detail:
+        raise HTTPException(status_code=404, detail=detail["error"])
+    return create_review_decision(
+        id_siniestro.upper(),
+        payload.status,
+        payload.comentario,
+        user.email,
+        user.role,
+        db_path=DEFAULT_DB_PATH,
+    )
+
+
+@app.get("/claims/{id_siniestro}/review-history")
+def review_history(
+    id_siniestro: str,
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> list[dict[str, Any]]:
+    initialize_demo_data(force=False)
+    log_event(user.email, user.role, "review_history.viewed", "claim", id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    return list_review_history(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+
+
+@app.get("/audit-log")
+def audit_log(
+    actor_email: str | None = None,
+    action: str | None = None,
+    resource_type: str | None = None,
+    resource_id: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+    limit: int = Query(default=100, ge=1, le=500),
+    user: DemoUser = Depends(require_roles("Jefatura", "Auditoria")),
+) -> list[dict[str, Any]]:
+    initialize_demo_data(force=False)
+    log_event(user.email, user.role, "audit_log.viewed", "audit", "audit_log", db_path=DEFAULT_DB_PATH)
+    return list_audit_events(
+        actor_email=actor_email,
+        action=action,
+        resource_type=resource_type,
+        resource_id=resource_id,
+        date_from=date_from,
+        date_to=date_to,
+        limit=limit,
+        db_path=DEFAULT_DB_PATH,
+    )
+
+
+@app.post("/agent/question")
+def agent_question(payload: AgentQuestionPayload, user: DemoUser = Depends(current_user)) -> dict[str, Any]:
+    initialize_demo_data(force=False)
+    question = payload.question
+    if payload.id_siniestro and payload.id_siniestro.upper() not in question.upper():
+        question = f"{question}\n\nSiniestro relacionado: {payload.id_siniestro.upper()}"
+    answer, source = ask_agent_with_status(question, DEFAULT_DB_PATH)
+    log_event(
+        user.email,
+        user.role,
+        "agent.question.asked",
+        payload.scope or "agent",
+        payload.id_siniestro.upper() if payload.id_siniestro else "general",
+        {"question": payload.question, "source": source},
+        db_path=DEFAULT_DB_PATH,
+    )
+    return {
+        "answer": answer,
+        "source": source,
+        "disclaimer": "Alerta de revision humana; no acusacion ni decision automatica.",
+    }
+
+
+@app.get("/agent/suggested-questions/{id_siniestro}")
+def suggested_questions(
+    id_siniestro: str,
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> dict[str, Any]:
+    initialize_demo_data(force=False)
+    detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    if "error" in detail:
+        raise HTTPException(status_code=404, detail=detail["error"])
+    questions = [
+        f"Explica por que el siniestro {id_siniestro.upper()} fue priorizado.",
+        f"Que documentos observados tiene el siniestro {id_siniestro.upper()}?",
+        f"Que proveedor atiende el siniestro {id_siniestro.upper()} y que alertas concentra?",
+        f"Que accion humana recomiendas para {id_siniestro.upper()} sin acusar fraude?",
+    ]
+    log_event(user.email, user.role, "agent.suggested_questions.generated", "claim", id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    return {"id_siniestro": id_siniestro.upper(), "questions": questions}
+
+
+@app.get("/agent/executive-summary")
+def agent_executive_summary(
+    group_by: str = Query(pattern="^(proveedor|ciudad)$"),
+    value: str = "",
+    user: DemoUser = Depends(require_roles("Jefatura", "Auditoria")),
+) -> dict[str, Any]:
+    initialize_demo_data(force=False)
+    if group_by == "proveedor":
+        data = provider_pareto(15, DEFAULT_DB_PATH).to_dict(orient="records")
+    else:
+        data = city_concentration(15, DEFAULT_DB_PATH).to_dict(orient="records")
+    filtered = [row for row in data if not value or value.lower() in json.dumps(row, ensure_ascii=False).lower()]
+    log_event(user.email, user.role, "agent.executive_summary.generated", group_by, value or "all", db_path=DEFAULT_DB_PATH)
+    return {
+        "group_by": group_by,
+        "value": value,
+        "summary": "Resumen ejecutivo para priorizacion humana; no constituye acusacion ni decision automatica.",
+        "rows": filtered,
+    }
+
+
+@app.post("/claims/upload-csv")
+async def upload_claims_csv(
+    file: UploadFile = File(...),
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura")),
+) -> dict[str, Any]:
+    initialize_demo_data(force=False)
+    content = await file.read()
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp:
+            tmp.write(content)
+            temp_path = Path(tmp.name)
+        frame = pd.read_csv(temp_path)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"CSV invalido: {exc}") from exc
+    finally:
+        try:
+            temp_path.unlink(missing_ok=True)  # type: ignore[name-defined]
+        except Exception:
+            pass
+
+    stem = Path(file.filename or "").stem
+    required = REQUIRED_COLUMNS.get(stem, set())
+    missing = sorted(required - set(frame.columns)) if required else []
+    status_value = "revisar" if missing else "ok"
+    log_event(
+        user.email,
+        user.role,
+        "claims.upload_csv.validated",
+        "csv",
+        file.filename or "upload.csv",
+        {"rows": len(frame), "columns": list(frame.columns), "status": status_value, "missing": missing},
+        db_path=DEFAULT_DB_PATH,
+    )
+    return {
+        "filename": file.filename,
+        "table_detected": stem or None,
+        "rows": int(len(frame)),
+        "columns": list(frame.columns),
+        "status": status_value,
+        "missing_columns": missing,
+        "message": "CSV validado. En v1 no reemplaza tablas persistidas desde este endpoint.",
+    }
 
 
 @app.get("/alerts/aggregate")
