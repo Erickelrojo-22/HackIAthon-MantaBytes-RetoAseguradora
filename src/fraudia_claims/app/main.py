@@ -22,6 +22,7 @@ from fraudia_claims.app.pages import (
     page_report,
     page_resumen,
 )
+from fraudia_claims.app.components import dashboard_styles, team_brand_sidebar
 from fraudia_claims.storage import initialize_demo_data, load_table
 
 
@@ -58,6 +59,8 @@ def table(name: str) -> pd.DataFrame:
 
 
 def sidebar() -> str:
+    dashboard_styles()
+    team_brand_sidebar()
     st.sidebar.title("FraudIA Claims")
     st.sidebar.caption("Agente explicable para alertas de posible fraude en siniestros.")
     page = st.sidebar.radio("Navegacion", PAGES)
