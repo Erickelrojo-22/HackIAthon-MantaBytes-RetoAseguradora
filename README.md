@@ -7,12 +7,13 @@ Importante: FraudIA genera **alertas de revision humana**. No acusa fraude, no r
 ## Funcionalidades
 
 - Dataset sintetico reproducible con 3.000 siniestros y tablas relacionales.
-- Base SQLite y CSV para inspeccion del jurado.
+- Base PostgreSQL para despliegue y SQLite/CSV como fallback local para inspeccion del jurado.
 - Score trazable: reglas + anomalias + NLP.
 - Modelo supervisado demo con etiqueta sintetica y metricas reproducibles.
 - Semaforo: Verde `0-40`, Amarillo `41-75`, Rojo `76-100`.
 - Dashboard Streamlit con demo guiada, resumen ejecutivo, bandeja, detalle, red de relaciones, caso nuevo y reporte descargable.
 - Agente offline con preguntas frecuentes del reto y explicacion del ultimo caso evaluado en vivo.
+- Analisis opcional de imagenes con OpenAI Vision en sesion, sin modificar scores.
 - API minima FastAPI para integracion futura.
 - Integracion OpenAI opcional con herramientas locales de solo lectura.
 
@@ -36,6 +37,40 @@ Esto crea:
 - `data/raw/contexto_publico.csv`
 - `data/synthetic/*.csv`
 - `data/processed/fraudia_claims.db`
+
+Por defecto el proyecto usa SQLite local para que la demo arranque en cualquier maquina. Para usar PostgreSQL:
+
+```powershell
+$env:FRAUDIA_DB_BACKEND="postgres"
+$env:FRAUDIA_DATABASE_URL="postgresql+psycopg://usuario:password@localhost:5432/fraudia"
+.\.venv\Scripts\python scripts\generate_demo_data.py --force
+```
+
+En despliegue cloud se configuran esas variables como secretos. No subas credenciales al repositorio.
+
+## Dataset empresarial sintetico
+
+Si el equipo recibe datos sinteticos de la empresa, cargarlos fuera del repo en `data/company_synthetic` con:
+
+```text
+asegurados.csv
+polizas.csv
+proveedores.csv
+vehiculos.csv
+siniestros.csv
+documentos.csv
+README_DATOS.md
+```
+
+Luego activar:
+
+```powershell
+$env:FRAUDIA_DATA_SOURCE="company_synthetic"
+$env:FRAUDIA_COMPANY_DATA_DIR="data/company_synthetic"
+.\.venv\Scripts\python scripts\generate_demo_data.py --force
+```
+
+El loader valida columnas antes de cargar. No se debe versionar ese dataset hasta confirmar autorizacion y naturaleza 100% sintetica.
 
 ## Ejecutar app
 
@@ -142,4 +177,11 @@ tests/
 ```
 
 La documentacion tecnica vive en `docs/` y el guion del pitch en `presentation/pitch.md`.
-Para revisar cumplimiento directo contra el PDF del reto, ver `docs/matriz_cumplimiento_pdf.md`.
+
+Documentos utiles:
+
+- `docs/arquitectura.md`
+- `docs/modelo_datos.md`
+- `docs/reglas_negocio.md`
+- `docs/uso_ia.md`
+- `docs/despliegue.md`

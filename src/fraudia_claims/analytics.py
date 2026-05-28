@@ -1,27 +1,20 @@
 from __future__ import annotations
 
-import sqlite3
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
 from fraudia_claims.config import DEFAULT_DB_PATH
+from fraudia_claims.database import read_sql
 
 
 REVIEW_LEVELS = ("Rojo", "Amarillo")
 SAVINGS_RATE = 0.12
 
 
-def _connect(db_path: Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def _read_sql(query: str, db_path: Path = DEFAULT_DB_PATH, params: list[Any] | None = None) -> pd.DataFrame:
-    with _connect(db_path) as conn:
-        return pd.read_sql_query(query, conn, params=params or [])
+def _read_sql(query: str, db_path: Path = DEFAULT_DB_PATH, params: dict[str, Any] | None = None) -> pd.DataFrame:
+    return read_sql(query, params=params or {}, db_path=db_path)
 
 
 def executive_kpis(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
@@ -76,10 +69,10 @@ def top_cases(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> pd.DataFrame:
         JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
         ORDER BY sc.score_final DESC, si.monto_reclamado DESC
-        LIMIT ?
+        LIMIT :limit
         """,
         db_path,
-        [int(limit)],
+        {"limit": int(limit)},
     )
 
 
@@ -97,12 +90,12 @@ def provider_pareto(limit: int = 15, db_path: Path = DEFAULT_DB_PATH) -> pd.Data
         JOIN scores sc ON sc.id_siniestro = si.id_siniestro
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
         GROUP BY pr.nombre, pr.tipo
-        HAVING alertas_rojas > 0
+        HAVING SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) > 0
         ORDER BY alertas_rojas DESC, monto_priorizado DESC
-        LIMIT ?
+        LIMIT :limit
         """,
         db_path,
-        [int(limit)],
+        {"limit": int(limit)},
     )
 
 
@@ -136,10 +129,10 @@ def city_concentration(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> pd.D
         JOIN scores sc ON sc.id_siniestro = si.id_siniestro
         GROUP BY si.sucursal
         ORDER BY casos_revision DESC, score_promedio DESC
-        LIMIT ?
+        LIMIT :limit
         """,
         db_path,
-        [int(limit)],
+        {"limit": int(limit)},
     )
 
 

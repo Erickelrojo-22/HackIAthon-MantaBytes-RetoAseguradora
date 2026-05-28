@@ -15,7 +15,7 @@ from fraudia_claims.agent_tools import (
     score_candidate_claim,
 )
 from fraudia_claims.config import DEFAULT_DB_PATH
-from fraudia_claims.storage import initialize_demo_data
+from fraudia_claims.storage import database_status, initialize_demo_data
 
 
 app = FastAPI(
@@ -33,9 +33,10 @@ def startup() -> None:
 @app.get("/health")
 def health() -> dict[str, Any]:
     initialize_demo_data(force=False)
+    status = database_status(DEFAULT_DB_PATH)
     return {
         "status": "ok",
-        "db_path": str(DEFAULT_DB_PATH),
+        "database": status,
         "principio": "Alertas de revision humana; no acusaciones ni decisiones automaticas.",
     }
 

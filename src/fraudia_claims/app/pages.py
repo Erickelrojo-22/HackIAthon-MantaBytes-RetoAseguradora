@@ -34,6 +34,7 @@ from fraudia_claims.offline_agent import answer_offline
 from fraudia_claims.openai_agent import ask_agent
 from fraudia_claims.reports import build_executive_report_html
 from fraudia_claims.utils import money
+from fraudia_claims.vision import analyze_claim_image, image_analysis_available
 
 
 TableLoader = Callable[[str], pd.DataFrame]
@@ -382,6 +383,55 @@ def page_network(db_path: Path = DEFAULT_DB_PATH) -> None:
     left.dataframe(pd.DataFrame(payload["nodes"]), hide_index=True, use_container_width=True)
     right.write("### Relaciones")
     right.dataframe(pd.DataFrame(payload["edges"]), hide_index=True, use_container_width=True)
+
+
+def page_image_analysis(table: TableLoader) -> None:
+    st.title("Analisis de imagenes")
+    st.caption("Vision es auxiliar: no modifica el score y no reemplaza peritaje humano.")
+    if "vision_results" not in st.session_state:
+        st.session_state["vision_results"] = []
+
+    scores = table("scores")
+    claims = table("siniestros")
+    ordered = scores.sort_values("score_final", ascending=False)["id_siniestro"].tolist()
+    selected = st.selectbox("Siniestro asociado", ["Caso nuevo temporal"] + ordered)
+    uploaded = st.file_uploader("Sube foto del siniestro", type=["jpg", "jpeg", "png", "webp"])
+
+    if not image_analysis_available():
+        st.info("Configura OPENAI_API_KEY y OPENAI_MODEL para activar Vision. Sin credenciales, la pagina funciona en modo offline.")
+
+    if st.button("Analizar imagen") and uploaded is not None:
+        context: dict[str, Any] = {"id_siniestro": selected}
+        if selected != "Caso nuevo temporal":
+            row = claims[claims["id_siniestro"] == selected]
+            if not row.empty:
+                context.update(row.iloc[0][["ramo", "cobertura", "monto_reclamado", "descripcion"]].to_dict())
+        result = analyze_claim_image(uploaded.getvalue(), uploaded.type or "application/octet-stream", context)
+        result["id_siniestro"] = selected
+        result["filename"] = uploaded.name
+        st.session_state["vision_results"].append(result)
+
+    results = st.session_state["vision_results"]
+    if not results:
+        st.warning("Aun no hay analisis visuales en esta sesion.")
+        return
+
+    latest = results[-1]
+    st.write("### Ultimo analisis")
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Estado", latest["status"])
+    c2.metric("Severidad visual", latest["severidad_visual"])
+    c3.metric("Confianza", f"{float(latest['confianza']):.0%}")
+    st.write("**Accion sugerida:**", latest["accion_sugerida"])
+    st.write("**Observaciones:**")
+    st.write("\n".join(f"- {item}" for item in latest.get("observaciones", [])))
+    if latest.get("anomalias_potenciales"):
+        st.write("**Anomalias potenciales:**")
+        st.write("\n".join(f"- {item}" for item in latest["anomalias_potenciales"]))
+    st.caption(latest["disclaimer"])
+
+    with st.expander("Historial visual de sesion"):
+        show_dataframe(pd.DataFrame(results))
 
 
 def page_agent(db_path: Path = DEFAULT_DB_PATH) -> None:

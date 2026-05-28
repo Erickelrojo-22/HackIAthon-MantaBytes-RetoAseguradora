@@ -9,7 +9,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from fraudia_claims.storage import initialize_demo_data
+from fraudia_claims.storage import database_status, initialize_demo_data
 
 
 def main() -> None:
@@ -18,7 +18,8 @@ def main() -> None:
     parser.add_argument("--n-per-ramo", type=int, default=1000, help="Number of claims per insurance line.")
     args = parser.parse_args()
     db_path = initialize_demo_data(force=args.force, n_per_ramo=args.n_per_ramo)
-    print(f"Demo data ready: {db_path}")
+    status = database_status(db_path)
+    print(f"Demo data ready: {status['backend']} ({status['target']})")
 
 
 if __name__ == "__main__":

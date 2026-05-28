@@ -4,7 +4,9 @@ FraudIA Claims sigue un flujo reproducible:
 
 ```mermaid
 flowchart LR
-    A["Contexto publico SCVS + datos sinteticos"] --> B["CSV y SQLite"]
+    A["Contexto publico SCVS + datos sinteticos"] --> B["Capa database.py"]
+    B --> DB1["SQLite local"]
+    B --> DB2["PostgreSQL despliegue"]
     B --> C["Reglas de negocio"]
     B --> D["Anomalias numericas"]
     B --> E["Similitud narrativa"]
@@ -16,8 +18,8 @@ flowchart LR
     F --> G["Dashboard Streamlit"]
     F --> H["Red de relaciones"]
     F --> I["Agente IA offline/OpenAI opcional"]
-    F --> K["API minima FastAPI"]
-    G --> L["Reporte ejecutivo HTML"]
+    F --> API["API minima FastAPI"]
+    G --> REP["Reporte ejecutivo HTML"]
 ```
 
 ## Componentes
@@ -36,8 +38,19 @@ flowchart LR
 
 ## Decisiones
 
-- SQLite evita infraestructura externa y permite consultas relacionales durante la demo.
+- PostgreSQL es la base recomendada para despliegue y disponibilidad 24/7.
+- SQLite queda como fallback local para evitar infraestructura externa durante pruebas rapidas.
 - CSV permite inspeccion y regeneracion de datos.
 - El LLM queda fuera del calculo del score para mantener trazabilidad.
 - Las metricas supervisadas se calculan con etiqueta sintetica; sirven para demo tecnica, no para prometer desempeno real.
-- Los casos nuevos evaluados en vivo se guardan solo en sesion y no modifican SQLite.
+- Los casos nuevos evaluados en vivo se guardan solo en sesion y no modifican la base persistida.
+
+## Configuracion de base de datos
+
+Variables principales:
+
+- `FRAUDIA_DB_BACKEND=sqlite|postgres`
+- `FRAUDIA_DB_PATH=data/processed/fraudia_claims.db`
+- `FRAUDIA_DATABASE_URL=postgresql+psycopg://...`
+
+En demo local el default es SQLite. En despliegue se recomienda PostgreSQL administrado en Render, Supabase o Railway con secretos configurados desde la plataforma.

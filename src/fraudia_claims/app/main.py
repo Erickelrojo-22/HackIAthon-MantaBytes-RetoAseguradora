@@ -17,6 +17,7 @@ from fraudia_claims.app.pages import (
     page_case_form,
     page_demo_guiada,
     page_detalle,
+    page_image_analysis,
     page_methodology,
     page_network,
     page_report,
@@ -40,6 +41,7 @@ PAGES = [
     "Bandeja de revision",
     "Detalle del siniestro",
     "Evaluar caso nuevo",
+    "Analisis de imagenes",
     "Red de relaciones",
     "Agente IA",
     "Reporte ejecutivo",
@@ -87,6 +89,8 @@ def main() -> None:
         page_detalle(table, db_path)
     elif page == "Evaluar caso nuevo":
         page_case_form()
+    elif page == "Analisis de imagenes":
+        page_image_analysis(table)
     elif page == "Red de relaciones":
         page_network(db_path)
     elif page == "Agente IA":
