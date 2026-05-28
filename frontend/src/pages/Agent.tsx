@@ -1,78 +1,75 @@
-import React, { useState } from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
+import { BotMessageSquare, Loader2, Send } from 'lucide-react';
 import { api } from '../lib/api';
-import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Loader2, BotMessageSquare, Send } from 'lucide-react';
+import { Card, CardContent } from '../components/ui/Card';
+
+const suggestions = [
+  'Cuales son los 10 siniestros con mayor riesgo?',
+  'Que proveedores concentran mas alertas rojas?',
+  'Genera un resumen ejecutivo de los casos criticos.',
+  'Que documentos faltan en los casos criticos?',
+];
 
 export function Agent() {
   const [question, setQuestion] = useState('');
-  const [messages, setMessages] = useState<{role: 'user'|'agent', content: string}[]>([]);
+  const [messages, setMessages] = useState<{ role: 'user' | 'agent'; content: string; source?: string }[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!question.trim()) return;
-
-    const newMsgs = [...messages, { role: 'user' as const, content: question }];
-    setMessages(newMsgs);
+  const ask = async (text: string) => {
+    if (!text.trim()) return;
+    const next = [...messages, { role: 'user' as const, content: text }];
+    setMessages(next);
     setQuestion('');
     setLoading(true);
-
     try {
-      const res = await api.post('/agent/question', { question, id_siniestro: null, scope: 'global' });
-      setMessages([...newMsgs, { role: 'agent', content: res.data.answer }]);
-    } catch (err) {
-      setMessages([...newMsgs, { role: 'agent', content: 'Lo siento, ocurrió un error de conexión.' }]);
+      const response = await api.post('/agent/question', { question: text, scope: 'global' });
+      setMessages([...next, { role: 'agent', content: response.data.answer, source: response.data.source }]);
+    } catch {
+      setMessages([...next, { role: 'agent', content: 'No pude conectar con el agente. Verifica que FastAPI este activo.' }]);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSend = (event: FormEvent) => {
+    event.preventDefault();
+    ask(question);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-12rem)] flex flex-col">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-navy-900">Agente IA</h1>
+    <div className="mx-auto flex h-[calc(100vh-9rem)] max-w-5xl flex-col space-y-5">
+      <div>
+        <h1 className="text-3xl font-black text-navy-950">Agente IA</h1>
+        <p className="text-sm text-navy-500">Responde con herramientas locales y fallback offline si OpenAI no esta configurado.</p>
       </div>
 
-      <Card className="flex-1 flex flex-col overflow-hidden">
-        <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex flex-wrap gap-2">
+        {suggestions.map((item) => <button key={item} onClick={() => ask(item)} className="rounded-full border border-navy-200 bg-white px-3 py-1.5 text-xs font-semibold text-navy-700 transition hover:bg-cyan-50">{item}</button>)}
+      </div>
+
+      <Card className="flex min-h-0 flex-1 flex-col">
+        <CardContent className="min-h-0 flex-1 space-y-4 overflow-y-auto p-6">
           {messages.length === 0 && (
-            <div className="text-center text-navy-400 mt-10">
-              <BotMessageSquare className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p>Hola, soy tu asistente IA de fraude. ¿En qué te puedo ayudar hoy?</p>
+            <div className="grid h-full place-items-center text-center text-navy-400">
+              <div><BotMessageSquare className="mx-auto mb-4 h-16 w-16 opacity-50" /><p>Haz una pregunta ejecutiva sobre riesgo, proveedores, documentos o un caso SINxxxxx.</p></div>
             </div>
           )}
-          {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-2xl p-4 flex gap-3 ${msg.role === 'user' ? 'bg-cyan-600 text-white rounded-br-none' : 'bg-navy-50 text-navy-900 border border-navy-100 rounded-bl-none'}`}>
-                 {msg.role === 'agent' && <BotMessageSquare className="w-5 h-5 mt-1 flex-shrink-0 text-cyan-600" />}
-                 <div className="text-sm whitespace-pre-wrap">{msg.content}</div>
+          {messages.map((message, index) => (
+            <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[82%] rounded-3xl p-4 text-sm ${message.role === 'user' ? 'rounded-br-sm bg-cyan-700 text-white' : 'rounded-bl-sm border border-navy-100 bg-navy-50 text-navy-900'}`}>
+                <div className="whitespace-pre-wrap">{message.content}</div>
+                {message.source && <p className="mt-3 text-xs font-semibold text-cyan-700">Fuente: {message.source}</p>}
               </div>
             </div>
           ))}
-          {loading && (
-             <div className="flex justify-start">
-               <div className="bg-navy-50 text-navy-900 border border-navy-100 rounded-2xl rounded-bl-none p-4 flex gap-3 items-center">
-                 <BotMessageSquare className="w-5 h-5 text-cyan-600" />
-                 <Loader2 className="w-4 h-4 animate-spin" />
-               </div>
-             </div>
-          )}
+          {loading && <Loader2 className="h-5 w-5 animate-spin text-cyan-700" />}
         </CardContent>
-        <div className="p-4 bg-white border-t border-navy-100">
-          <form onSubmit={handleSend} className="flex gap-2">
-            <input
-              type="text"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Escribe tu pregunta (ej: top riesgos, resumen ejecutivo)..."
-              className="flex-1 border border-navy-300 rounded-lg px-4 py-2 focus:ring-cyan-500 focus:border-cyan-500"
-            />
-            <Button type="submit" disabled={loading || !question.trim()}>
-              <Send className="w-4 h-4" />
-            </Button>
-          </form>
-        </div>
+        <form onSubmit={handleSend} className="flex gap-2 border-t border-navy-100 bg-white p-4">
+          <input value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Escribe tu pregunta..." className="flex-1 rounded-xl border border-navy-200 px-4 py-2 outline-none focus:ring-2 focus:ring-cyan-400" />
+          <Button type="submit" disabled={loading || !question.trim()}><Send className="h-4 w-4" /></Button>
+        </form>
       </Card>
     </div>
   );

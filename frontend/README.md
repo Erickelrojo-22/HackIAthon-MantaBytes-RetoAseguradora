@@ -1,43 +1,76 @@
 # FraudIA Claims Frontend
 
-Este es el frontend moderno y empresarial para el sistema de FraudIA Claims.
-Ha sido construido usando:
-- React
-- Vite
+Frontend moderno y empresarial para FraudIA Claims, construido como SPA separada del backend Streamlit/FastAPI.
+
+Stack:
+
+- React + Vite
 - TypeScript
 - Tailwind CSS
 - React Router
 - TanStack Query
+- Axios
 - Recharts
+- Lucide React
 
 ## Requisitos
 
-- Node.js (18+ recomendado)
-- El backend FastAPI corriendo en el puerto 8000.
+- Node.js 18+
+- Backend FastAPI activo en `http://127.0.0.1:8000`
 
-## Instrucciones para levantar en local
+Levantar backend desde la raiz del repo:
 
-1. Instala las dependencias:
-   ```bash
-   npm install
-   ```
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn fraudia_claims.api:app --app-dir src --reload
+```
 
-2. Ejecuta el entorno de desarrollo:
-   ```bash
-   npm run dev
-   ```
+## Desarrollo
 
-El frontend estará disponible en el puerto indicado (usualmente `http://localhost:5173`).
+```powershell
+cd frontend
+npm install
+npm run dev
+```
 
-## Rutas principales
+URL por defecto:
 
-- `/login`: Pantalla de autenticación (usuarios demo: `analista@fraudia.demo`, `jefatura@fraudia.demo`, `auditoria@fraudia.demo`).
-- `/`: Dashboard / Centro de Mando con KPIs y gráficos.
-- `/claims`: Bandeja de revisión con filtros.
-- `/claims/:id`: Expediente de siniestro (Score, IA y decisión humana).
-- `/jury-test`: Simulación y prueba de score.
-- `/agent`: Agente IA de consulta global.
-- `/audit`: Registro de auditoría (solo para Jefatura/Auditoría).
+```text
+http://localhost:5173
+```
 
-## Principios Éticos
-El sistema expone claramente que la IA no acusa fraude, no rechaza reclamos y no toma decisiones automáticas de pago.
+Para usar otra API:
+
+```powershell
+$env:VITE_API_URL="http://127.0.0.1:8000"
+npm run dev
+```
+
+## Usuarios Demo
+
+```text
+analista@fraudia.demo  / demo123
+jefatura@fraudia.demo  / demo123
+auditoria@fraudia.demo / demo123
+```
+
+## Rutas
+
+- `/login`: autenticacion demo.
+- `/`: centro de mando con KPIs y graficos.
+- `/claims`: bandeja de revision.
+- `/claims/:id`: expediente del siniestro.
+- `/jury-test`: prueba controlada para jurado.
+- `/agent`: chat del agente IA.
+- `/audit`: auditoria para Jefatura/Auditoria.
+
+## Validacion
+
+```powershell
+npx tsc --noEmit
+npm run build
+npm run lint
+```
+
+## Principio Etico
+
+La interfaz debe mantener siempre este mensaje: FraudIA Claims prioriza casos para revision humana. La IA no acusa fraude, no rechaza reclamos y no toma decisiones automaticas de pago.

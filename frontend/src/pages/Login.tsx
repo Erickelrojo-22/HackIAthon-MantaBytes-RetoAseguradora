@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldAlert, User, Lock, Loader2 } from 'lucide-react';
-import { Card, CardContent } from '../components/ui/Card';
+import { Loader2, Lock, ShieldAlert, User } from 'lucide-react';
+import { api, type LoginResponse } from '../lib/api';
+import { useAuth } from '../contexts/useAuth';
 import { Button } from '../components/ui/Button';
-import { api } from '../lib/api';
-import { useAuth } from '../contexts/AuthContext';
+import { Card, CardContent } from '../components/ui/Card';
+import { Disclaimer } from '../components/ui/Disclaimer';
+
+const demoUsers = [
+  { label: 'Analista', email: 'analista@fraudia.demo' },
+  { label: 'Jefatura', email: 'jefatura@fraudia.demo' },
+  { label: 'Auditoria', email: 'auditoria@fraudia.demo' },
+];
 
 export function Login() {
   const [email, setEmail] = useState('analista@fraudia.demo');
@@ -14,106 +22,90 @@ export function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async (event: FormEvent) => {
+    event.preventDefault();
     setLoading(true);
     setError('');
-    
     try {
-      const response = await api.post('/auth/login', { email, password });
-      const { access_token, user } = response.data;
-      login(access_token, user);
+      const response = await api.post<LoginResponse>('/auth/login', { email, password });
+      login(response.data.access_token, response.data.user);
       navigate('/');
-    } catch (err) {
-      setError('Credenciales inválidas. Intente nuevamente.');
+    } catch {
+      setError('Credenciales demo invalidas. Usa demo123.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-navy-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-cyan-900/20 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-navy-800/40 rounded-full blur-3xl"></div>
-      
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="flex justify-center">
-          <ShieldAlert className="w-16 h-16 text-cyan-400" />
-        </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-          FraudIA Claims
-        </h2>
-        <p className="mt-2 text-center text-sm text-navy-300">
-          Demo Empresarial Aseguradora
-        </p>
-      </div>
+    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-navy-950 px-4 py-10">
+      <div className="absolute -left-28 -top-28 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
+      <div className="absolute -bottom-28 -right-28 h-[28rem] w-[28rem] rounded-full bg-blue-900/40 blur-3xl" />
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <Card className="bg-navy-900 border-navy-700 shadow-2xl">
-          <CardContent className="py-8 px-4 sm:px-10">
-            <form className="space-y-6" onSubmit={handleLogin}>
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/50 rounded-md p-3 text-sm text-red-400 text-center">
-                  {error}
-                </div>
-              )}
-              
+      <div className="relative z-10 w-full max-w-md">
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-3xl bg-cyan-400/15 text-cyan-300 ring-1 ring-cyan-300/25">
+            <ShieldAlert className="h-9 w-9" />
+          </div>
+          <h1 className="text-3xl font-black tracking-tight text-white">FraudIA Claims</h1>
+          <p className="mt-2 text-sm text-navy-300">Centro de mando para revision de siniestros</p>
+        </div>
+
+        <Card className="border-white/10 bg-white/10 shadow-2xl backdrop-blur-xl">
+          <CardContent className="p-8">
+            <form className="space-y-5" onSubmit={handleLogin}>
+              {error && <div className="rounded-xl border border-red-400/50 bg-red-500/10 p-3 text-center text-sm text-red-200">{error}</div>}
+
               <div>
-                <label className="block text-sm font-medium text-navy-200">
-                  Correo Electrónico
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-navy-400" />
-                  </div>
+                <label className="mb-2 block text-sm font-semibold text-navy-100">Correo demo</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-2.5 h-5 w-5 text-navy-400" />
                   <input
                     type="email"
-                    required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="focus:ring-cyan-500 focus:border-cyan-500 block w-full pl-10 sm:text-sm border-navy-700 bg-navy-800 text-white rounded-md py-2.5"
-                    placeholder="analista@fraudia.demo"
+                    onChange={(event) => setEmail(event.target.value)}
+                    className="w-full rounded-xl border border-white/10 bg-navy-900/80 py-2.5 pl-10 pr-3 text-sm text-white outline-none ring-cyan-400 transition placeholder:text-navy-500 focus:ring-2"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-navy-200">
-                  Contraseña
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-navy-400" />
-                  </div>
+                <label className="mb-2 block text-sm font-semibold text-navy-100">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-2.5 h-5 w-5 text-navy-400" />
                   <input
                     type="password"
-                    required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="focus:ring-cyan-500 focus:border-cyan-500 block w-full pl-10 sm:text-sm border-navy-700 bg-navy-800 text-white rounded-md py-2.5"
-                    placeholder="•••••••"
+                    onChange={(event) => setPassword(event.target.value)}
+                    className="w-full rounded-xl border border-white/10 bg-navy-900/80 py-2.5 pl-10 pr-3 text-sm text-white outline-none ring-cyan-400 transition placeholder:text-navy-500 focus:ring-2"
                   />
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-col space-y-2">
-                 <p className="text-xs text-navy-400 mb-2">Usuarios Demo:</p>
-                 <div className="flex gap-2">
-                    <button type="button" onClick={() => setEmail('analista@fraudia.demo')} className="text-xs bg-navy-800 px-2 py-1 rounded text-navy-300 hover:text-white">Analista</button>
-                    <button type="button" onClick={() => setEmail('jefatura@fraudia.demo')} className="text-xs bg-navy-800 px-2 py-1 rounded text-navy-300 hover:text-white">Jefatura</button>
-                    <button type="button" onClick={() => setEmail('auditoria@fraudia.demo')} className="text-xs bg-navy-800 px-2 py-1 rounded text-navy-300 hover:text-white">Auditoría</button>
-                 </div>
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-navy-300">Roles demo</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {demoUsers.map((item) => (
+                    <button
+                      key={item.email}
+                      type="button"
+                      onClick={() => setEmail(item.email)}
+                      className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-xs font-semibold text-navy-200 transition hover:bg-cyan-400/10 hover:text-cyan-200"
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <div>
-                <Button type="submit" variant="secondary" className="w-full" disabled={loading}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Ingresar'}
-                </Button>
-              </div>
+              <Button type="submit" variant="secondary" className="w-full" disabled={loading}>
+                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Ingresar al centro de mando'}
+              </Button>
             </form>
           </CardContent>
         </Card>
+
+        <Disclaimer className="mt-5 border-white/10 bg-white/10 text-navy-100" />
       </div>
     </div>
   );
