@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -19,6 +21,9 @@ RISK_COLORS = {
     "Amarillo": "#B54708",
     "Verde": "#067647",
 }
+
+APP_ASSETS = Path(__file__).resolve().parent / "assets"
+TEAM_LOGO = APP_ASSETS / "manta_bytes_logo.svg"
 
 
 def risk_badge(level: str) -> str:
@@ -42,6 +47,24 @@ def dashboard_styles() -> None:
             color: white;
             margin-bottom: 1rem;
             box-shadow: 0 14px 34px rgba(15, 39, 66, 0.18);
+        }
+        .fraudia-hero-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.2rem;
+        }
+        .fraudia-hero-copy {
+            flex: 1;
+            min-width: 0;
+        }
+        .fraudia-hero-logo {
+            width: 148px;
+            max-width: 28%;
+            padding: .45rem .65rem;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .95);
+            box-shadow: 0 10px 24px rgba(15, 39, 66, 0.18);
         }
         .fraudia-hero h1 {
             margin: 0 0 .35rem 0;
@@ -86,18 +109,58 @@ def dashboard_styles() -> None:
             font-size: .78rem;
             font-weight: 700;
         }
+        .fraudia-team-caption {
+            text-align: center;
+            color: #475467;
+            font-size: .78rem;
+            margin-top: -.35rem;
+            margin-bottom: .65rem;
+        }
+        @media (max-width: 780px) {
+            .fraudia-hero-inner {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .fraudia-hero-logo {
+                max-width: 190px;
+                width: 44%;
+            }
+        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
 
+def _logo_data_uri() -> str:
+    if not TEAM_LOGO.exists():
+        return ""
+    encoded = base64.b64encode(TEAM_LOGO.read_bytes()).decode("ascii")
+    return f"data:image/svg+xml;base64,{encoded}"
+
+
+def team_brand_sidebar() -> None:
+    if TEAM_LOGO.exists():
+        st.sidebar.image(str(TEAM_LOGO), width=210)
+        st.sidebar.markdown(
+            "<div class='fraudia-team-caption'>Manta Bytes | HackIAthon 2026</div>",
+            unsafe_allow_html=True,
+        )
+
+
 def hero(title: str, subtitle: str) -> None:
+    logo = _logo_data_uri()
+    logo_markup = f'<img class="fraudia-hero-logo" src="{logo}" alt="Manta Bytes">' if logo else ""
     st.markdown(
         f"""
         <div class="fraudia-hero">
-            <h1>{title}</h1>
-            <p>{subtitle}</p>
+            <div class="fraudia-hero-inner">
+                <div class="fraudia-hero-copy">
+                    <h1>{title}</h1>
+                    <p>{subtitle}</p>
+                </div>
+                {logo_markup}
+            </div>
         </div>
         """,
         unsafe_allow_html=True,

@@ -32,12 +32,24 @@ def apply_rules(features: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     alerts: list[dict[str, Any]] = []
     totals: dict[str, int] = defaultdict(int)
     criticals: dict[str, bool] = defaultdict(bool)
+    yellow_escalations: dict[str, bool] = defaultdict(bool)
 
-    def add(row: pd.Series, code: str, category: str, severity: str, points: int, description: str, evidence: str, critical: bool = False) -> None:
+    def add(
+        row: pd.Series,
+        code: str,
+        category: str,
+        severity: str,
+        points: int,
+        description: str,
+        evidence: str,
+        critical: bool = False,
+        min_yellow: bool = False,
+    ) -> None:
         claim_id = str(row["id_siniestro"])
         alerts.append(_alert(claim_id, code, category, severity, points, description, evidence, critical))
         totals[claim_id] += int(points)
         criticals[claim_id] = bool(criticals[claim_id] or critical)
+        yellow_escalations[claim_id] = bool(yellow_escalations[claim_id] or min_yellow)
 
     for _, row in features.iterrows():
         claim_id = str(row["id_siniestro"])
@@ -52,6 +64,7 @@ def apply_rules(features: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
                 8,
                 "Siniestro muy cercano al inicio o fin de vigencia.",
                 f"{min_border} dias al borde de vigencia.",
+                min_yellow=min_border <= 1,
             )
         elif min_border <= 30:
             add(row, "RF-05", "Vigencia", "Media", 4, "Siniestro cercano al borde de vigencia.", f"{min_border} dias al borde de vigencia.")
@@ -145,7 +158,16 @@ def apply_rules(features: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
             if "Robo" in str(row["cobertura"]):
                 hours = int(row.get("denuncia_horas", 0))
                 if hours > 48:
-                    add(row, "RF-06", "Denuncia", "Alta", 8, "Demora atipica en denuncia de robo.", f"{hours} horas hasta la denuncia.")
+                    add(
+                        row,
+                        "RF-06",
+                        "Denuncia",
+                        "Alta",
+                        8,
+                        "Demora atipica en denuncia de robo.",
+                        f"{hours} horas hasta la denuncia.",
+                        min_yellow=hours > 96,
+                    )
                 elif hours >= 24:
                     add(row, "RF-06", "Denuncia", "Media", 4, "Demora moderada en denuncia de robo.", f"{hours} horas hasta la denuncia.")
             vehicle_freq = int(row.get("frecuencia_vehiculo_total", 0))
@@ -196,7 +218,12 @@ def apply_rules(features: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 
     summary = pd.DataFrame(
         [
-            {"id_siniestro": claim_id, "score_reglas": int(points), "regla_critica": bool(criticals[claim_id])}
+            {
+                "id_siniestro": claim_id,
+                "score_reglas": int(points),
+                "regla_critica": bool(criticals[claim_id]),
+                "regla_min_amarillo": bool(yellow_escalations[claim_id]),
+            }
             for claim_id, points in totals.items()
         ]
     )

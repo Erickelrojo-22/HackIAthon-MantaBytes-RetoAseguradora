@@ -11,8 +11,8 @@ Importante: FraudIA genera **alertas de revision humana**. No acusa fraude, no r
 - Score trazable: reglas + anomalias + NLP.
 - Modelo supervisado demo con etiqueta sintetica y metricas reproducibles.
 - Semaforo: Verde `0-40`, Amarillo `41-75`, Rojo `76-100`.
-- Dashboard Streamlit con bandeja, detalle, red de relaciones y formulario de caso nuevo.
-- Agente offline con preguntas frecuentes del reto.
+- Dashboard Streamlit con demo guiada, resumen ejecutivo, bandeja, detalle, red de relaciones, caso nuevo y reporte descargable.
+- Agente offline con preguntas frecuentes del reto y explicacion del ultimo caso evaluado en vivo.
 - API minima FastAPI para integracion futura.
 - Integracion OpenAI opcional con herramientas locales de solo lectura.
 
@@ -55,8 +55,11 @@ Endpoints principales:
 - `GET /claims/risk?limit=10&level=Rojo`
 - `GET /claims/{id_siniestro}`
 - `GET /alerts/aggregate?group_by=proveedor`
-- `POST /score-candidate`
+- `GET /alerts/provider-pareto`
+- `GET /relationships?limit=60`
+- `GET /report/summary`
 - `GET /metrics`
+- `POST /score-candidate`
 
 ## Ejecutar en VS Code
 
@@ -102,14 +105,30 @@ El script crea/usa `.venv`, instala dependencias, valida datos, ejecuta tests y 
 
 ## Demo sugerida
 
-1. Mostrar resumen y explicar que los resultados son alertas, no acusaciones.
-2. Abrir la bandeja y filtrar casos rojos.
-3. Entrar al detalle de un caso rojo y revisar reglas, documentos y similitud narrativa.
-4. Abrir la red de relaciones para evidenciar proveedores o asegurados recurrentes.
-5. Preguntar al agente: "Que proveedores concentran mas alertas rojas?"
-6. Preguntar: "Que proveedores concentran el 80% de las alertas rojas?"
-7. Evaluar un caso nuevo ocurrido 24 horas despues de iniciar la poliza.
-8. Mostrar metricas del modelo supervisado y aclarar que usan etiqueta sintetica.
+1. Abrir `Demo guiada` para seguir el flujo del pitch.
+2. Mostrar `Resumen` y explicar que los resultados son alertas, no acusaciones.
+3. Abrir la `Bandeja de revision` y filtrar casos rojos.
+4. Entrar al `Detalle del siniestro` destacado y revisar reglas, documentos y similitud narrativa.
+5. Abrir `Red de relaciones` para evidenciar proveedores o asegurados recurrentes.
+6. En `Agente IA`, preguntar: "Que proveedores concentran el 80% de las alertas rojas?"
+7. Evaluar un caso nuevo con el preset de 24 horas despues de iniciar la poliza.
+8. Preguntar al agente: "Explica el ultimo caso evaluado en vivo."
+9. Descargar el `Reporte ejecutivo` y mostrar el disclaimer etico.
+
+Preguntas del jurado cubiertas por el agente:
+
+- "Cuales son los 10 siniestros con mayor riesgo?"
+- "Por que el siniestro SINxxxxx fue marcado como alto riesgo?"
+- "Que proveedores concentran mas alertas rojas?"
+- "Que ramos tienen mayor porcentaje de casos sospechosos?"
+- "Que ciudades presentan mayor concentracion de alertas?"
+- "Que asegurados tienen mayor frecuencia de reclamos?"
+- "Que documentos faltan en los casos criticos?"
+- "Que casos tienen montos atipicos?"
+- "Que siniestros ocurrieron cerca del inicio de la poliza?"
+- "Que patrones se repiten en los reclamos sospechosos?"
+- "Genera un resumen ejecutivo de los casos criticos."
+- "Recomienda que casos deberia revisar primero el analista."
 
 ## Estructura
 

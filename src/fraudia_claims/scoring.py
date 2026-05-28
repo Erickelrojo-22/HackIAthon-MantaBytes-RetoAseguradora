@@ -92,7 +92,7 @@ def score_claims(tables: dict[str, pd.DataFrame], include_metrics: bool = False)
         features[["id_siniestro", "ramo", "cobertura", "id_asegurado", "id_proveedor", "sucursal", "monto_reclamado"]]
         .merge(rules_summary, on="id_siniestro", how="left")
         .merge(anomaly[["id_siniestro", "anomaly_score", "score_anomalia"]], on="id_siniestro", how="left")
-        .merge(nlp[["id_siniestro", "similitud_narrativa", "siniestro_similar", "score_nlp"]], on="id_siniestro", how="left")
+        .merge(nlp[["id_siniestro", "similitud_narrativa", "siniestro_similar", "score_nlp", "nlp_min_amarillo"]], on="id_siniestro", how="left")
         .merge(supervised[["id_siniestro", "probabilidad_modelo", "score_modelo"]], on="id_siniestro", how="left")
     )
     scores[["score_reglas", "score_anomalia", "score_nlp", "score_modelo"]] = scores[
@@ -100,9 +100,15 @@ def score_claims(tables: dict[str, pd.DataFrame], include_metrics: bool = False)
     ].fillna(0).astype(int)
     scores["probabilidad_modelo"] = scores["probabilidad_modelo"].fillna(0).astype(float)
     scores["regla_critica"] = scores["regla_critica"].fillna(False).astype(bool)
+    if "regla_min_amarillo" not in scores.columns:
+        scores["regla_min_amarillo"] = False
+    scores["regla_min_amarillo"] = scores["regla_min_amarillo"].fillna(False).astype(bool)
+    scores["nlp_min_amarillo"] = scores["nlp_min_amarillo"].fillna(False).astype(bool)
     scores["score_final"] = (
         scores["score_reglas"].clip(upper=60) + scores["score_anomalia"] + scores["score_nlp"] + scores["score_modelo"]
     ).clip(upper=100)
+    nlp_min_yellow = scores["nlp_min_amarillo"]
+    scores.loc[(scores["regla_min_amarillo"] | nlp_min_yellow) & (scores["score_final"] < 41), "score_final"] = 41
     scores.loc[scores["regla_critica"] & (scores["score_final"] < 76), "score_final"] = 76
     scores["score_final"] = scores["score_final"].astype(int)
     scores["nivel_riesgo"] = scores["score_final"].map(level_from_score)

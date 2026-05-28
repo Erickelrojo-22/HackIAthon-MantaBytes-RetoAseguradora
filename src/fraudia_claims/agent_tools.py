@@ -421,18 +421,27 @@ def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
     alerts: list[dict[str, Any]] = []
     points = 0
     critical = False
+    min_yellow = False
 
-    def add(code: str, description: str, pts: int, evidence: str, is_critical: bool = False) -> None:
-        nonlocal points, critical
+    def add(
+        code: str,
+        description: str,
+        pts: int,
+        evidence: str,
+        is_critical: bool = False,
+        force_yellow: bool = False,
+    ) -> None:
+        nonlocal points, critical, min_yellow
         points += int(pts)
         critical = critical or is_critical
+        min_yellow = min_yellow or force_yellow
         alerts.append({"codigo": code, "descripcion": description, "puntos": pts, "evidencia": evidence, "es_critica": is_critical})
 
     days_start = int(data.get("dias_desde_inicio_poliza", 999))
     days_end = int(data.get("dias_desde_fin_poliza", 999))
     border = min(days_start, days_end)
     if border <= 10:
-        add("RF-05", "Siniestro muy cercano al borde de vigencia.", 8, f"{border} dias al borde.")
+        add("RF-05", "Siniestro muy cercano al borde de vigencia.", 8, f"{border} dias al borde.", force_yellow=border <= 1)
     elif border <= 30:
         add("RF-05", "Siniestro cercano al borde de vigencia.", 4, f"{border} dias al borde.")
 
@@ -463,7 +472,8 @@ def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
         if cobertura == "Perdida Total por Robo":
             add("RF-01", "Perdida total por robo requiere revision especializada.", 20, "Cobertura PTxRB.", True)
         if "Robo" in cobertura and int(data.get("denuncia_horas", delay * 24)) > 48:
-            add("RF-06", "Demora atipica en denuncia de robo.", 8, f"{int(data.get('denuncia_horas', delay * 24))} horas.")
+            hours = int(data.get("denuncia_horas", delay * 24))
+            add("RF-06", "Demora atipica en denuncia de robo.", 8, f"{hours} horas.", force_yellow=hours > 96)
         if bool(data.get("dinamica_imposible", False)):
             add("RF-04", "Dinamica fisicamente imposible.", 20, "Marcado en formulario.", True)
         if not bool(data.get("tercero_identificado", True)) and ratio > 0.35:
@@ -473,10 +483,18 @@ def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
     elif ramo == "Hogar" and bool(data.get("factura_duplicada", False)):
         add("RH-01", "Factura repetida en reclamo de hogar.", 8, "Marcado en formulario.")
 
+    if bool(data.get("narrativa_clonada", False)):
+        add("RF-07", "Narrativa identica o clonada.", 8, "Marcado en formulario.", force_yellow=True)
+
     score = min(100, min(points, 60))
+    if min_yellow and score < 41:
+        score = 41
     if critical and score < 76:
         score = 76
     level = level_from_score(score)
+    explanation = " | ".join(
+        f"{alert['descripcion']} ({alert['puntos']} pts)" for alert in alerts[:3]
+    ) or "Sin alertas materiales; mantener flujo normal con controles habituales."
     return {
         "score_final": int(score),
         "nivel_riesgo": level,
@@ -490,5 +508,6 @@ def score_candidate_claim(data: dict[str, Any]) -> dict[str, Any]:
             "Amarillo": "Escalar a revision documental.",
             "Rojo": "Escalar a revision especializada de campo.",
         }[level],
+        "explicacion_resumen": explanation,
         "alertas": alerts,
     }

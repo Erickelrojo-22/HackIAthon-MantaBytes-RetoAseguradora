@@ -164,16 +164,28 @@ def _dispatch(name: str, arguments: dict[str, Any], db_path: Path) -> Any:
     raise ValueError(f"Herramienta no soportada: {name}")
 
 
-def ask_with_openai(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
+def _should_answer_from_session(question: str) -> bool:
+    text = question.lower()
+    return "ultimo caso" in text or "caso evaluado" in text or "evaluado en vivo" in text
+
+
+def ask_with_openai(
+    question: str,
+    db_path: Path = DEFAULT_DB_PATH,
+    session_cases: list[dict[str, Any]] | None = None,
+) -> str:
+    if _should_answer_from_session(question):
+        return answer_offline(question, db_path, session_cases=session_cases)
+
     api_key = os.getenv("OPENAI_API_KEY")
     model = os.getenv("OPENAI_MODEL")
     if not api_key or not model:
-        return answer_offline(question, db_path)
+        return answer_offline(question, db_path, session_cases=session_cases)
 
     try:
         from openai import OpenAI
     except Exception:
-        return answer_offline(question, db_path)
+        return answer_offline(question, db_path, session_cases=session_cases)
 
     client = OpenAI(api_key=api_key)
     instructions = (
@@ -210,10 +222,14 @@ def ask_with_openai(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
                 tools=TOOLS,
             )
         text = getattr(response, "output_text", None)
-        return text.strip() if text else answer_offline(question, db_path)
+        return text.strip() if text else answer_offline(question, db_path, session_cases=session_cases)
     except Exception:
-        return answer_offline(question, db_path)
+        return answer_offline(question, db_path, session_cases=session_cases)
 
 
-def ask_agent(question: str, db_path: Path = DEFAULT_DB_PATH) -> str:
-    return ask_with_openai(question, db_path)
+def ask_agent(
+    question: str,
+    db_path: Path = DEFAULT_DB_PATH,
+    session_cases: list[dict[str, Any]] | None = None,
+) -> str:
+    return ask_with_openai(question, db_path, session_cases=session_cases)

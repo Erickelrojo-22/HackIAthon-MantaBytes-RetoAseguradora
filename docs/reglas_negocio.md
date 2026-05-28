@@ -6,7 +6,7 @@
 score_final = min(100, min(puntos_reglas, 60) + puntos_anomalia + puntos_nlp + puntos_modelo)
 ```
 
-Si una regla critica se activa, el caso escala como minimo a `76` puntos.
+Si una regla critica se activa, el caso escala como minimo a `76` puntos. Si se activa una regla amarilla obligatoria del reto, el caso escala como minimo a `41` puntos.
 
 ## Semaforo
 
@@ -22,6 +22,12 @@ Si una regla critica se activa, el caso escala como minimo a `76` puntos.
 - Proveedor recurrente o en lista restrictiva simulada.
 - Documentos faltantes, ilegibles, inconsistentes o adulterados.
 - Monto cercano a la suma asegurada o atipico frente a la cobertura.
+
+## Escalamientos oficiales del reto
+
+- Minimo rojo: `RF-01` perdida total por robo, `RF-02` adulteracion documental, `RF-03` lista restrictiva y `RF-04` dinamica fisicamente imposible.
+- Minimo amarillo: `RF-05` siniestro extremo al borde de vigencia menor a 48 horas, `RF-06` denuncia de robo mayor a 4 dias y `RF-07` narrativa identica o clonada.
+- El escalamiento no acusa fraude; solo garantiza que el caso aparezca en la bandeja de revision humana.
 
 ## Reglas por ramo
 
