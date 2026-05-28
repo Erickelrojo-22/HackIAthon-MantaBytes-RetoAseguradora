@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 import pandas as pd
+import plotly.express as px
 import streamlit as st
 
 from fraudia_claims.agent_tools import get_claim_detail, list_risk_cases, score_candidate_claim
@@ -17,9 +18,12 @@ from fraudia_claims.analytics import (
 from fraudia_claims.app.components import (
     alerts_markdown,
     case_card,
+    dashboard_styles,
     ethical_notice,
+    hero,
     metric_row,
     risk_badge,
+    section_header,
     session_case_summary,
     show_dataframe,
 )
@@ -84,47 +88,115 @@ def page_demo_guiada(table: TableLoader, db_path: Path = DEFAULT_DB_PATH) -> Non
 
 
 def page_resumen(table: TableLoader, db_path: Path = DEFAULT_DB_PATH) -> None:
+    dashboard_styles()
     scores = table("scores")
     claims = table("siniestros")
-    providers = table("proveedores")
     context = table("contexto_publico")
     kpis = executive_kpis(db_path)
     merged = scores.merge(
-        claims[["id_siniestro", "fecha_ocurrencia", "ramo", "sucursal"]],
+        claims[["id_siniestro", "fecha_ocurrencia", "ramo", "sucursal", "monto_reclamado"]],
         on=["id_siniestro", "ramo"],
         how="left",
     )
 
-    st.title("FraudIA Claims")
-    st.subheader("Priorizacion explicable de siniestros para revision humana")
+    hero(
+        "FraudIA Claims",
+        "Dashboard ejecutivo para priorizar alertas de posible fraude en siniestros. "
+        "El foco es acelerar la revision humana con evidencia trazable.",
+    )
     ethical_notice()
+    section_header("Indicadores ejecutivos", "Resumen de exposicion, prioridad y ahorro potencial simulado.")
     metric_row(kpis)
 
-    by_level = scores["nivel_riesgo"].value_counts().reindex(["Verde", "Amarillo", "Rojo"]).fillna(0)
-    by_ramo = merged.groupby(["ramo", "nivel_riesgo"]).size().unstack(fill_value=0)
-    left, right = st.columns([1, 1])
-    with left:
-        st.write("### Distribucion por nivel")
-        st.bar_chart(by_level)
-    with right:
-        st.write("### Alertas por ramo")
-        st.bar_chart(by_ramo)
+    level_order = ["Verde", "Amarillo", "Rojo"]
+    level_colors = {"Verde": "#12B76A", "Amarillo": "#F79009", "Rojo": "#D92D20"}
+    by_level = (
+        scores["nivel_riesgo"]
+        .value_counts()
+        .reindex(level_order)
+        .fillna(0)
+        .reset_index()
+    )
+    by_level.columns = ["nivel_riesgo", "total"]
+    by_ramo = (
+        merged.groupby(["ramo", "nivel_riesgo"], as_index=False)
+        .agg(total=("id_siniestro", "count"), monto=("monto_reclamado", "sum"))
+    )
+    providers = provider_pareto(10, db_path)
+    cities = city_concentration(10, db_path)
 
-    st.write("### Analitica ejecutiva")
+    section_header("Mapa de riesgo", "Distribucion del semaforo y concentracion por ramo.")
+    left, right = st.columns([0.9, 1.1])
+    with left:
+        fig = px.pie(
+            by_level,
+            names="nivel_riesgo",
+            values="total",
+            hole=0.48,
+            color="nivel_riesgo",
+            color_discrete_map=level_colors,
+        )
+        fig.update_traces(textposition="inside", textinfo="percent+label")
+        fig.update_layout(height=360, margin=dict(l=10, r=10, t=20, b=10), showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    with right:
+        fig = px.bar(
+            by_ramo,
+            x="ramo",
+            y="total",
+            color="nivel_riesgo",
+            color_discrete_map=level_colors,
+            category_orders={"nivel_riesgo": level_order},
+            labels={"ramo": "Ramo", "total": "Siniestros", "nivel_riesgo": "Nivel"},
+        )
+        fig.update_layout(height=360, barmode="stack", margin=dict(l=10, r=10, t=20, b=10), legend_title_text="Nivel")
+        st.plotly_chart(fig, use_container_width=True)
+
+    section_header("Concentracion operativa", "Proveedores y ciudades con mayor carga de revision.")
     c1, c2 = st.columns(2)
     with c1:
-        st.write("#### Pareto de proveedores")
-        show_dataframe(provider_pareto(10, db_path))
+        if providers.empty:
+            show_dataframe(providers)
+        else:
+            fig = px.bar(
+                providers.sort_values("alertas_rojas"),
+                x="alertas_rojas",
+                y="proveedor",
+                orientation="h",
+                color="score_promedio",
+                color_continuous_scale=["#D1E9FF", "#1F4E79"],
+                labels={"alertas_rojas": "Alertas rojas", "proveedor": "Proveedor", "score_promedio": "Score promedio"},
+            )
+            fig.update_layout(height=420, margin=dict(l=10, r=10, t=20, b=10), coloraxis_showscale=False)
+            st.plotly_chart(fig, use_container_width=True)
     with c2:
-        st.write("#### Ciudades con mayor concentracion")
-        show_dataframe(city_concentration(10, db_path))
+        if cities.empty:
+            show_dataframe(cities)
+        else:
+            fig = px.bar(
+                cities,
+                x="ciudad",
+                y="casos_revision",
+                color="porcentaje_revision",
+                color_continuous_scale=["#ECFDF3", "#067647"],
+                labels={"ciudad": "Ciudad", "casos_revision": "Casos revision", "porcentaje_revision": "% revision"},
+            )
+            fig.update_layout(height=420, margin=dict(l=10, r=10, t=20, b=10), coloraxis_showscale=False)
+            st.plotly_chart(fig, use_container_width=True)
 
-    st.write("### Fuente publica de contexto")
+    section_header("Tablero para analistas", "Casos prioritarios y tablas de soporte para auditoria.")
+    t1, t2 = st.columns([1.2, 1])
+    with t1:
+        st.write("#### Top 10 para revision")
+        top = pd.DataFrame(list_risk_cases(limit=10, db_path=db_path))
+        show_dataframe(top)
+    with t2:
+        st.write("#### Pareto de proveedores")
+        show_dataframe(providers)
+
+    st.write("#### Fuente publica de contexto")
     st.dataframe(context, hide_index=True, use_container_width=True)
     st.markdown(f"Portal de referencia: [SCVS - informacion de seguros]({SCVS_CONTEXT_URL})")
-
-    st.write("### Top 10 para revision")
-    st.dataframe(pd.DataFrame(list_risk_cases(limit=10, db_path=db_path)), hide_index=True, use_container_width=True)
 
 
 def page_bandeja(table: TableLoader) -> None:
