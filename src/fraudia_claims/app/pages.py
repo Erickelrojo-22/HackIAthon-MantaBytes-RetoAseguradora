@@ -49,6 +49,28 @@ def _set_selected_claim(claim_id: str) -> None:
     st.session_state["selected_claim_id"] = claim_id
 
 
+def summary_risk_frames(scores: pd.DataFrame, claims: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    merged = scores.merge(
+        claims[["id_siniestro", "fecha_ocurrencia", "ramo", "sucursal"]],
+        on=["id_siniestro", "ramo"],
+        how="left",
+    )
+    level_order = ["Verde", "Amarillo", "Rojo"]
+    by_level = (
+        scores["nivel_riesgo"]
+        .value_counts()
+        .reindex(level_order)
+        .fillna(0)
+        .reset_index()
+    )
+    by_level.columns = ["nivel_riesgo", "total"]
+    by_ramo = (
+        merged.groupby(["ramo", "nivel_riesgo"], as_index=False)
+        .agg(total=("id_siniestro", "count"), monto=("monto_reclamado", "sum"))
+    )
+    return by_level, by_ramo
+
+
 def page_demo_guiada(table: TableLoader, db_path: Path = DEFAULT_DB_PATH) -> None:
     st.title("Demo guiada")
     ethical_notice()
@@ -93,11 +115,6 @@ def page_resumen(table: TableLoader, db_path: Path = DEFAULT_DB_PATH) -> None:
     claims = table("siniestros")
     context = table("contexto_publico")
     kpis = executive_kpis(db_path)
-    merged = scores.merge(
-        claims[["id_siniestro", "fecha_ocurrencia", "ramo", "sucursal", "monto_reclamado"]],
-        on=["id_siniestro", "ramo"],
-        how="left",
-    )
 
     hero(
         "FraudIA Claims",
@@ -108,20 +125,9 @@ def page_resumen(table: TableLoader, db_path: Path = DEFAULT_DB_PATH) -> None:
     section_header("Indicadores ejecutivos", "Resumen de exposicion, prioridad y ahorro potencial simulado.")
     metric_row(kpis)
 
-    level_order = ["Verde", "Amarillo", "Rojo"]
     level_colors = {"Verde": "#12B76A", "Amarillo": "#F79009", "Rojo": "#D92D20"}
-    by_level = (
-        scores["nivel_riesgo"]
-        .value_counts()
-        .reindex(level_order)
-        .fillna(0)
-        .reset_index()
-    )
-    by_level.columns = ["nivel_riesgo", "total"]
-    by_ramo = (
-        merged.groupby(["ramo", "nivel_riesgo"], as_index=False)
-        .agg(total=("id_siniestro", "count"), monto=("monto_reclamado", "sum"))
-    )
+    level_order = ["Verde", "Amarillo", "Rojo"]
+    by_level, by_ramo = summary_risk_frames(scores, claims)
     providers = provider_pareto(10, db_path)
     cities = city_concentration(10, db_path)
 
