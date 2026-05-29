@@ -1,9 +1,10 @@
 import type { FormEvent } from 'react';
-import { useState } from 'react';
-import { BotMessageSquare, Loader2, Send } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { BotMessageSquare, Loader2, Send, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
+import { useAuth } from '../contexts/useAuth';
 
 const suggestions = [
   'Cuales son los 10 siniestros con mayor riesgo?',
@@ -12,10 +13,28 @@ const suggestions = [
   'Que documentos faltan en los casos criticos?',
 ];
 
+type AgentMessage = { role: 'user' | 'agent'; content: string; source?: string };
+
+function readStoredMessages(storageKey: string): AgentMessage[] {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 export function Agent() {
+  const { user } = useAuth();
+  const storageKey = useMemo(() => `fraudia.agent.messages.${user?.email ?? 'anonymous'}`, [user?.email]);
   const [question, setQuestion] = useState('');
-  const [messages, setMessages] = useState<{ role: 'user' | 'agent'; content: string; source?: string }[]>([]);
+  const [messages, setMessages] = useState<AgentMessage[]>(() => readStoredMessages(storageKey));
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(messages));
+  }, [messages, storageKey]);
 
   const ask = async (text: string) => {
     if (!text.trim()) return;
@@ -33,6 +52,12 @@ export function Agent() {
     }
   };
 
+  const clearChat = () => {
+    localStorage.removeItem(storageKey);
+    setMessages([]);
+    setQuestion('');
+  };
+
   const handleSend = (event: FormEvent) => {
     event.preventDefault();
     ask(question);
@@ -40,9 +65,15 @@ export function Agent() {
 
   return (
     <div className="mx-auto flex h-[calc(100vh-9rem)] max-w-5xl flex-col space-y-5">
-      <div>
-        <h1 className="text-3xl font-black text-navy-950">Agente IA</h1>
-        <p className="text-sm text-navy-500">Responde con herramientas locales y fallback offline si OpenAI no esta configurado.</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-black text-navy-950">Agente IA</h1>
+          <p className="text-sm text-navy-500">Responde con herramientas locales y conserva esta sesion de chat en tu navegador.</p>
+        </div>
+        <Button type="button" variant="outline" size="sm" onClick={clearChat} disabled={messages.length === 0 || loading}>
+          <Trash2 className="mr-2 h-4 w-4" />
+          Limpiar chat
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-2">
