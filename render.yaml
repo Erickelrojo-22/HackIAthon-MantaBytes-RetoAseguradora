@@ -8,15 +8,15 @@ services:
     healthCheckPath: /health
     envVars:
       - key: FRAUDIA_DB_BACKEND
-        value: sqlite
-      - key: FRAUDIA_DB_PATH
-        value: data/processed/fraudia_claims.db
+        value: postgres
+      - key: FRAUDIA_DATABASE_URL
+        sync: false
       - key: OPENAI_API_KEY
         sync: false
       - key: OPENAI_MODEL
         value: gpt-5.4-mini
       - key: FRAUDIA_DATA_SOURCE
-        value: demo
+        value: company_synthetic
   - type: web
     name: fraudia-frontend
     runtime: static
