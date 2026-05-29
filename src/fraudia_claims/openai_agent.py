@@ -5,7 +5,6 @@ import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal
-from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +22,7 @@ from fraudia_claims.agent_tools import (
     score_candidate_claim,
     top_insured_frequency,
 )
+from fraudia_claims.agent_intents import is_fast_local_question
 from fraudia_claims.config import DEFAULT_DB_PATH
 from fraudia_claims.offline_agent import answer_offline
 from fraudia_claims.utils import money, normalize_text
@@ -214,10 +214,7 @@ def _should_answer_from_session(question: str) -> bool:
 
 
 def _is_fast_local_question(question: str) -> bool:
-    text = normalize_text(question)
-    if text in FAST_LOCAL_QUESTIONS:
-        return True
-    return any(SequenceMatcher(None, text, candidate).ratio() >= 0.92 for candidate in FAST_LOCAL_QUESTIONS)
+    return is_fast_local_question(question)
 
 
 def _format_local_table(rows: list[dict[str, Any]], columns: list[str]) -> str:
@@ -246,25 +243,23 @@ def _format_local_cases(rows: list[dict[str, Any]]) -> str:
 
 
 def _fast_local_answer(question: str, db_path: Path, session_cases: list[dict[str, Any]] | None = None) -> str:
-    text = normalize_text(question)
-    if "resumen ejecutivo" in text or text == "genera un resumen ejecutivo de los casos criticos":
-        report = executive_report(db_path=db_path)
-        savings = report["ahorro_potencial_simulado"]
+    return _safe_offline_answer(question, db_path, session_cases=session_cases)
+
+
+def _safe_offline_answer(
+    question: str,
+    db_path: Path,
+    session_cases: list[dict[str, Any]] | None = None,
+) -> str:
+    try:
+        return answer_offline(question, db_path, session_cases=session_cases)
+    except Exception:
+        LOGGER.exception("Offline agent fallback failed")
         return (
-            "### Resumen ejecutivo\n"
-            "El prototipo prioriza casos para revision humana con reglas trazables, anomalias, NLP y modelo supervisado demo. "
-            "Los scores no constituyen acusaciones ni decisiones automaticas.\n\n"
-            f"- Total de siniestros: **{report['resumen'].get('total_siniestros', 0)}**\n"
-            f"- Casos rojos: **{report['resumen'].get('rojos', 0)}**\n"
-            f"- Casos amarillos: **{report['resumen'].get('amarillos', 0)}**\n"
-            f"- Ahorro potencial simulado: **{money(savings['monto_estimado'])}** "
-            f"sobre una base de revision de {money(savings['base_revision_rojo_amarillo'])}.\n\n"
-            "Casos mas urgentes:\n\n"
-            f"{_format_local_cases(report['top_casos'][:5])}\n\n"
-            "Proveedores destacados por concentracion de alertas rojas:\n\n"
-            f"{_format_local_table(report['proveedores_80_20'][:5], ['proveedor', 'tipo', 'alertas_rojas', 'porcentaje_acumulado', 'score_promedio'])}"
+            "No pude completar la consulta con las herramientas locales en este momento. "
+            "Puedes preguntar por casos de mayor riesgo, proveedores críticos, documentos, métricas o un SIN específico. "
+            "El score es una alerta de revisión humana; no es una acusación ni una decisión automática."
         )
-    return answer_offline(question, db_path, session_cases=session_cases)
 
 
 def ask_with_openai(
@@ -283,7 +278,7 @@ def _with_disclaimer(answer: str) -> str:
         return answer
     return (
         answer.rstrip()
-        + "\n\nNota: este score es una alerta de revision humana; no es una acusacion ni una decision automatica."
+        + "\n\nNota: este score es una alerta de revisión humana; no es una acusación ni una decisión automática."
     )
 
 
@@ -292,8 +287,14 @@ def ask_with_openai_status(
     db_path: Path = DEFAULT_DB_PATH,
     session_cases: list[dict[str, Any]] | None = None,
 ) -> tuple[str, str]:
+    question = (question or "").strip()
+    if not question:
+        return _safe_offline_answer(question, db_path, session_cases=session_cases), "Validación local"
+    if len(question) > 1200:
+        return _safe_offline_answer(question, db_path, session_cases=session_cases), "Validación local"
+
     if _should_answer_from_session(question):
-        return answer_offline(question, db_path, session_cases=session_cases), "Sesion local"
+        return _safe_offline_answer(question, db_path, session_cases=session_cases), "Sesion local"
 
     if _is_fast_local_question(question):
         return _fast_local_answer(question, db_path, session_cases=session_cases), "Herramientas locales rapidas"
@@ -301,17 +302,18 @@ def ask_with_openai_status(
     api_key = os.getenv("OPENAI_API_KEY")
     model = os.getenv("OPENAI_MODEL")
     if not api_key or not model:
-        return answer_offline(question, db_path, session_cases=session_cases), "Offline: faltan credenciales OpenAI"
+        return _safe_offline_answer(question, db_path, session_cases=session_cases), "Offline"
 
     try:
         from openai import OpenAI
     except Exception:
-        return answer_offline(question, db_path, session_cases=session_cases), "Offline: paquete openai no disponible"
+        return _safe_offline_answer(question, db_path, session_cases=session_cases), "Offline"
 
     client = OpenAI(api_key=api_key)
     instructions = (
-        "Eres FraudIA Claims, un agente para una aseguradora. Responde en espanol, con tono ejecutivo y claro. "
-        "Tu salida siempre debe decir que el score es una alerta de revision humana, no una acusacion ni decision automatica. "
+        "Eres FraudIA Claims, un agente para una aseguradora. Responde siempre en español, con tono ejecutivo y claro. "
+        "Usa tildes y caracteres propios del español, como ñ, cuando correspondan. "
+        "Tu salida siempre debe decir que el score es una alerta de revisión humana, no una acusación ni decisión automática. "
         "Usa solo las herramientas locales; no inventes datos."
     )
     try:
@@ -345,10 +347,10 @@ def ask_with_openai_status(
         text = getattr(response, "output_text", None)
         if text:
             return _with_disclaimer(text.strip()), f"OpenAI activo ({model})"
-        return answer_offline(question, db_path, session_cases=session_cases), "Offline: respuesta OpenAI vacia"
+        return _safe_offline_answer(question, db_path, session_cases=session_cases), "Offline"
     except Exception:
         LOGGER.exception("OpenAI agent fallback activated")
-        return answer_offline(question, db_path, session_cases=session_cases), "Offline"
+        return _safe_offline_answer(question, db_path, session_cases=session_cases), "Offline"
 
 
 def ask_agent(

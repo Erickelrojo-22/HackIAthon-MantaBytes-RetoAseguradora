@@ -150,17 +150,58 @@ def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PAT
                 COUNT(*) AS total_documentos_observados,
                 SUM(CASE WHEN NOT d.entregado THEN 1 ELSE 0 END) AS faltantes,
                 SUM(CASE WHEN NOT d.legible THEN 1 ELSE 0 END) AS ilegibles,
-                SUM(CASE WHEN d.inconsistencia_detectada THEN 1 ELSE 0 END) AS inconsistentes
+                SUM(CASE WHEN d.inconsistencia_detectada THEN 1 ELSE 0 END) AS inconsistentes,
+                SUM(CASE WHEN COALESCE(d.observacion, '') <> '' THEN 1 ELSE 0 END) AS observaciones
             FROM documentos d
             JOIN scores sc ON sc.id_siniestro = d.id_siniestro
-            WHERE sc.nivel_riesgo = 'Rojo'
-              AND (NOT d.entregado OR NOT d.legible OR d.inconsistencia_detectada)
+            WHERE sc.nivel_riesgo IN ('Rojo', 'Amarillo')
+              AND (
+                NOT d.entregado
+                OR NOT d.legible
+                OR d.inconsistencia_detectada
+                OR COALESCE(d.observacion, '') <> ''
+              )
             GROUP BY d.tipo_documento
             ORDER BY total_documentos_observados DESC
         """
     else:
         raise ValueError(f"Agrupacion no soportada: {group_by}")
     return execute_rows_cached(query, db_path=db_path)
+
+
+def list_document_findings(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
+    query = """
+        SELECT
+            d.id_siniestro,
+            sc.score_final,
+            sc.nivel_riesgo,
+            si.ramo,
+            si.cobertura,
+            d.tipo_documento,
+            d.entregado,
+            d.legible,
+            d.inconsistencia_detectada,
+            d.adulteracion_confirmada,
+            COALESCE(d.observacion, '') AS observacion
+        FROM documentos d
+        JOIN scores sc ON sc.id_siniestro = d.id_siniestro
+        JOIN siniestros si ON si.id_siniestro = d.id_siniestro
+        WHERE sc.nivel_riesgo IN ('Rojo', 'Amarillo')
+          AND (
+            NOT d.entregado
+            OR NOT d.legible
+            OR d.inconsistencia_detectada
+            OR d.adulteracion_confirmada
+            OR COALESCE(d.observacion, '') <> ''
+          )
+        ORDER BY
+            CASE sc.nivel_riesgo WHEN 'Rojo' THEN 0 WHEN 'Amarillo' THEN 1 ELSE 2 END,
+            sc.score_final DESC,
+            d.id_siniestro,
+            d.tipo_documento
+        LIMIT :limit
+    """
+    return execute_rows_cached(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def get_model_metrics(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
