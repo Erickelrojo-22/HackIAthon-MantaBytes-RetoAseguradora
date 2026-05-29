@@ -50,4 +50,4 @@ Los casos evaluados en vivo no se entregan como herramienta persistente al LLM. 
 
 `vision.py` permite analizar fotos de siniestros con la Responses API cuando existen `OPENAI_API_KEY` y `OPENAI_MODEL`. La imagen se envia como `input_image` codificada en data URL, siguiendo el flujo de Vision de OpenAI.
 
-El resultado queda solo en `st.session_state` durante la demo. No se persiste la imagen, no modifica `scores` y siempre se presenta como apoyo para revision humana, no como conclusion de fraude.
+En la version actual el frontend React consume la API y puede mantener resultados visuales de forma temporal en el cliente hasta que se agregue persistencia dedicada. No se persiste la imagen, no modifica `scores` y siempre se presenta como apoyo para revision humana, no como conclusion de fraude.

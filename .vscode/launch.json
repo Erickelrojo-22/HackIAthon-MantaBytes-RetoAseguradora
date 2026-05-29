@@ -2,17 +2,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "FraudIA: Streamlit",
+      "name": "FraudIA: FastAPI",
       "type": "debugpy",
       "request": "launch",
-      "module": "streamlit",
+      "module": "uvicorn",
       "args": [
-        "run",
-        "src\\fraudia_claims\\app\\main.py",
-        "--server.address",
-        "127.0.0.1",
-        "--server.port",
-        "8501"
+        "fraudia_claims.api:app",
+        "--app-dir",
+        "src",
+        "--reload"
       ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",

@@ -21,20 +21,18 @@ La demo ya tiene:
 - Dataset sintetico reproducible con 3.000 siniestros.
 - CSVs en `data/synthetic/`.
 - Base SQLite en `data/processed/fraudia_claims.db`.
-- Dashboard Streamlit con:
-  - Demo guiada
-  - Resumen ejecutivo
+- Frontend React/Vite en `frontend/` con:
+  - Login demo por rol
+  - Centro de mando
   - Bandeja de revision
-  - Detalle del siniestro
-  - Evaluar caso nuevo
-  - Red de relaciones
+  - Expediente del siniestro
+  - Prueba del jurado
   - Agente IA
-  - Reporte ejecutivo
-  - Metodologia y limitaciones
+  - Auditoria
 - Logo del equipo Manta Bytes integrado en el dashboard.
 - Agente offline funcional sin internet.
 - OpenAI opcional con fallback offline.
-- API FastAPI para integracion futura.
+- API FastAPI como backend principal.
 - Tests automatizados.
 
 Rama principal de trabajo actual:
@@ -58,22 +56,30 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-Ejecutar Streamlit:
+Ejecutar backend API:
 
 ```powershell
-.\.venv\Scripts\python.exe -m streamlit run src\fraudia_claims\app\main.py
+.\.venv\Scripts\python.exe -m uvicorn fraudia_claims.api:app --app-dir src --reload
+```
+
+Ejecutar frontend React:
+
+```powershell
+cd frontend
+npm install
+npm run dev
 ```
 
 Abrir en navegador:
 
 ```text
-http://localhost:8501
+http://localhost:5173
 ```
 
-Ejecutar API:
+Documentacion de la API:
 
-```powershell
-.\.venv\Scripts\python.exe -m uvicorn fraudia_claims.api:app --app-dir src --reload
+```text
+http://127.0.0.1:8000/docs
 ```
 
 Ejecutar pruebas:
@@ -106,9 +112,9 @@ Si no existe, esta incompleta o se llama con `force=True`, se regenera todo:
 1. `synthetic_data.py` crea datos sinteticos.
 2. `scoring.py` calcula reglas, anomalias, NLP y modelo supervisado demo.
 3. Se guardan CSVs y SQLite.
-4. La app, API y agente leen desde SQLite.
+4. La API y el agente leen desde SQLite/PostgreSQL segun configuracion.
 
-Importante: los casos nuevos evaluados en vivo **no se guardan en SQLite**; viven solo en `st.session_state`.
+Importante: los casos nuevos evaluados desde el frontend **no se guardan en SQLite**; se calculan como simulacion temporal.
 
 ## 5. Arquitectura del sistema
 
@@ -127,10 +133,8 @@ Modulos principales:
 - `analytics.py`: KPIs y analitica ejecutiva.
 - `reports.py`: reporte HTML descargable.
 - `network.py`: grafo de relaciones.
-- `api.py`: endpoints FastAPI.
-- `app/main.py`: orquestador Streamlit.
-- `app/pages.py`: paginas de la interfaz.
-- `app/components.py`: componentes visuales reutilizables.
+- `api.py`: endpoints FastAPI para el frontend.
+- `frontend/`: aplicacion React/Vite.
 
 ## 6. Scoring y reglas
 
@@ -221,13 +225,13 @@ No hacer:
 
 Opciones de mejora de bajo riesgo:
 
-- Pulir textos visuales del dashboard para captura en redes.
+- Pulir componentes visuales del frontend React para captura en redes.
 - Mejorar el reporte ejecutivo HTML.
 - Agregar mas preguntas sugeridas al agente.
 - Revisar ortografia y consistencia de docs.
 - Crear una presentacion PPTX/PDF a partir de `presentation/pitch_ejecutivo.md`.
 - Mejorar el README con capturas.
-- Agregar tests para paginas especificas de Streamlit.
+- Agregar tests de componentes o flujos del frontend.
 
 Opciones de mejora de riesgo medio:
 
@@ -246,8 +250,9 @@ Si se toca scoring o datos, siempre correr la suite completa y revisar que la de
 - `docs/reglas_negocio.md`
 - `docs/uso_ia.md`
 - `presentation/pitch_ejecutivo.md`
-- `src/fraudia_claims/app/main.py`
-- `src/fraudia_claims/app/pages.py`
+- `frontend/src/App.tsx`
+- `frontend/src/pages/Dashboard.tsx`
+- `frontend/src/pages/Claims.tsx`
 - `src/fraudia_claims/agent_tools.py`
 - `src/fraudia_claims/storage.py`
 

@@ -1,6 +1,6 @@
 # FraudIA Claims Frontend
 
-Frontend moderno y empresarial para FraudIA Claims, construido como SPA separada del backend Streamlit/FastAPI.
+Frontend moderno y empresarial para FraudIA Claims, construido como SPA separada que consume el backend FastAPI.
 
 Stack:
 

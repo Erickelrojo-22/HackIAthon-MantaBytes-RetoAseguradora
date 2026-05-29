@@ -11,7 +11,7 @@ Importante: FraudIA genera **alertas de revision humana**. No acusa fraude, no r
 - Score trazable: reglas + anomalias + NLP.
 - Modelo supervisado demo con etiqueta sintetica y metricas reproducibles.
 - Semaforo: Verde `0-40`, Amarillo `41-75`, Rojo `76-100`.
-- Dashboard Streamlit con demo guiada, resumen ejecutivo, bandeja, detalle, red de relaciones, caso nuevo y reporte descargable.
+- Frontend React/Vite empresarial con login demo, centro de mando, bandeja, expediente, agente, auditoria y prueba del jurado.
 - Agente offline con preguntas frecuentes del reto y explicacion del ultimo caso evaluado en vivo.
 - Analisis opcional de imagenes con OpenAI Vision en sesion, sin modificar scores.
 - API minima FastAPI para integracion futura.
@@ -72,17 +72,23 @@ $env:FRAUDIA_COMPANY_DATA_DIR="data/company_synthetic"
 
 El loader valida columnas antes de cargar. No se debe versionar ese dataset hasta confirmar autorizacion y naturaleza 100% sintetica.
 
-## Ejecutar app
-
-```powershell
-.\.venv\Scripts\python -m streamlit run src\fraudia_claims\app\main.py
-```
-
-## Ejecutar API
+## Ejecutar backend API
 
 ```powershell
 .\.venv\Scripts\python -m uvicorn fraudia_claims.api:app --app-dir src --reload
 ```
+
+La API queda disponible en `http://127.0.0.1:8000` y su documentacion interactiva en `http://127.0.0.1:8000/docs`.
+
+## Ejecutar frontend React
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+El frontend queda disponible normalmente en `http://localhost:5173`.
 
 Endpoints principales:
 
@@ -101,17 +107,20 @@ Endpoints principales:
 1. Abre esta carpeta en VS Code.
 2. Acepta el interprete recomendado: `.venv\Scripts\python.exe`.
 3. Ve a `Terminal > Run Task...`.
-4. Ejecuta `FraudIA: Run Streamlit app`.
-5. Abre `http://127.0.0.1:8501` en el navegador.
+4. Ejecuta `FraudIA: Run API`.
+5. En otra terminal ejecuta `FraudIA: Run React frontend`.
+6. Abre `http://localhost:5173` en el navegador.
 
 Tareas disponibles:
 
-- `FraudIA: Run Streamlit app`
+- `FraudIA: Run API`
+- `FraudIA: Run React frontend`
+- `FraudIA: Build React frontend`
 - `FraudIA: Generate demo data`
 - `FraudIA: Run tests`
 - `FraudIA: Compile check`
 
-Tambien puedes usar `Run and Debug > FraudIA: Streamlit` para levantar la app desde el depurador.
+Tambien puedes usar `Run and Debug > FraudIA: FastAPI` para levantar el backend desde el depurador.
 
 ## Modo OpenAI opcional
 
@@ -126,7 +135,7 @@ El modelo recomendado para la demo queda preconfigurado como `gpt-5.4-mini`. Cad
 
 Si las variables no existen, la app funciona en modo offline. El LLM no modifica scores persistidos; solo redacta respuestas usando herramientas locales.
 
-Para que jurados o invitados prueben la IA sin configurar nada, despliega el proyecto y guarda `OPENAI_API_KEY` como secreto del servidor. En Render, `render.yaml` ya deja `OPENAI_MODEL=gpt-5.4-mini` y SQLite demo preconfigurados; solo falta agregar el secreto `OPENAI_API_KEY` en el panel de Environment. En Streamlit Cloud, copia `.streamlit/secrets.example.toml` en la seccion Secrets y reemplaza el placeholder por la key real.
+Para que jurados o invitados prueben la IA sin configurar nada, despliega el proyecto y guarda `OPENAI_API_KEY` como secreto del backend. En Render, `render.yaml` define un servicio `fraudia-api` y un sitio estatico `fraudia-frontend`; solo falta agregar el secreto `OPENAI_API_KEY` en el panel de Environment del backend.
 
 ## Pruebas
 
@@ -140,19 +149,18 @@ Prueba automatizada completa en Windows:
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_project_tests.ps1
 ```
 
-El script crea/usa `.venv`, instala dependencias, valida datos, ejecuta tests y verifica API + Streamlit.
+El script crea/usa `.venv`, instala dependencias, valida datos, ejecuta tests, verifica la API y compila el frontend React.
 
 ## Demo sugerida
 
-1. Abrir `Demo guiada` para seguir el flujo del pitch.
-2. Mostrar `Resumen` y explicar que los resultados son alertas, no acusaciones.
+1. Abrir el frontend React y entrar con `analista@fraudia.demo` / `demo123`.
+2. Mostrar el `Centro de mando` y explicar que los resultados son alertas, no acusaciones.
 3. Abrir la `Bandeja de revision` y filtrar casos rojos.
-4. Entrar al `Detalle del siniestro` destacado y revisar reglas, documentos y similitud narrativa.
-5. Abrir `Red de relaciones` para evidenciar proveedores o asegurados recurrentes.
+4. Entrar al `Expediente del siniestro` destacado y revisar reglas, documentos, historial humano y explicacion IA.
+5. Registrar una decision humana como `Escalado` para demostrar trazabilidad.
 6. En `Agente IA`, preguntar: "Que proveedores concentran el 80% de las alertas rojas?"
-7. Evaluar un caso nuevo con el preset de 24 horas despues de iniciar la poliza.
-8. Preguntar al agente: "Explica el ultimo caso evaluado en vivo."
-9. Descargar el `Reporte ejecutivo` y mostrar el disclaimer etico.
+7. Abrir `Prueba del jurado`, evaluar un caso temporal y remarcar que no modifica scores persistidos.
+8. Abrir `Auditoria` y mostrar que las consultas y decisiones quedan registradas.
 
 Preguntas del jurado cubiertas por el agente:
 
@@ -174,6 +182,7 @@ Preguntas del jurado cubiertas por el agente:
 ```text
 data/
 docs/
+frontend/
 presentation/
 scripts/
 src/fraudia_claims/

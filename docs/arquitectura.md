@@ -15,10 +15,10 @@ flowchart LR
     E --> F
     B --> J["Modelo supervisado con etiqueta sintetica"]
     J --> F
-    F --> G["Dashboard Streamlit"]
+    API --> G["Frontend React/Vite"]
     F --> H["Red de relaciones"]
     F --> I["Agente IA offline/OpenAI opcional"]
-    F --> API["API minima FastAPI"]
+    F --> API["API FastAPI"]
     G --> REP["Reporte ejecutivo HTML"]
 ```
 
@@ -32,9 +32,8 @@ flowchart LR
 - `scoring.py`: combina reglas, anomalias y NLP en el semaforo oficial.
 - `agent_tools.py`: expone consultas seguras de solo lectura y scoring temporal.
 - `offline_agent.py` y `openai_agent.py`: responden preguntas del jurado.
-- `app/main.py`: orquestador Streamlit liviano.
-- `app/pages.py`: paginas de demo guiada, dashboard, bandeja, detalle, caso nuevo, agente y reporte.
-- `api.py`: API minima para integracion futura.
+- `api.py`: API FastAPI para frontend, agente, scoring temporal, auditoria y revision humana.
+- `frontend/`: aplicacion React/Vite para centro de mando, bandeja, expediente, agente, auditoria y prueba del jurado.
 
 ## Decisiones
 
@@ -43,7 +42,7 @@ flowchart LR
 - CSV permite inspeccion y regeneracion de datos.
 - El LLM queda fuera del calculo del score para mantener trazabilidad.
 - Las metricas supervisadas se calculan con etiqueta sintetica; sirven para demo tecnica, no para prometer desempeno real.
-- Los casos nuevos evaluados en vivo se guardan solo en sesion y no modifican la base persistida.
+- Los casos nuevos evaluados desde el frontend se calculan como simulacion temporal y no modifican la base persistida.
 
 ## Configuracion de base de datos
 

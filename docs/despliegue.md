@@ -5,11 +5,12 @@
 La ruta mas simple es:
 
 1. GitHub como repositorio principal.
-2. Render Web Service para Streamlit.
-3. SQLite demo incluido para que el jurado no dependa de una base externa.
-4. `OPENAI_API_KEY` configurada como secreto del servicio.
+2. Render Web Service para `fraudia-api`.
+3. Render Static Site para `fraudia-frontend`.
+4. SQLite demo incluido para que el jurado no dependa de una base externa.
+5. `OPENAI_API_KEY` configurada como secreto del backend.
 
-El archivo `render.yaml` deja preparado el servicio web para demo publica. En Render se debe conectar el repositorio y definir solo este secreto:
+El archivo `render.yaml` deja preparado el backend y el frontend para demo publica. En Render se debe conectar el repositorio y definir este secreto en `fraudia-api`:
 
 - `OPENAI_API_KEY`
 
@@ -29,14 +30,15 @@ Para el dia de la presentacion, el flujo recomendado es:
 1. Hacer push del repositorio a GitHub.
 2. Crear el Web Service en Render desde ese repo.
 3. En `Environment`, agregar `OPENAI_API_KEY` como secret.
-4. Desplegar y probar `Agente IA` con la pregunta: `Que proveedores concentran el 80% de las alertas rojas?`
-5. Probar `Analisis de imagenes` con una imagen `jpg`, `png` o `webp`.
+4. Desplegar y probar el frontend React.
+5. Probar `Agente IA` con la pregunta: `Que proveedores concentran el 80% de las alertas rojas?`
+6. Probar la `Prueba del jurado` y una decision humana para generar auditoria.
 
 Los jurados no necesitan conocer ni configurar la API key; solo abren el URL publico del despliegue.
 
-## Alternativa Streamlit Cloud
+## Configuracion del frontend
 
-Si se usa Streamlit Cloud, copiar el contenido de `.streamlit/secrets.example.toml` en la seccion `Secrets` de la app y reemplazar `OPENAI_API_KEY` por la key real. El proyecto tambien lee `st.secrets`, asi que no hace falta crear `.env` en la nube.
+El frontend usa `VITE_API_URL` para apuntar al backend. En local, por defecto consume `http://127.0.0.1:8000`. En Render se debe configurar con el URL publico del servicio `fraudia-api`.
 
 ## Inicializacion de datos
 
@@ -67,7 +69,7 @@ La carga falla si faltan columnas minimas, para evitar una demo rota por estruct
 Para pasar de demo a disponibilidad continua:
 
 - Usar PostgreSQL administrado con backups automaticos.
-- Separar Streamlit y API si se necesita consumo externo.
+- Mantener frontend y API como servicios separados.
 - Guardar imagenes en object storage, no en disco local del servidor.
 - Agregar observabilidad: logs de errores, tiempos de respuesta y alertas de caida.
 - Migrar de `if_exists="replace"` a migraciones controladas con Alembic.

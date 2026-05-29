@@ -30,10 +30,10 @@ f77ee65 Prepare secure AI deployment for judges
 c4bb6e1 Add optional vision analysis page
 ```
 
-Backend disponible:
+Backend y frontend disponibles:
 
 - FastAPI en `src/fraudia_claims/api.py`.
-- Streamlit actual en `src/fraudia_claims/app/main.py`.
+- Frontend React/Vite en `frontend/`.
 - SQLite local por defecto.
 - PostgreSQL soportado por variables de entorno.
 - OpenAI opcional con fallback offline.
@@ -69,10 +69,12 @@ Documentacion interactiva:
 http://127.0.0.1:8000/docs
 ```
 
-Streamlit demo actual:
+Frontend React:
 
 ```powershell
-.\.venv\Scripts\python.exe -m streamlit run src\fraudia_claims\app\main.py
+cd frontend
+npm install
+npm run dev
 ```
 
 ## Autenticacion Demo
@@ -412,7 +414,7 @@ Flujo:
 
 ### 6. Analisis De Imagenes
 
-Actualmente Streamlit tiene la pagina con OpenAI Vision. Para frontend separado todavia no hay endpoint dedicado de imagen.
+Actualmente no hay endpoint dedicado de imagen en la API publica.
 
 Opcion recomendada para frontend:
 
@@ -548,7 +550,7 @@ frontend/src/lib/api.ts
 - Agente.
 - Vision cuando exista endpoint dedicado.
 
-6. Mantener Streamlit como respaldo de demo mientras el frontend nuevo madura.
+6. Mantener el frontend React como interfaz principal de demo.
 
 ## Frase Guia Del Producto
 

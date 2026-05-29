@@ -2,18 +2,16 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "FraudIA: Run Streamlit app",
+      "label": "FraudIA: Run API",
       "type": "shell",
       "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
       "args": [
         "-m",
-        "streamlit",
-        "run",
-        "src\\fraudia_claims\\app\\main.py",
-        "--server.address",
-        "127.0.0.1",
-        "--server.port",
-        "8501"
+        "uvicorn",
+        "fraudia_claims.api:app",
+        "--app-dir",
+        "src",
+        "--reload"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -25,6 +23,38 @@
         "panel": "dedicated",
         "clear": true
       }
+    },
+    {
+      "label": "FraudIA: Run React frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "dev"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}\\frontend"
+      },
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "FraudIA: Build React frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "build"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}\\frontend"
+      },
+      "problemMatcher": []
     },
     {
       "label": "FraudIA: Generate demo data",

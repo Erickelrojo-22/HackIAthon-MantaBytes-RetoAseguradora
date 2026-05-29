@@ -74,5 +74,5 @@ if ($isRepo -and $Push) {
 }
 
 Step "Demo local"
-Write-Host "Streamlit: python -m streamlit run src\fraudia_claims\app\main.py"
-Write-Host "API:       python -m uvicorn fraudia_claims.api:app --app-dir src --reload"
+Write-Host "API:      python -m uvicorn fraudia_claims.api:app --app-dir src --reload"
+Write-Host "Frontend: cd frontend; npm run dev"
