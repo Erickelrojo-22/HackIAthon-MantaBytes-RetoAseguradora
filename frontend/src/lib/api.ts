@@ -101,7 +101,7 @@ export interface DashboardKpis {
   score_promedio: number;
 }
 
-export const api = axios.create({ baseURL: API_URL });
+export const api = axios.create({ baseURL: API_URL, timeout: 30000 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');

@@ -80,7 +80,7 @@ def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict
             legible,
             inconsistencia_detectada,
             adulteracion_confirmada,
-            '' AS observacion
+            observacion
         FROM documentos
         WHERE id_siniestro = :claim_id
         ORDER BY tipo_documento

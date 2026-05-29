@@ -11,6 +11,11 @@ import { MarkdownMessage } from '../components/ui/MarkdownMessage';
 
 const reviewStatuses: ReviewStatus[] = ['En revision', 'Descartado', 'Escalado', 'Confirmado para investigacion'];
 
+function visibleSource(source?: string) {
+  if (!source || source.startsWith('Herramientas locales') || source === 'Sesion local') return '';
+  return source;
+}
+
 export function ClaimDetail() {
   const { id = '' } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
@@ -41,7 +46,10 @@ export function ClaimDetail() {
 
   const aiMutation = useMutation({
     mutationFn: async (question: string) => (await api.post('/agent/question', { question, id_siniestro: id, scope: 'claim' })).data,
-    onSuccess: (data) => setAiAnswer(`${data.answer}\n\nFuente: ${data.source}`),
+    onSuccess: (data) => {
+      const source = visibleSource(data.source);
+      setAiAnswer(source ? `${data.answer}\n\nFuente: ${source}` : data.answer);
+    },
   });
 
   const handleSubmit = (event: FormEvent) => {

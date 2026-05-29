@@ -37,6 +37,7 @@ REQUIRED_DATABASE_TABLES = [*BASE_TABLES, "scores", "alertas", "metricas_modelo"
 REQUIRED_DATABASE_COLUMNS = {
     "scores": {"score_final", "nivel_riesgo", "score_modelo", "regla_min_amarillo", "nlp_min_amarillo"},
     "siniestros": {"beneficiario", "id_conductor"},
+    "documentos": {"observacion"},
 }
 
 
