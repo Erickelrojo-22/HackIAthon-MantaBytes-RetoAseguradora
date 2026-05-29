@@ -38,7 +38,15 @@ Esto crea:
 - `data/synthetic/*.csv`
 - `data/processed/fraudia_claims.db`
 
-Por defecto el proyecto usa SQLite local para que la demo arranque en cualquier maquina. Para usar PostgreSQL:
+Por defecto el proyecto usa SQLite local para que la demo arranque en cualquier maquina. Para reconstruir la base offline desde los CSV versionados:
+
+```powershell
+$env:FRAUDIA_DB_BACKEND="sqlite"
+$env:FRAUDIA_DATA_SOURCE="csv"
+.\.venv\Scripts\python scripts\generate_demo_data.py --force
+```
+
+Para usar PostgreSQL:
 
 ```powershell
 $env:FRAUDIA_DB_BACKEND="postgres"
@@ -76,6 +84,7 @@ El loader valida columnas antes de cargar. No se debe versionar ese dataset hast
 
 La configuracion de base vive en `.env` en la raiz del repo, no dentro de `frontend/`.
 El frontend no decide si muestra 500 o 3.000 siniestros; solo consume el backend configurado en `VITE_API_URL`.
+En la demo actual del equipo, el backend local esta configurado con `FRAUDIA_DB_BACKEND=postgres` y `FRAUDIA_DATA_SOURCE=company_synthetic`, por lo que las pantallas consultan Supabase/PostgreSQL a traves de FastAPI. Los CSV de `data/synthetic/` quedan como respaldo reproducible y evidencia tecnica, no como fuente directa de la pagina web.
 
 Para usar Supabase o PostgreSQL con el dataset empresarial:
 
@@ -93,6 +102,12 @@ FRAUDIA_DATABASE_URL=postgresql+psycopg://usuario:password@host:5432/base
 ```
 
 Despues detén cualquier backend viejo y vuelve a levantar FastAPI. Verifica `http://127.0.0.1:8000/health`; debe indicar `backend: postgres` y `data_source: company_synthetic`.
+
+Tambien puedes verificar la fuente activa y los conteos con:
+
+```powershell
+.\.venv\Scripts\python scripts\verify_data_source.py
+```
 
 ## Ejecutar backend API
 
@@ -134,7 +149,7 @@ El despliegue continuo queda separado en dos servicios:
 - Backend FastAPI: `https://fraudia-api.onrender.com`
 - API docs: `https://fraudia-api.onrender.com/docs`
 
-Render puede operar en `sqlite/demo` para una demo estable sin depender de servicios externos, o en `postgres/company_synthetic` si se configuran `FRAUDIA_DATABASE_URL` y `FRAUDIA_DATA_SOURCE` en el panel del backend. En ambos casos el frontend solo consume `VITE_API_URL`.
+Render puede operar en `sqlite/demo` para generar una demo estable, en `sqlite/csv` para usar los CSV versionados sin depender de servicios externos, o en `postgres/company_synthetic` si se configuran `FRAUDIA_DATABASE_URL` y `FRAUDIA_DATA_SOURCE` en el panel del backend. En todos los casos el frontend solo consume `VITE_API_URL`.
 
 ## Ejecutar en VS Code
 
@@ -185,6 +200,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_project_tests.ps
 
 El script crea/usa `.venv`, instala dependencias, valida datos, ejecuta tests, verifica la API y compila el frontend React.
 
+Verificacion completa para entrega hackathon, incluyendo modo online Supabase, modo offline CSV, smoke API, build frontend y entregables:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify_hackathon_readiness.ps1
+```
+
 ## Demo sugerida
 
 1. Entrar con `analista@fraudia.demo` / `demo123`.
@@ -233,5 +254,7 @@ Documentos utiles:
 - `docs/modelo_datos.md`
 - `docs/reglas_negocio.md`
 - `docs/uso_ia.md`
+- `docs/datos_supabase.md`
+- `docs/checklist_entrega.md`
 - `docs/despliegue.md`
 - `docs/api_frontend.md`

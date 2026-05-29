@@ -34,6 +34,10 @@ La misma estructura se carga mediante `database.py` en SQLite local o PostgreSQL
 Para un dataset empresarial sintetico, el paquete esperado vive fuera del repo en `data/company_synthetic` y pasa por `ingestion.py`, que valida columnas minimas antes de cargar.
 La etiqueta de fraude es sintetica y se usa solo para demo, entrenamiento y metricas.
 
+## Fuente activa de demo
+
+La demo web no lee los CSV directamente. React consume FastAPI y FastAPI consulta la base activa configurada en `.env`. En el entorno actual del equipo, `FRAUDIA_DB_BACKEND=postgres` y `FRAUDIA_DATA_SOURCE=company_synthetic`, por lo que las consultas se resuelven contra Supabase/PostgreSQL. Ver `docs/datos_supabase.md` para el comando de verificacion y conteos.
+
 ## Alineacion con la guia del reto
 
 - Beneficiarios: se representan en `siniestros.beneficiario` y se relacionan con `proveedores`.

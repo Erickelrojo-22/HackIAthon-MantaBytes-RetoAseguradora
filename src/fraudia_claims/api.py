@@ -27,7 +27,7 @@ from fraudia_claims.analytics import city_concentration, executive_kpis, provide
 from fraudia_claims.audit import list_audit_events, log_event
 from fraudia_claims.auth import DemoUser, authenticate_demo_user, current_user, optional_user, require_roles, user_to_dict
 from fraudia_claims.config import DEFAULT_DB_PATH
-from fraudia_claims.ingestion import REQUIRED_COLUMNS, data_quality_report, validate_company_tables
+from fraudia_claims.ingestion import REQUIRED_COLUMNS, data_quality_report, missing_required_columns, validate_company_tables
 from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
@@ -386,7 +386,7 @@ async def upload_claims_csv(
 
     stem = Path(file.filename or "").stem
     required = REQUIRED_COLUMNS.get(stem, set())
-    missing = sorted(required - set(frame.columns)) if required else []
+    missing = sorted(missing_required_columns(stem, frame.columns)) if required else []
     status_value = "revisar" if missing else "ok"
     queue_log_event(
         background_tasks,

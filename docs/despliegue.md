@@ -19,7 +19,7 @@ El resto queda versionado sin credenciales:
 - `OPENAI_MODEL=gpt-5.4-mini`
 - `FRAUDIA_DB_BACKEND=sqlite`
 - `FRAUDIA_DB_PATH=data/processed/fraudia_claims.db`
-- `FRAUDIA_DATA_SOURCE=demo`
+- `FRAUDIA_DATA_SOURCE=csv`
 
 No se debe subir `.env`, credenciales ni datasets empresariales no autorizados.
 
@@ -63,6 +63,19 @@ $env:FRAUDIA_COMPANY_DATA_DIR="data/company_synthetic"
 ```
 
 La carga falla si faltan columnas minimas, para evitar una demo rota por estructura inesperada.
+
+## Modo offline con CSV
+
+Si no hay internet o Supabase no esta disponible, reconstruir SQLite desde los CSV versionados:
+
+```powershell
+$env:FRAUDIA_DB_BACKEND="sqlite"
+$env:FRAUDIA_DATA_SOURCE="csv"
+$env:FRAUDIA_DB_PATH="data/processed/fraudia_claims.db"
+.\.venv\Scripts\python.exe scripts\generate_demo_data.py --force
+```
+
+Despues se ejecuta FastAPI y React igual que en modo online. El frontend no cambia; solo cambia la fuente activa del backend.
 
 ## Disponibilidad futura 24/7
 

@@ -13,6 +13,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from fraudia_claims.ingestion import COMPANY_TABLES, load_validated_company_tables, validate_company_tables
+from fraudia_claims.storage import load_tables_from_csv
 from fraudia_claims.synthetic_data import SyntheticConfig, generate_all
 
 
@@ -38,6 +39,12 @@ class IngestionTests(unittest.TestCase):
         self.assertEqual(set(COMPANY_TABLES).issubset(loaded), True)
         self.assertIn("contexto_publico", loaded)
         self.assertEqual(len(loaded["siniestros"]), 9)
+
+    def test_load_tables_from_csv_reads_offline_dataset(self) -> None:
+        tables = load_tables_from_csv(ROOT / "data" / "synthetic")
+        self.assertEqual(set(COMPANY_TABLES).issubset(tables), True)
+        self.assertGreater(len(tables["siniestros"]), 0)
+        self.assertGreater(len(tables["polizas"]), 0)
 
 
 if __name__ == "__main__":

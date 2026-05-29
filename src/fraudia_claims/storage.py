@@ -106,8 +106,10 @@ def _load_source_tables(n_per_ramo: int) -> dict[str, pd.DataFrame]:
         from fraudia_claims.ingestion import load_validated_company_tables
 
         return load_validated_company_tables(COMPANY_DATA_DIR)
+    if source in {"csv", "local_csv"}:
+        return load_tables_from_csv()
     if source != "demo":
-        raise ValueError("FRAUDIA_DATA_SOURCE debe ser demo o company_synthetic.")
+        raise ValueError("FRAUDIA_DATA_SOURCE debe ser demo, csv o company_synthetic.")
     return generate_all(SyntheticConfig(n_per_ramo=n_per_ramo))
 
 

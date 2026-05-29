@@ -12,6 +12,15 @@ from fraudia_claims.synthetic_data import generate_public_context
 
 COMPANY_TABLES = ["asegurados", "polizas", "proveedores", "vehiculos", "siniestros", "documentos"]
 
+COLUMN_ALIASES: dict[str, dict[str, set[str]]] = {
+    "asegurados": {
+        "antiguedad": {"antiguedad_meses"},
+    },
+    "proveedores": {
+        "antiguedad": {"antiguedad_meses"},
+    },
+}
+
 REQUIRED_COLUMNS: dict[str, set[str]] = {
     "asegurados": {
         "id_asegurado",
@@ -107,8 +116,14 @@ class DataQualityIssue:
     message: str
 
 
-def _missing_columns(table: str, columns: Iterable[str]) -> set[str]:
-    return REQUIRED_COLUMNS.get(table, set()) - set(columns)
+def missing_required_columns(table: str, columns: Iterable[str]) -> set[str]:
+    present = set(columns)
+    missing = set()
+    for required in REQUIRED_COLUMNS.get(table, set()):
+        aliases = COLUMN_ALIASES.get(table, {}).get(required, set())
+        if required not in present and not aliases.intersection(present):
+            missing.add(required)
+    return missing
 
 
 def read_company_tables(directory: Path = COMPANY_DATA_DIR) -> dict[str, pd.DataFrame]:
@@ -131,7 +146,7 @@ def validate_company_tables(tables: dict[str, pd.DataFrame]) -> list[DataQuality
         if frame is None:
             issues.append(DataQualityIssue(table, "error", "Tabla requerida ausente."))
             continue
-        missing = _missing_columns(table, frame.columns)
+        missing = missing_required_columns(table, frame.columns)
         if missing:
             issues.append(DataQualityIssue(table, "error", f"Columnas faltantes: {', '.join(sorted(missing))}."))
         if frame.empty:

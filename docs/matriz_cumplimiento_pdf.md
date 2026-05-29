@@ -4,7 +4,7 @@ Esta matriz resume como FraudIA Claims cubre los puntos principales del document
 
 | Punto del PDF | Requerimiento | Implementacion en FraudIA | Evidencia |
 | --- | --- | --- | --- |
-| Datos minimos | Siniestros, polizas, asegurados, vehiculos, proveedores y documentos | Dataset sintetico reproducible y base SQLite/CSV | `data/synthetic/`, `data/processed/fraudia_claims.db`, `synthetic_data.py` |
+| Datos minimos | Siniestros, polizas, asegurados, vehiculos, proveedores y documentos | Online: dataset empresarial sintetico en Supabase/PostgreSQL. Offline: SQLite reconstruido desde CSV versionados | `docs/datos_supabase.md`, `data/company_synthetic/`, `data/synthetic/`, `database.py` |
 | Score de riesgo | Puntaje por siniestro y semaforo verde/amarillo/rojo | `score_final` 0-100 con nivel y accion sugerida | `scoring.py`, tabla `scores` |
 | Reglas de negocio | Senales por vigencia, denuncia, frecuencia, documentos, proveedor, monto y dinamica | Motor de reglas con codigos RF/RS/RH, puntos y evidencia | `rules.py`, tabla `alertas` |
 | Reglas criticas | Perdida total por robo, adulteracion, lista restrictiva, dinamica imposible | Escalamiento automatico minimo a rojo cuando aplica | `rules.py`, `agent_tools.score_candidate_claim` |

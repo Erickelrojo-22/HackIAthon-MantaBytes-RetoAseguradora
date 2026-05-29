@@ -1,0 +1,176 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 2698 >>
+stream
+BT
+/F2 20 Tf
+1 0 0 1 54 740 Tm
+(Presentacion ejecutiva - FraudIA Claims) Tj
+/F2 15 Tf
+1 0 0 1 54 722 Tm
+(1. Problema y oportunidad) Tj
+/F1 11 Tf
+1 0 0 1 54 704 Tm
+(Las aseguradoras revisan miles de siniestros con informacion dispersa:) Tj
+/F1 11 Tf
+1 0 0 1 54 690 Tm
+(fechas, polizas, proveedores, documentos, montos y narrativas. Muchas) Tj
+/F1 11 Tf
+1 0 0 1 54 676 Tm
+(senales de posible fraude aparecen solo al cruzar variables y) Tj
+/F1 11 Tf
+1 0 0 1 54 662 Tm
+(relaciones.) Tj
+/F2 15 Tf
+1 0 0 1 54 648 Tm
+(2. Solucion) Tj
+/F1 11 Tf
+1 0 0 1 54 630 Tm
+(FraudIA Claims prioriza siniestros para revision humana con un score) Tj
+/F1 11 Tf
+1 0 0 1 54 616 Tm
+(explicable. Combina reglas del negocio, deteccion de anomalias,) Tj
+/F1 11 Tf
+1 0 0 1 54 602 Tm
+(similitud narrativa y un agente consultable en lenguaje natural.) Tj
+/F1 11 Tf
+1 0 0 1 54 588 Tm
+(Principio clave: el sistema no acusa fraude, no rechaza reclamos y no) Tj
+/F1 11 Tf
+1 0 0 1 54 574 Tm
+(decide pagos.) Tj
+/F2 15 Tf
+1 0 0 1 54 560 Tm
+(3. Demo en vivo) Tj
+/F1 11 Tf
+1 0 0 1 54 542 Tm
+(1. Entrar al frontend React con analista@fraudia.demo.) Tj
+/F1 11 Tf
+1 0 0 1 54 528 Tm
+(2. Mostrar Centro de mando con KPIs, semaforo y concentracion operativa.) Tj
+/F1 11 Tf
+1 0 0 1 54 514 Tm
+(3. Filtrar la Bandeja por casos rojos.) Tj
+/F1 11 Tf
+1 0 0 1 54 500 Tm
+(4. Explicar un caso rojo en el Expediente del siniestro y usar el boton) Tj
+/F1 11 Tf
+1 0 0 1 54 486 Tm
+(   de IA.) Tj
+/F1 11 Tf
+1 0 0 1 54 472 Tm
+(5. Registrar una decision humana para mostrar trazabilidad.) Tj
+/F1 11 Tf
+1 0 0 1 54 458 Tm
+(6. Abrir Red de relaciones para evidenciar proveedores y asegurados) Tj
+/F1 11 Tf
+1 0 0 1 54 444 Tm
+(   anonimos conectados.) Tj
+/F1 11 Tf
+1 0 0 1 54 430 Tm
+(7. Preguntar al agente: "Que proveedores concentran el 80% de las) Tj
+/F1 11 Tf
+1 0 0 1 54 416 Tm
+(   alertas rojas?") Tj
+/F1 11 Tf
+1 0 0 1 54 402 Tm
+(8. Ejecutar la Prueba del jurado con un caso temporal ocurrido 24 horas) Tj
+/F1 11 Tf
+1 0 0 1 54 388 Tm
+(   despues del inicio de poliza.) Tj
+/F1 11 Tf
+1 0 0 1 54 374 Tm
+(9. Mostrar Analisis visual como apoyo no decisorio al peritaje humano.) Tj
+/F1 11 Tf
+1 0 0 1 54 360 Tm
+(10. Descargar Reporte ejecutivo y cerrar con Auditoria.) Tj
+/F2 15 Tf
+1 0 0 1 54 346 Tm
+(4. Arquitectura e IA) Tj
+/F1 11 Tf
+1 0 0 1 54 328 Tm
+(El prototipo usa FastAPI, React/Vite, SQLite/PostgreSQL, scikit-learn,) Tj
+/F1 11 Tf
+1 0 0 1 54 314 Tm
+(TF-IDF y OpenAI opcional. El LLM solo redacta respuestas usando) Tj
+/F1 11 Tf
+1 0 0 1 54 300 Tm
+(herramientas locales; el score se calcula fuera del modelo generativo.) Tj
+/F2 15 Tf
+1 0 0 1 54 286 Tm
+(5. Impacto operativo) Tj
+/F1 9 Tf
+1 0 0 1 54 32 Tm
+(FraudIA Claims - Pitch ejecutivo | Pagina 1 de 2) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 825 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 740 Tm
+(La solucion reduce tiempo de priorizacion, concentra la revision en) Tj
+/F1 11 Tf
+1 0 0 1 54 726 Tm
+(casos de mayor riesgo, deja evidencia trazable y habilita preguntas) Tj
+/F1 11 Tf
+1 0 0 1 54 712 Tm
+(ejecutivas para analistas, gerencia y auditoria.) Tj
+/F2 15 Tf
+1 0 0 1 54 698 Tm
+(6. Limitaciones y evolucion) Tj
+/F1 11 Tf
+1 0 0 1 54 680 Tm
+(Los datos son sinteticos, las metricas no prueban desempeno productivo y) Tj
+/F1 11 Tf
+1 0 0 1 54 666 Tm
+(el modelo requiere calibracion con expertos antes de uso real. La) Tj
+/F1 11 Tf
+1 0 0 1 54 652 Tm
+(siguiente evolucion seria conectar fuentes internas anonimizadas,) Tj
+/F1 11 Tf
+1 0 0 1 54 638 Tm
+(validacion experta y monitoreo de sesgo/falsos positivos.) Tj
+/F1 9 Tf
+1 0 0 1 54 32 Tm
+(FraudIA Claims - Pitch ejecutivo | Pagina 2 de 2) Tj
+ET
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000326 00000 n 
+0000000462 00000 n 
+0000003212 00000 n 
+0000003348 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R >>
+startxref
+4224
+%%EOF
