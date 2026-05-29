@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +46,8 @@ FAST_LOCAL_QUESTIONS = {
     "cual es el ahorro potencial simulado",
     "que metricas tiene el modelo supervisado",
 }
+
+LOGGER = logging.getLogger(__name__)
 
 
 TOOLS = [
@@ -210,7 +214,10 @@ def _should_answer_from_session(question: str) -> bool:
 
 
 def _is_fast_local_question(question: str) -> bool:
-    return normalize_text(question) in FAST_LOCAL_QUESTIONS
+    text = normalize_text(question)
+    if text in FAST_LOCAL_QUESTIONS:
+        return True
+    return any(SequenceMatcher(None, text, candidate).ratio() >= 0.92 for candidate in FAST_LOCAL_QUESTIONS)
 
 
 def _format_local_table(rows: list[dict[str, Any]], columns: list[str]) -> str:
@@ -339,8 +346,9 @@ def ask_with_openai_status(
         if text:
             return _with_disclaimer(text.strip()), f"OpenAI activo ({model})"
         return answer_offline(question, db_path, session_cases=session_cases), "Offline: respuesta OpenAI vacia"
-    except Exception as exc:
-        return answer_offline(question, db_path, session_cases=session_cases), f"Offline: fallo OpenAI ({type(exc).__name__})"
+    except Exception:
+        LOGGER.exception("OpenAI agent fallback activated")
+        return answer_offline(question, db_path, session_cases=session_cases), "Offline"
 
 
 def ask_agent(

@@ -77,6 +77,7 @@ class AgentTests(unittest.TestCase):
     def test_fast_local_route_only_matches_demo_questions(self) -> None:
         self.assertTrue(_is_fast_local_question("Que proveedores concentran mas alertas rojas?"))
         self.assertTrue(_is_fast_local_question("Genera un resumen ejecutivo de los casos criticos."))
+        self.assertTrue(_is_fast_local_question("Recomienda que casos deberia revisar primero el analizta"))
         self.assertFalse(_is_fast_local_question("Explica con detalle si SIN00001 tiene riesgo por documentos."))
 
     def test_fast_local_questions_bypass_openai_status(self) -> None:

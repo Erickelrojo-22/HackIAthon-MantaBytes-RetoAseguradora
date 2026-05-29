@@ -28,6 +28,7 @@ function readStoredMessages(storageKey: string): AgentMessage[] {
 
 function visibleSource(source?: string) {
   if (!source || source.startsWith('Herramientas locales') || source === 'Sesion local') return '';
+  if (source.startsWith('Offline')) return 'Offline';
   return source;
 }
 

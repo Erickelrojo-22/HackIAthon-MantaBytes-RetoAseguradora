@@ -297,7 +297,7 @@ def repeated_claim_patterns(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) ->
             sc.nivel_riesgo,
             si.ramo,
             si.cobertura,
-            ROUND(sc.similitud_narrativa, 4) AS similitud_narrativa,
+            ROUND(CAST(sc.similitud_narrativa AS NUMERIC), 4) AS similitud_narrativa,
             sc.siniestro_similar,
             si.descripcion
         FROM scores sc
