@@ -1,0 +1,34 @@
+id_proveedor,nombre,tipo,ramo,ciudad,lista_restrictiva
+HOSP-001,Clínica Santa Cecilia,Salud,Salud,Ambato,False
+HOSP-002,Hospital Metropolitano Quito,Salud,Salud,Quito,False
+HOSP-003,Clínica Ibarra Salud,Salud,Salud,Ibarra,False
+HOSP-004,Hospital Básico Guayaquil,Salud,Salud,Loja,False
+HOSP-005,Centro Médico del Sur,Salud,Salud,Quito,False
+PROV-014,Servicios Hogar Ecuador,Servicios,Hogar,Quito,False
+PROV-015,Reparaciones Domésticas EC,Servicios,Hogar,Ambato,False
+PROV-016,Técnicos del Hogar Cía.,Servicios,Hogar,Cuenca,False
+PROV-017,Servicios Integrales Sur,Servicios,Hogar,Loja,False
+PROV-018,Hogar Seguro S.A.,Servicios,Hogar,Ambato,False
+PROV-019,Reparaciones Norte Ecuador,Servicios,Hogar,Esmeraldas,False
+PROV-020,Servicios Generales GYE,Servicios,Hogar,Esmeraldas,False
+PROV-021,Reparaciones Tungurahua,Servicios,Hogar,Cuenca,False
+PROV-022,Técnicos Especializados EC,Servicios,Hogar,Guayaquil,False
+TALLER-001,Taller El Norte Cía. Ltda.,Automotriz,Vehiculos,Ambato,False
+TALLER-002,Automotriz Centro Sur,Automotriz,Vehiculos,Cuenca,False
+TALLER-003,Mecánica Imbabura S.A.,Automotriz,Vehiculos,Manta,False
+TALLER-004,Servicio Express Loja,Automotriz,Vehiculos,Ibarra,False
+TALLER-005,Taller Portuario Guayaquil,Automotriz,Vehiculos,Portoviejo,False
+TALLER-006,Auto Service Quito Norte,Automotriz,Vehiculos,Guayaquil,False
+TALLER-007,Multiservicios Automotrices EC,Automotriz,Vehiculos,Ambato,False
+TALLER-008,Reparaciones Viales Cía.,Automotriz,Vehiculos,Manta,False
+TALLER-011,Mecánica Tungurahua,Automotriz,Vehiculos,Quito,False
+TALLER-012,Serviautos Litoral,Automotriz,Vehiculos,Riobamba,False
+TALLER-013,Taller Chimborazo Express,Automotriz,Vehiculos,Loja,False
+TALLER-015,Automotriz Sur Azuay,Automotriz,Vehiculos,Manta,False
+TALLER-016,Servicio Técnico Loja,Automotriz,Vehiculos,Ibarra,False
+TALLER-017,Mecánica Manabí,Automotriz,Vehiculos,Ibarra,False
+TALLER-018,Automotriz Ambato Central,Automotriz,Vehiculos,Ibarra,False
+TALLER-020,Taller Quito Sur Cía.,Automotriz,Vehiculos,Guayaquil,False
+TALLER-777,Mecánica Sin Nombre — Facturación irregular,Automotriz,Vehiculos,Ambato,True
+TALLER-888,Taller Anónimo Manta — Documentos alterados,Automotriz,Vehiculos,Ambato,True
+TALLER-999,Taller No Registrado — Asociado a red de fraude,Automotriz,Vehiculos,Portoviejo,True
