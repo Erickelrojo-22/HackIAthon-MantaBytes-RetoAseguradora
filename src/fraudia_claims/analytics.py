@@ -142,14 +142,14 @@ def document_findings(db_path: Path = DEFAULT_DB_PATH) -> pd.DataFrame:
         SELECT
             d.tipo_documento,
             COUNT(*) AS observaciones,
-            SUM(CASE WHEN d.entregado = 0 THEN 1 ELSE 0 END) AS faltantes,
-            SUM(CASE WHEN d.legible = 0 THEN 1 ELSE 0 END) AS ilegibles,
-            SUM(CASE WHEN d.inconsistencia_detectada = 1 THEN 1 ELSE 0 END) AS inconsistentes,
-            SUM(CASE WHEN d.adulteracion_confirmada = 1 THEN 1 ELSE 0 END) AS adulteraciones
+            SUM(CASE WHEN NOT d.entregado THEN 1 ELSE 0 END) AS faltantes,
+            SUM(CASE WHEN NOT d.legible THEN 1 ELSE 0 END) AS ilegibles,
+            SUM(CASE WHEN d.inconsistencia_detectada THEN 1 ELSE 0 END) AS inconsistentes,
+            SUM(CASE WHEN d.adulteracion_confirmada THEN 1 ELSE 0 END) AS adulteraciones
         FROM documentos d
         JOIN scores sc ON sc.id_siniestro = d.id_siniestro
         WHERE sc.nivel_riesgo = 'Rojo'
-          AND (d.entregado = 0 OR d.legible = 0 OR d.inconsistencia_detectada = 1 OR d.adulteracion_confirmada = 1)
+          AND (NOT d.entregado OR NOT d.legible OR d.inconsistencia_detectada OR d.adulteracion_confirmada)
         GROUP BY d.tipo_documento
         ORDER BY observaciones DESC
         """,

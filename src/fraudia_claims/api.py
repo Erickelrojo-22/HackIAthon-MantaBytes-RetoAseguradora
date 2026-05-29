@@ -31,6 +31,7 @@ from fraudia_claims.ingestion import REQUIRED_COLUMNS, data_quality_report, vali
 from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
+from fraudia_claims.vision import analyze_claim_image
 
 
 _APP_READY = False
@@ -405,6 +406,45 @@ async def upload_claims_csv(
         "missing_columns": missing,
         "message": "CSV validado. En v1 no reemplaza tablas persistidas desde este endpoint.",
     }
+
+
+@app.post("/vision/analyze")
+async def vision_analyze(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    id_siniestro: str | None = None,
+    user: DemoUser = Depends(current_user),
+) -> dict[str, Any]:
+    ensure_app_ready()
+    content = await file.read()
+    claim_context: dict[str, Any] = {
+        "filename": file.filename or "imagen_siniestro",
+        "mime_type": file.content_type or "application/octet-stream",
+    }
+    if id_siniestro:
+        detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+        if "error" not in detail:
+            claim_context.update(
+                {
+                    "id_siniestro": detail.get("id_siniestro"),
+                    "ramo": detail.get("ramo"),
+                    "cobertura": detail.get("cobertura"),
+                    "nivel_riesgo": detail.get("nivel_riesgo"),
+                    "score_final": detail.get("score_final"),
+                    "descripcion": detail.get("descripcion"),
+                }
+            )
+    result = analyze_claim_image(content, file.content_type or "application/octet-stream", claim_context)
+    queue_log_event(
+        background_tasks,
+        user.email,
+        user.role,
+        "vision.image_analyzed",
+        "claim" if id_siniestro else "vision",
+        id_siniestro.upper() if id_siniestro else file.filename or "upload",
+        {"status": result.get("status"), "mime_type": file.content_type, "bytes": len(content)},
+    )
+    return result
 
 
 @app.get("/alerts/aggregate")

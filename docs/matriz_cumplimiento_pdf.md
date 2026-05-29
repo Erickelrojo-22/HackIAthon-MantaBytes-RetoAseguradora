@@ -11,9 +11,11 @@ Esta matriz resume como FraudIA Claims cubre los puntos principales del document
 | IA / ML | Modelo de anomalias o clasificacion | IsolationForest por ramo y RandomForest supervisado con etiqueta sintetica | `models.py`, tabla `metricas_modelo` |
 | NLP | Analisis de descripcion y narrativas similares | TF-IDF por ramo y similitud narrativa trazada | `nlp.py`, columnas `similitud_narrativa`, `siniestro_similar` |
 | Agente IA | Consultas en lenguaje natural | Agente offline y OpenAI opcional con herramientas locales | `offline_agent.py`, `openai_agent.py` |
-| Dashboard | Interfaz funcional para analista | Frontend React con centro de mando, bandeja, expediente, agente, auditoria y prueba del jurado | `frontend/`, `api.py` |
-| Red de relaciones | Asegurados, proveedores y casos conectados | Endpoint de relaciones para frontend y agente | `GET /relationships`, `agent_tools.py` |
-| Reporte ejecutivo | Resumen para auditoria o gerencia | Reporte HTML con KPIs, top casos, proveedores, ciudades y documentos | `reports.py` |
+| Dashboard | Interfaz funcional para analista | Frontend React con centro de mando, bandeja, expediente, agente, auditoria, red, reporte, carga CSV, Vision y prueba del jurado | `frontend/`, `api.py` |
+| Red de relaciones | Asegurados, proveedores y casos conectados | Pagina React y endpoint de relaciones para frontend/agente | `GET /relationships`, `frontend/src/pages/Relationships.tsx` |
+| Reporte ejecutivo | Resumen para auditoria o gerencia | Pagina React con descarga HTML, KPIs, top casos, proveedores y metricas | `GET /report/summary`, `frontend/src/pages/ExecutiveReport.tsx` |
+| Vision | Analisis auxiliar de fotos de siniestros | Endpoint y pagina React para hallazgos visuales sin modificar scores | `POST /vision/analyze`, `vision.py` |
+| Carga de datos | Carga/validacion de estructura | Endpoint y pagina React para validar CSV sin reemplazar tablas persistidas | `POST /claims/upload-csv`, `ingestion.py` |
 | API futura | Integracion con otros sistemas | API minima FastAPI | `api.py` |
 | Seguridad y etica | No acusar, no rechazar, no usar datos reales | Datos sinteticos, disclaimers y revision humana obligatoria | `docs/limitaciones.md`, README, dashboard |
 | Reproducibilidad | Codigo ejecutable y pruebas | Script automatizado de pruebas y smoke test | `scripts/run_project_tests.ps1`, `tests/` |

@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { BotMessageSquare, ClipboardCheck, FileText, Gauge, Inbox, LogOut, Scale, UserCog } from 'lucide-react';
+import { BotMessageSquare, ClipboardCheck, FileText, Gauge, Image, Inbox, LogOut, Network, Scale, Upload, UserCog } from 'lucide-react';
 import { useAuth } from '../../contexts/useAuth';
 import { Disclaimer } from '../ui/Disclaimer';
 import mantaBytesLogo from '../../assets/manta-bytes-logo.svg';
@@ -7,7 +7,11 @@ import mantaBytesLogo from '../../assets/manta-bytes-logo.svg';
 const baseNav = [
   { to: '/', icon: Gauge, label: 'Centro de Mando' },
   { to: '/claims', icon: Inbox, label: 'Bandeja' },
+  { to: '/relationships', icon: Network, label: 'Red de relaciones' },
+  { to: '/report', icon: FileText, label: 'Reporte ejecutivo' },
   { to: '/jury-test', icon: Scale, label: 'Prueba del Jurado' },
+  { to: '/vision', icon: Image, label: 'Analisis visual' },
+  { to: '/upload-csv', icon: Upload, label: 'Carga CSV' },
   { to: '/agent', icon: BotMessageSquare, label: 'Agente IA' },
 ];
 
@@ -17,7 +21,7 @@ export function AppLayout() {
   const navItems = [...baseNav];
 
   if (user?.role === 'Jefatura' || user?.role === 'Auditoria') {
-    navItems.push({ to: '/audit', icon: FileText, label: 'Auditoria' });
+    navItems.push({ to: '/audit', icon: ClipboardCheck, label: 'Auditoria' });
   }
 
   const handleLogout = () => {

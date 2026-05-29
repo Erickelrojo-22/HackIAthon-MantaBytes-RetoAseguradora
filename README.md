@@ -117,12 +117,24 @@ Endpoints principales:
 - `GET /health`
 - `GET /claims/risk?limit=10&level=Rojo`
 - `GET /claims/{id_siniestro}`
+- `POST /claims/upload-csv`
 - `GET /alerts/aggregate?group_by=proveedor`
 - `GET /alerts/provider-pareto`
 - `GET /relationships?limit=60`
 - `GET /report/summary`
+- `POST /vision/analyze`
 - `GET /metrics`
 - `POST /score-candidate`
+
+## Despliegue Render
+
+El despliegue continuo queda separado en dos servicios:
+
+- Frontend React: `https://fraudia-frontend.onrender.com`
+- Backend FastAPI: `https://fraudia-api.onrender.com`
+- API docs: `https://fraudia-api.onrender.com/docs`
+
+Render puede operar en `sqlite/demo` para una demo estable sin depender de servicios externos, o en `postgres/company_synthetic` si se configuran `FRAUDIA_DATABASE_URL` y `FRAUDIA_DATA_SOURCE` en el panel del backend. En ambos casos el frontend solo consume `VITE_API_URL`.
 
 ## Ejecutar en VS Code
 
@@ -175,14 +187,16 @@ El script crea/usa `.venv`, instala dependencias, valida datos, ejecuta tests, v
 
 ## Demo sugerida
 
-1. Abrir el frontend React y entrar con `analista@fraudia.demo` / `demo123`.
-2. Mostrar el `Centro de mando` y explicar que los resultados son alertas, no acusaciones.
-3. Abrir la `Bandeja de revision` y filtrar casos rojos.
-4. Entrar al `Expediente del siniestro` destacado y revisar reglas, documentos, historial humano y explicacion IA.
-5. Registrar una decision humana como `Escalado` para demostrar trazabilidad.
-6. En `Agente IA`, preguntar: "Que proveedores concentran el 80% de las alertas rojas?"
-7. Abrir `Prueba del jurado`, evaluar un caso temporal y remarcar que no modifica scores persistidos.
-8. Abrir `Auditoria` y mostrar que las consultas y decisiones quedan registradas.
+1. Entrar con `analista@fraudia.demo` / `demo123`.
+2. Mostrar `Centro de Mando`: KPIs, semaforo, proveedores y ciudades.
+3. Abrir `Bandeja` y filtrar casos rojos.
+4. Entrar a un `Expediente`: score dividido, alertas, documentos, timeline y explicacion IA.
+5. Guardar una decision humana como `Escalado`.
+6. Abrir `Red de relaciones` para mostrar proveedores, asegurados anonimos y casos conectados.
+7. En `Agente IA`, preguntar: "Que proveedores concentran el 80% de las alertas rojas?"
+8. Ejecutar `Prueba del Jurado` con un caso temporal cercano al inicio de poliza.
+9. Abrir `Analisis visual` y mostrar que Vision es auxiliar y no modifica scores.
+10. Abrir `Reporte ejecutivo`, descargar HTML y cerrar con `Auditoria`.
 
 Preguntas del jurado cubiertas por el agente:
 

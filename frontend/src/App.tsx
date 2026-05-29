@@ -12,6 +12,10 @@ import { ClaimDetail } from './pages/ClaimDetail';
 import { JuryTest } from './pages/JuryTest';
 import { Agent } from './pages/Agent';
 import { Audit } from './pages/Audit';
+import { Relationships } from './pages/Relationships';
+import { ExecutiveReportPage } from './pages/ExecutiveReport';
+import { UploadCsv } from './pages/UploadCsv';
+import { Vision } from './pages/Vision';
 
 const queryClient = new QueryClient();
 
@@ -39,6 +43,10 @@ function AppRoutes() {
         <Route path="claims" element={<Claims />} />
         <Route path="claims/:id" element={<ClaimDetail />} />
         <Route path="jury-test" element={<JuryTest />} />
+        <Route path="relationships" element={<Relationships />} />
+        <Route path="report" element={<ExecutiveReportPage />} />
+        <Route path="upload-csv" element={<UploadCsv />} />
+        <Route path="vision" element={<Vision />} />
         <Route path="agent" element={<Agent />} />
         <Route path="audit" element={<Audit />} />
       </Route>

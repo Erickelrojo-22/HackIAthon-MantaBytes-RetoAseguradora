@@ -108,3 +108,29 @@ POST /claims/upload-csv
 Multipart field: `file`.
 
 En v1 valida columnas y registra auditoria, pero no reemplaza tablas persistidas desde este endpoint.
+
+## Red de relaciones
+
+```http
+GET /relationships?limit=80
+```
+
+Devuelve `nodes` y `edges` para conectar siniestros, asegurados anonimos y proveedores.
+
+## Reporte ejecutivo
+
+```http
+GET /report/summary
+```
+
+Devuelve resumen, exposicion, ahorro potencial simulado, top casos, proveedores 80/20 y metricas del modelo.
+
+## Vision
+
+```http
+POST /vision/analyze
+```
+
+Multipart field: `file`. Query opcional: `id_siniestro`.
+
+El analisis visual es auxiliar, no persiste imagenes y no modifica `scores`.

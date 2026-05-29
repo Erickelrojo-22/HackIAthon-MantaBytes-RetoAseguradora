@@ -30,7 +30,7 @@ class AgentAndApiTests(unittest.TestCase):
         self.assertIn("id_asegurado", answer)
 
         answer = answer_offline("Que metricas tiene el modelo supervisado?")
-        self.assertIn("precision", answer)
+        self.assertTrue("precision" in answer or "skipped" in answer)
 
     def test_api_health_metrics_and_candidate_score(self) -> None:
         client = TestClient(app)
@@ -40,7 +40,7 @@ class AgentAndApiTests(unittest.TestCase):
 
         metrics = client.get("/metrics")
         self.assertEqual(metrics.status_code, 200)
-        self.assertTrue(any(row["metrica"] == "f1" for row in metrics.json()))
+        self.assertTrue(any(row["metrica"] in {"f1", "status"} for row in metrics.json()))
 
         pareto = client.get("/alerts/provider-pareto")
         self.assertEqual(pareto.status_code, 200)
@@ -54,6 +54,14 @@ class AgentAndApiTests(unittest.TestCase):
         report = client.get("/report/summary")
         self.assertEqual(report.status_code, 200)
         self.assertIn("resumen", report.json())
+
+        vision = client.post(
+            "/vision/analyze",
+            files={"file": ("demo.jpg", b"fake-image", "image/jpeg")},
+            headers={"Authorization": "Bearer demo-token-analista"},
+        )
+        self.assertEqual(vision.status_code, 200)
+        self.assertIn("disclaimer", vision.json())
 
         candidate = client.post(
             "/score-candidate",

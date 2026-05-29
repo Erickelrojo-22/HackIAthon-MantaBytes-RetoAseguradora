@@ -101,6 +101,61 @@ export interface DashboardKpis {
   score_promedio: number;
 }
 
+export interface RelationshipNode {
+  id: string;
+  label: string;
+  tipo: string;
+  score?: number;
+  nivel?: RiskLevel;
+  ramo?: string;
+}
+
+export interface RelationshipEdge {
+  source: string;
+  target: string;
+  relacion: string;
+}
+
+export interface RelationshipNetwork {
+  nodes: RelationshipNode[];
+  edges: RelationshipEdge[];
+}
+
+export interface ExecutiveReport {
+  resumen: Record<string, number | string | null>;
+  exposicion: Record<string, number | string | null>;
+  ahorro_potencial_simulado: {
+    base_revision_rojo_amarillo: number;
+    tasa_evitable_demo: number;
+    monto_estimado: number;
+    nota: string;
+  };
+  top_casos: ClaimRisk[];
+  proveedores_80_20: Array<Record<string, number | string | null>>;
+  metricas_modelo: Array<Record<string, number | string | null>>;
+}
+
+export interface CsvUploadResult {
+  filename: string;
+  table_detected?: string | null;
+  rows: number;
+  columns: string[];
+  status: string;
+  missing_columns: string[];
+  message: string;
+}
+
+export interface VisionResult {
+  status: string;
+  modelo_openai: string;
+  severidad_visual: string;
+  confianza: number;
+  observaciones: string[];
+  anomalias_potenciales: string[];
+  accion_sugerida: string;
+  disclaimer: string;
+}
+
 export const api = axios.create({ baseURL: API_URL, timeout: 30000 });
 
 api.interceptors.request.use((config) => {

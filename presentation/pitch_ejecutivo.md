@@ -12,14 +12,16 @@ Principio clave: el sistema no acusa fraude, no rechaza reclamos y no decide pag
 
 ## 3. Demo en vivo
 
-1. Entrar al frontend React con un usuario demo.
-2. Mostrar el `Centro de mando` con KPIs, semaforo y concentracion operativa.
-3. Filtrar la `Bandeja de revision` por casos rojos.
-4. Explicar un caso rojo en el `Expediente del siniestro`.
+1. Entrar al frontend React con `analista@fraudia.demo`.
+2. Mostrar `Centro de mando` con KPIs, semaforo y concentracion operativa.
+3. Filtrar la `Bandeja` por casos rojos.
+4. Explicar un caso rojo en el `Expediente del siniestro` y usar el boton de IA.
 5. Registrar una decision humana para mostrar trazabilidad.
-6. Preguntar al agente: "Que proveedores concentran el 80% de las alertas rojas?"
-7. Ejecutar la `Prueba del jurado` con un caso temporal ocurrido 24 horas despues del inicio de poliza.
-8. Abrir `Auditoria` para evidenciar logs de consulta y revision.
+6. Abrir `Red de relaciones` para evidenciar proveedores y asegurados anonimos conectados.
+7. Preguntar al agente: "Que proveedores concentran el 80% de las alertas rojas?"
+8. Ejecutar la `Prueba del jurado` con un caso temporal ocurrido 24 horas despues del inicio de poliza.
+9. Mostrar `Analisis visual` como apoyo no decisorio al peritaje humano.
+10. Descargar `Reporte ejecutivo` y cerrar con `Auditoria`.
 
 ## 4. Arquitectura e IA
 
