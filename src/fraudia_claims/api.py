@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 
 from fraudia_claims.agent_tools import (
     aggregate_alerts,
+    claim_exists,
     executive_report,
     get_claim_detail,
     get_relationship_network,
@@ -249,9 +250,8 @@ def suggested_questions(
     user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
 ) -> dict[str, Any]:
     ensure_app_ready()
-    detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
-    if "error" in detail:
-        raise HTTPException(status_code=404, detail=detail["error"])
+    if not claim_exists(id_siniestro.upper(), db_path=DEFAULT_DB_PATH):
+        raise HTTPException(status_code=404, detail=f"No existe el siniestro {id_siniestro.upper()}.")
     questions = [
         f"Explica por que el siniestro {id_siniestro.upper()} fue priorizado.",
         f"Que documentos observados tiene el siniestro {id_siniestro.upper()}?",

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from hashlib import sha256
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
 import pandas as pd
@@ -26,6 +27,8 @@ except Exception:  # pragma: no cover - exercised when optional dependency is mi
 
 
 SUPPORTED_BACKENDS = {"sqlite", "postgres"}
+_ENGINE_CACHE: dict[tuple[str, str], Engine] = {}
+_ENGINE_LOCK = Lock()
 
 
 @dataclass(frozen=True)
@@ -94,7 +97,13 @@ def get_engine(db_path: Path = DEFAULT_DB_PATH) -> Engine:
     settings = database_settings(db_path)
     if settings.backend == "postgres":
         assert settings.url is not None
-        return create_engine(settings.url, pool_pre_ping=True)
+        key = (settings.backend, settings.url)
+        with _ENGINE_LOCK:
+            engine = _ENGINE_CACHE.get(key)
+            if engine is None:
+                engine = create_engine(settings.url, pool_pre_ping=True)
+                _ENGINE_CACHE[key] = engine
+            return engine
     settings.sqlite_path.parent.mkdir(parents=True, exist_ok=True)
     return create_engine(f"sqlite:///{settings.sqlite_path.as_posix()}", poolclass=NullPool)
 
@@ -110,11 +119,8 @@ def read_sql(query: str, params: dict[str, Any] | None = None, db_path: Path = D
             conn.close()
     engine = get_engine(db_path)
     assert text is not None
-    try:
-        with engine.connect() as conn:
-            return pd.read_sql_query(text(query), conn, params=params)
-    finally:
-        engine.dispose()
+    with engine.connect() as conn:
+        return pd.read_sql_query(text(query), conn, params=params)
 
 
 @lru_cache(maxsize=128)
@@ -143,11 +149,8 @@ def execute_rows(query: str, params: dict[str, Any] | None = None, db_path: Path
             conn.close()
     engine = get_engine(db_path)
     assert text is not None
-    try:
-        with engine.connect() as conn:
-            return [dict(row) for row in conn.execute(text(query), params).mappings().all()]
-    finally:
-        engine.dispose()
+    with engine.connect() as conn:
+        return [dict(row) for row in conn.execute(text(query), params).mappings().all()]
 
 
 @lru_cache(maxsize=256)
@@ -185,10 +188,7 @@ def table_names(db_path: Path = DEFAULT_DB_PATH) -> set[str]:
             conn.close()
     engine = get_engine(db_path)
     assert inspect is not None
-    try:
-        return set(inspect(engine).get_table_names())
-    finally:
-        engine.dispose()
+    return set(inspect(engine).get_table_names())
 
 
 def table_columns(table_name: str, db_path: Path = DEFAULT_DB_PATH) -> set[str]:
@@ -201,10 +201,7 @@ def table_columns(table_name: str, db_path: Path = DEFAULT_DB_PATH) -> set[str]:
             conn.close()
     engine = get_engine(db_path)
     assert inspect is not None
-    try:
-        return {column["name"] for column in inspect(engine).get_columns(table_name)}
-    finally:
-        engine.dispose()
+    return {column["name"] for column in inspect(engine).get_columns(table_name)}
 
 
 def write_frame(name: str, frame: pd.DataFrame, if_exists: str = "replace", db_path: Path = DEFAULT_DB_PATH) -> None:
@@ -217,10 +214,7 @@ def write_frame(name: str, frame: pd.DataFrame, if_exists: str = "replace", db_p
             conn.close()
         return
     engine = get_engine(db_path)
-    try:
-        frame.to_sql(name, engine, index=False, if_exists=if_exists)
-    finally:
-        engine.dispose()
+    frame.to_sql(name, engine, index=False, if_exists=if_exists)
 
 
 def execute_statement(statement: str, db_path: Path = DEFAULT_DB_PATH) -> None:
@@ -235,11 +229,8 @@ def execute_statement(statement: str, db_path: Path = DEFAULT_DB_PATH) -> None:
         return
     engine = get_engine(db_path)
     assert text is not None
-    try:
-        with engine.begin() as conn:
-            conn.execute(text(statement))
-    finally:
-        engine.dispose()
+    with engine.begin() as conn:
+        conn.execute(text(statement))
 
 
 def execute_write(
@@ -259,8 +250,5 @@ def execute_write(
         return
     engine = get_engine(db_path)
     assert text is not None
-    try:
-        with engine.begin() as conn:
-            conn.execute(text(statement), params)
-    finally:
-        engine.dispose()
+    with engine.begin() as conn:
+        conn.execute(text(statement), params)

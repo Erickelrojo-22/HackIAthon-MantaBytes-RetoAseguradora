@@ -59,10 +59,10 @@ def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
         WHERE si.id_siniestro = :claim_id
     """
-    detail = execute_one(query, {"claim_id": id_siniestro}, db_path=db_path)
+    detail = execute_one_cached(query, {"claim_id": id_siniestro}, db_path=db_path)
     if detail is None:
         return {"error": f"No existe el siniestro {id_siniestro}."}
-    detail["alertas"] = execute_rows(
+    detail["alertas"] = execute_rows_cached(
         """
         SELECT codigo, categoria, severidad, puntos, descripcion, evidencia, es_critica
         FROM alertas
@@ -72,9 +72,15 @@ def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict
         {"claim_id": id_siniestro},
         db_path=db_path,
     )
-    detail["documentos"] = execute_rows(
+    detail["documentos"] = execute_rows_cached(
         """
-        SELECT tipo_documento, entregado, legible, inconsistencia_detectada, adulteracion_confirmada, observacion
+        SELECT
+            tipo_documento,
+            entregado,
+            legible,
+            inconsistencia_detectada,
+            adulteracion_confirmada,
+            '' AS observacion
         FROM documentos
         WHERE id_siniestro = :claim_id
         ORDER BY tipo_documento
@@ -83,6 +89,15 @@ def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict
         db_path=db_path,
     )
     return detail
+
+
+def claim_exists(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> bool:
+    row = execute_one_cached(
+        "SELECT id_siniestro FROM siniestros WHERE id_siniestro = :claim_id",
+        {"claim_id": id_siniestro.upper()},
+        db_path=db_path,
+    )
+    return row is not None
 
 
 def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
