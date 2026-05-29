@@ -1,7 +1,6 @@
 param(
     [switch]$RegenerateData,
-    [int]$ApiPort = 8010,
-    [int]$StreamlitPort = 8510
+    [int]$ApiPort = 8010
 )
 
 $ErrorActionPreference = "Stop"
@@ -61,26 +60,22 @@ try {
     Stop-IfRunning $ApiProcess
 }
 
-Step "Smoke test Streamlit"
-$StreamlitLog = Join-Path $ProjectRoot "streamlit.smoke.log"
-$StreamlitErr = Join-Path $ProjectRoot "streamlit.smoke.err.log"
-Remove-Item $StreamlitLog, $StreamlitErr -ErrorAction SilentlyContinue
-$StreamlitProcess = Start-Process -WindowStyle Hidden -WorkingDirectory $ProjectRoot -FilePath $Python -ArgumentList @(
-    "-m", "streamlit", "run", "src\fraudia_claims\app\main.py",
-    "--server.address", "127.0.0.1",
-    "--server.port", "$StreamlitPort",
-    "--server.headless", "true"
-) -RedirectStandardOutput $StreamlitLog -RedirectStandardError $StreamlitErr -PassThru
-try {
-    Start-Sleep -Seconds 10
-    $Response = Invoke-WebRequest "http://127.0.0.1:$StreamlitPort" -UseBasicParsing
-    Write-Host "Streamlit HTTP: $($Response.StatusCode)"
-} finally {
-    Stop-IfRunning $StreamlitProcess
+Step "Build frontend React"
+$FrontendRoot = Join-Path $ProjectRoot "frontend"
+if (Test-Path $FrontendRoot) {
+    Push-Location $FrontendRoot
+    try {
+        npm install
+        npm run build
+    } finally {
+        Pop-Location
+    }
+} else {
+    throw "No existe la carpeta frontend."
 }
 
 Step "Listo"
 Write-Host "Smoke test completo."
 Write-Host "Para ejecutar manualmente:"
-Write-Host ".\.venv\Scripts\python -m streamlit run src\fraudia_claims\app\main.py"
 Write-Host ".\.venv\Scripts\python -m uvicorn fraudia_claims.api:app --app-dir src --reload"
+Write-Host "cd frontend; npm run dev"

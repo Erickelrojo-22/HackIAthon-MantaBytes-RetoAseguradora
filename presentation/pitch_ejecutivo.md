@@ -12,18 +12,18 @@ Principio clave: el sistema no acusa fraude, no rechaza reclamos y no decide pag
 
 ## 3. Demo en vivo
 
-1. Abrir `Demo guiada` para presentar el flujo.
-2. Mostrar `Resumen` con KPIs, semaforo y concentracion operativa.
+1. Entrar al frontend React con un usuario demo.
+2. Mostrar el `Centro de mando` con KPIs, semaforo y concentracion operativa.
 3. Filtrar la `Bandeja de revision` por casos rojos.
-4. Explicar un caso rojo en `Detalle del siniestro`.
-5. Mostrar `Red de relaciones` para proveedores y asegurados recurrentes.
+4. Explicar un caso rojo en el `Expediente del siniestro`.
+5. Registrar una decision humana para mostrar trazabilidad.
 6. Preguntar al agente: "Que proveedores concentran el 80% de las alertas rojas?"
-7. Evaluar un caso nuevo ocurrido 24 horas despues del inicio de poliza.
-8. Descargar `Reporte ejecutivo`.
+7. Ejecutar la `Prueba del jurado` con un caso temporal ocurrido 24 horas despues del inicio de poliza.
+8. Abrir `Auditoria` para evidenciar logs de consulta y revision.
 
 ## 4. Arquitectura e IA
 
-El prototipo usa Python, Streamlit, SQLite/CSV, scikit-learn, TF-IDF, NetworkX/Plotly, FastAPI y OpenAI opcional. El LLM solo redacta respuestas usando herramientas locales; el score se calcula fuera del modelo generativo.
+El prototipo usa FastAPI, React/Vite, SQLite/PostgreSQL, scikit-learn, TF-IDF, NetworkX/Plotly y OpenAI opcional. El LLM solo redacta respuestas usando herramientas locales; el score se calcula fuera del modelo generativo.
 
 ## 5. Impacto operativo
 

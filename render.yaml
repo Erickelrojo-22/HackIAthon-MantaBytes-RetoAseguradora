@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: fraudia-claims
+    name: fraudia-api
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: streamlit run src/fraudia_claims/app/main.py --server.address 0.0.0.0 --server.port $PORT --server.headless true
-    healthCheckPath: /
+    startCommand: uvicorn fraudia_claims.api:app --app-dir src --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
     envVars:
       - key: FRAUDIA_DB_BACKEND
         value: sqlite
@@ -17,3 +17,12 @@ services:
         value: gpt-5.4-mini
       - key: FRAUDIA_DATA_SOURCE
         value: demo
+  - type: web
+    name: fraudia-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://fraudia-api.onrender.com
