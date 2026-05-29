@@ -4,10 +4,15 @@ import json
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
 from fraudia_claims.config import DEFAULT_DB_PATH
-from fraudia_claims.database import execute_rows, execute_statement, execute_write
+from fraudia_claims.database import database_label, execute_rows, execute_statement, execute_write
+
+
+_AUDIT_TABLES_READY: set[str] = set()
+_AUDIT_LOCK = Lock()
 
 
 def utc_now() -> str:
@@ -15,24 +20,31 @@ def utc_now() -> str:
 
 
 def ensure_audit_table(db_path: Path = DEFAULT_DB_PATH) -> None:
-    execute_statement(
-        """
-        CREATE TABLE IF NOT EXISTS audit_log (
-            id_event TEXT PRIMARY KEY,
-            actor_email TEXT NOT NULL,
-            actor_role TEXT NOT NULL,
-            action TEXT NOT NULL,
-            resource_type TEXT NOT NULL,
-            resource_id TEXT NOT NULL,
-            metadata_json TEXT NOT NULL,
-            created_at TEXT NOT NULL
+    key = database_label(db_path)
+    if key in _AUDIT_TABLES_READY:
+        return
+    with _AUDIT_LOCK:
+        if key in _AUDIT_TABLES_READY:
+            return
+        execute_statement(
+            """
+            CREATE TABLE IF NOT EXISTS audit_log (
+                id_event TEXT PRIMARY KEY,
+                actor_email TEXT NOT NULL,
+                actor_role TEXT NOT NULL,
+                action TEXT NOT NULL,
+                resource_type TEXT NOT NULL,
+                resource_id TEXT NOT NULL,
+                metadata_json TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """,
+            db_path=db_path,
         )
-        """,
-        db_path=db_path,
-    )
-    execute_statement("CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor_email)", db_path=db_path)
-    execute_statement("CREATE INDEX IF NOT EXISTS idx_audit_resource ON audit_log(resource_type, resource_id)", db_path=db_path)
-    execute_statement("CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at)", db_path=db_path)
+        execute_statement("CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor_email)", db_path=db_path)
+        execute_statement("CREATE INDEX IF NOT EXISTS idx_audit_resource ON audit_log(resource_type, resource_id)", db_path=db_path)
+        execute_statement("CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at)", db_path=db_path)
+        _AUDIT_TABLES_READY.add(key)
 
 
 def log_event(

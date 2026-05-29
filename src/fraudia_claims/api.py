@@ -5,9 +5,10 @@ from typing import Any
 import json
 import tempfile
 from pathlib import Path
+from threading import Lock
 
 import pandas as pd
-from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -29,6 +30,43 @@ from fraudia_claims.ingestion import REQUIRED_COLUMNS, data_quality_report, vali
 from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
+
+
+_APP_READY = False
+_APP_READY_LOCK = Lock()
+
+
+def ensure_app_ready() -> None:
+    global _APP_READY
+    if _APP_READY:
+        return
+    with _APP_READY_LOCK:
+        if _APP_READY:
+            return
+        initialize_demo_data(force=False)
+        ensure_operational_tables(DEFAULT_DB_PATH)
+        _APP_READY = True
+
+
+def queue_log_event(
+    background_tasks: BackgroundTasks,
+    actor_email: str,
+    actor_role: str,
+    action: str,
+    resource_type: str,
+    resource_id: str,
+    metadata: dict[str, Any] | None = None,
+) -> None:
+    background_tasks.add_task(
+        log_event,
+        actor_email,
+        actor_role,
+        action,
+        resource_type,
+        resource_id,
+        metadata,
+        DEFAULT_DB_PATH,
+    )
 
 
 app = FastAPI(
@@ -64,8 +102,7 @@ class AgentQuestionPayload(BaseModel):
 
 @app.on_event("startup")
 def startup() -> None:
-    initialize_demo_data(force=False)
-    ensure_operational_tables(DEFAULT_DB_PATH)
+    ensure_app_ready()
 
 
 @app.post("/auth/login")
@@ -76,7 +113,7 @@ def login(payload: LoginPayload) -> dict[str, Any]:
 
 @app.get("/health")
 def health() -> dict[str, Any]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     status = database_status(DEFAULT_DB_PATH)
     return {
         "status": "ok",
@@ -90,27 +127,34 @@ def claims_risk(
     limit: int = Query(default=10, ge=1, le=100),
     level: str | None = Query(default=None, pattern="^(Verde|Amarillo|Rojo)$"),
 ) -> list[dict[str, Any]]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     return list_risk_cases(limit=limit, level=level, db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/claims/{id_siniestro}")
-def claim_detail(id_siniestro: str, user: DemoUser | None = Depends(optional_user)) -> dict[str, Any]:
-    initialize_demo_data(force=False)
+def claim_detail(
+    id_siniestro: str,
+    background_tasks: BackgroundTasks,
+    user: DemoUser | None = Depends(optional_user),
+) -> dict[str, Any]:
+    ensure_app_ready()
     detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
     if user is not None and "error" not in detail:
-        log_event(user.email, user.role, "claim.detail.viewed", "claim", id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+        queue_log_event(background_tasks, user.email, user.role, "claim.detail.viewed", "claim", id_siniestro.upper())
     return detail
 
 
 @app.get("/dashboard/kpis")
-def dashboard_kpis(user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria"))) -> dict[str, Any]:
-    initialize_demo_data(force=False)
+def dashboard_kpis(
+    background_tasks: BackgroundTasks,
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> dict[str, Any]:
+    ensure_app_ready()
     kpis = executive_kpis(DEFAULT_DB_PATH)
     providers = provider_pareto(5, DEFAULT_DB_PATH).to_dict(orient="records")
     cities = city_concentration(5, DEFAULT_DB_PATH).to_dict(orient="records")
     matrix = risk_matrix(DEFAULT_DB_PATH).to_dict(orient="records")
-    log_event(user.email, user.role, "dashboard.kpis.viewed", "dashboard", "kpis", db_path=DEFAULT_DB_PATH)
+    queue_log_event(background_tasks, user.email, user.role, "dashboard.kpis.viewed", "dashboard", "kpis")
     return {"kpis": kpis, "proveedores_criticos": providers, "ciudades_criticas": cities, "matriz_riesgo": matrix}
 
 
@@ -120,7 +164,7 @@ def review_decision(
     payload: ReviewDecisionPayload,
     user: DemoUser = Depends(require_roles("Analista", "Jefatura")),
 ) -> dict[str, Any]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
     if "error" in detail:
         raise HTTPException(status_code=404, detail=detail["error"])
@@ -137,15 +181,17 @@ def review_decision(
 @app.get("/claims/{id_siniestro}/review-history")
 def review_history(
     id_siniestro: str,
+    background_tasks: BackgroundTasks,
     user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
 ) -> list[dict[str, Any]]:
-    initialize_demo_data(force=False)
-    log_event(user.email, user.role, "review_history.viewed", "claim", id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    ensure_app_ready()
+    queue_log_event(background_tasks, user.email, user.role, "review_history.viewed", "claim", id_siniestro.upper())
     return list_review_history(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/audit-log")
 def audit_log(
+    background_tasks: BackgroundTasks,
     actor_email: str | None = None,
     action: str | None = None,
     resource_type: str | None = None,
@@ -155,8 +201,8 @@ def audit_log(
     limit: int = Query(default=100, ge=1, le=500),
     user: DemoUser = Depends(require_roles("Jefatura", "Auditoria")),
 ) -> list[dict[str, Any]]:
-    initialize_demo_data(force=False)
-    log_event(user.email, user.role, "audit_log.viewed", "audit", "audit_log", db_path=DEFAULT_DB_PATH)
+    ensure_app_ready()
+    queue_log_event(background_tasks, user.email, user.role, "audit_log.viewed", "audit", "audit_log")
     return list_audit_events(
         actor_email=actor_email,
         action=action,
@@ -170,20 +216,24 @@ def audit_log(
 
 
 @app.post("/agent/question")
-def agent_question(payload: AgentQuestionPayload, user: DemoUser = Depends(current_user)) -> dict[str, Any]:
-    initialize_demo_data(force=False)
+def agent_question(
+    payload: AgentQuestionPayload,
+    background_tasks: BackgroundTasks,
+    user: DemoUser = Depends(current_user),
+) -> dict[str, Any]:
+    ensure_app_ready()
     question = payload.question
     if payload.id_siniestro and payload.id_siniestro.upper() not in question.upper():
         question = f"{question}\n\nSiniestro relacionado: {payload.id_siniestro.upper()}"
     answer, source = ask_agent_with_status(question, DEFAULT_DB_PATH)
-    log_event(
+    queue_log_event(
+        background_tasks,
         user.email,
         user.role,
         "agent.question.asked",
         payload.scope or "agent",
         payload.id_siniestro.upper() if payload.id_siniestro else "general",
         {"question": payload.question, "source": source},
-        db_path=DEFAULT_DB_PATH,
     )
     return {
         "answer": answer,
@@ -195,9 +245,10 @@ def agent_question(payload: AgentQuestionPayload, user: DemoUser = Depends(curre
 @app.get("/agent/suggested-questions/{id_siniestro}")
 def suggested_questions(
     id_siniestro: str,
+    background_tasks: BackgroundTasks,
     user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
 ) -> dict[str, Any]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
     if "error" in detail:
         raise HTTPException(status_code=404, detail=detail["error"])
@@ -207,23 +258,24 @@ def suggested_questions(
         f"Que proveedor atiende el siniestro {id_siniestro.upper()} y que alertas concentra?",
         f"Que accion humana recomiendas para {id_siniestro.upper()} sin acusar fraude?",
     ]
-    log_event(user.email, user.role, "agent.suggested_questions.generated", "claim", id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
+    queue_log_event(background_tasks, user.email, user.role, "agent.suggested_questions.generated", "claim", id_siniestro.upper())
     return {"id_siniestro": id_siniestro.upper(), "questions": questions}
 
 
 @app.get("/agent/executive-summary")
 def agent_executive_summary(
+    background_tasks: BackgroundTasks,
     group_by: str = Query(pattern="^(proveedor|ciudad)$"),
     value: str = "",
     user: DemoUser = Depends(require_roles("Jefatura", "Auditoria")),
 ) -> dict[str, Any]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     if group_by == "proveedor":
         data = provider_pareto(15, DEFAULT_DB_PATH).to_dict(orient="records")
     else:
         data = city_concentration(15, DEFAULT_DB_PATH).to_dict(orient="records")
     filtered = [row for row in data if not value or value.lower() in json.dumps(row, ensure_ascii=False).lower()]
-    log_event(user.email, user.role, "agent.executive_summary.generated", group_by, value or "all", db_path=DEFAULT_DB_PATH)
+    queue_log_event(background_tasks, user.email, user.role, "agent.executive_summary.generated", group_by, value or "all")
     return {
         "group_by": group_by,
         "value": value,
@@ -234,10 +286,11 @@ def agent_executive_summary(
 
 @app.post("/claims/upload-csv")
 async def upload_claims_csv(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     user: DemoUser = Depends(require_roles("Analista", "Jefatura")),
 ) -> dict[str, Any]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     content = await file.read()
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp:
@@ -256,14 +309,14 @@ async def upload_claims_csv(
     required = REQUIRED_COLUMNS.get(stem, set())
     missing = sorted(required - set(frame.columns)) if required else []
     status_value = "revisar" if missing else "ok"
-    log_event(
+    queue_log_event(
+        background_tasks,
         user.email,
         user.role,
         "claims.upload_csv.validated",
         "csv",
         file.filename or "upload.csv",
         {"rows": len(frame), "columns": list(frame.columns), "status": status_value, "missing": missing},
-        db_path=DEFAULT_DB_PATH,
     )
     return {
         "filename": file.filename,
@@ -280,25 +333,25 @@ async def upload_claims_csv(
 def alerts_aggregate(
     group_by: str = Query(default="proveedor", pattern="^(proveedor|ramo|ciudad|documentos)$"),
 ) -> list[dict[str, Any]]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     return aggregate_alerts(group_by=group_by, db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/alerts/provider-pareto")
 def alerts_provider_pareto() -> list[dict[str, Any]]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     return provider_red_alert_pareto(db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/relationships")
 def relationships(limit: int = Query(default=60, ge=10, le=120)) -> dict[str, list[dict[str, Any]]]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     return get_relationship_network(limit=limit, db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/report/summary")
 def report_summary() -> dict[str, Any]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     return executive_report(db_path=DEFAULT_DB_PATH)
 
 
@@ -309,5 +362,5 @@ def score_candidate(payload: dict[str, Any]) -> dict[str, Any]:
 
 @app.get("/metrics")
 def metrics() -> list[dict[str, Any]]:
-    initialize_demo_data(force=False)
+    ensure_app_ready()
     return get_model_metrics(db_path=DEFAULT_DB_PATH)

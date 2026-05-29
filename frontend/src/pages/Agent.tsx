@@ -26,6 +26,11 @@ function readStoredMessages(storageKey: string): AgentMessage[] {
   }
 }
 
+function visibleSource(source?: string) {
+  if (!source || source.startsWith('Herramientas locales') || source === 'Sesion local') return '';
+  return source;
+}
+
 export function Agent() {
   const { user } = useAuth();
   const storageKey = useMemo(() => `fraudia.agent.messages.${user?.email ?? 'anonymous'}`, [user?.email]);
@@ -73,7 +78,7 @@ export function Agent() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-3xl font-black text-navy-950">Agente IA</h1>
-          <p className="text-sm text-navy-500">Responde con herramientas locales y conserva esta sesion de chat en tu navegador.</p>
+          <p className="text-sm text-navy-500">Consulta casos, alertas y patrones con evidencia para revision humana.</p>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={clearChat} disabled={messages.length === 0 || loading}>
           <Trash2 className="mr-2 h-4 w-4" />
@@ -105,7 +110,7 @@ export function Agent() {
             <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[82%] rounded-3xl p-4 text-sm ${message.role === 'user' ? 'rounded-br-sm bg-cyan-700 text-white' : 'rounded-bl-sm border border-navy-100 bg-navy-50 text-navy-900'}`}>
                 {message.role === 'agent' ? <MarkdownMessage content={message.content} /> : <div className="whitespace-pre-wrap">{message.content}</div>}
-                {message.source && <p className="mt-3 text-xs font-semibold text-cyan-700">Fuente: {message.source}</p>}
+                {visibleSource(message.source) && <p className="mt-3 text-xs font-semibold text-cyan-700">Fuente: {visibleSource(message.source)}</p>}
               </div>
             </div>
           ))}
