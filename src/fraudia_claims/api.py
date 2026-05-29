@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 import json
 import tempfile
@@ -99,6 +99,84 @@ class AgentQuestionPayload(BaseModel):
     question: str
     id_siniestro: str | None = None
     scope: str = "general"
+
+
+class CandidateScorePayload(BaseModel):
+    ramo: Literal["Vehiculos", "Salud", "Hogar"]
+    cobertura: str = Field(min_length=3, max_length=80)
+    monto_reclamado: float = Field(ge=100, le=100000)
+    suma_asegurada: float = Field(ge=500, le=200000)
+    dias_desde_inicio_poliza: int = Field(ge=0, le=365)
+    dias_desde_fin_poliza: int = Field(ge=0, le=365)
+    dias_entre_ocurrencia_reporte: int = Field(ge=0, le=365)
+    denuncia_horas: int = Field(ge=0, le=720)
+    documentos_completos: bool = True
+    documentos_inconsistentes: bool = False
+    tercero_identificado: bool = True
+    proveedor_lista_restrictiva: bool = False
+    adulteracion_documental: bool = False
+    dinamica_imposible: bool = False
+    factura_duplicada: bool = False
+    narrativa_clonada: bool = False
+
+
+ALLOWED_CANDIDATE_COVERAGES: dict[str, set[str]] = {
+    "Vehiculos": {
+        "Perdida Total por Robo",
+        "Robo",
+        "Robo de Accesorios",
+        "Choque",
+        "Cristales",
+        "Responsabilidad Civil",
+    },
+    "Salud": {
+        "Consulta Especializada",
+        "Emergencia",
+        "Hospitalizacion",
+        "Procedimiento Ambulatorio",
+    },
+    "Hogar": {
+        "Danio Agua",
+        "Incendio",
+        "Robo",
+        "Cristales",
+        "Responsabilidad Civil",
+    },
+}
+
+
+def candidate_payload_data(payload: CandidateScorePayload) -> dict[str, Any]:
+    if hasattr(payload, "model_dump"):
+        return payload.model_dump()
+    return payload.dict()
+
+
+def validate_candidate_payload(data: dict[str, Any]) -> list[dict[str, str]]:
+    errors: list[dict[str, str]] = []
+    ramo = str(data["ramo"])
+    cobertura = str(data["cobertura"])
+    if cobertura not in ALLOWED_CANDIDATE_COVERAGES.get(ramo, set()):
+        errors.append(
+            {
+                "field": "cobertura",
+                "message": f"La cobertura no corresponde al ramo {ramo}.",
+            }
+        )
+    if float(data["monto_reclamado"]) > float(data["suma_asegurada"]):
+        errors.append(
+            {
+                "field": "monto_reclamado",
+                "message": "El monto reclamado no debe superar la suma asegurada en esta prueba.",
+            }
+        )
+    if int(data["dias_desde_inicio_poliza"]) + int(data["dias_desde_fin_poliza"]) > 366:
+        errors.append(
+            {
+                "field": "dias_desde_inicio_poliza",
+                "message": "La vigencia simulada no debe superar 366 dias.",
+            }
+        )
+    return errors
 
 
 @app.on_event("startup")
@@ -356,8 +434,12 @@ def report_summary() -> dict[str, Any]:
 
 
 @app.post("/score-candidate")
-def score_candidate(payload: dict[str, Any]) -> dict[str, Any]:
-    return score_candidate_claim(payload)
+def score_candidate(payload: CandidateScorePayload) -> dict[str, Any]:
+    data = candidate_payload_data(payload)
+    errors = validate_candidate_payload(data)
+    if errors:
+        raise HTTPException(status_code=422, detail=errors)
+    return score_candidate_claim(data)
 
 
 @app.get("/metrics")

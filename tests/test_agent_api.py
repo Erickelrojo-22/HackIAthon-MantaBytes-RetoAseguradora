@@ -72,6 +72,38 @@ class AgentAndApiTests(unittest.TestCase):
         self.assertEqual(candidate.status_code, 200)
         self.assertEqual(candidate.json()["nivel_riesgo"], "Rojo")
 
+        invalid_branch = client.post(
+            "/score-candidate",
+            json={
+                "ramo": "Vehiculosdasdasdad",
+                "cobertura": "Perdida Total por Robo",
+                "monto_reclamado": 29500,
+                "suma_asegurada": 30000,
+                "dias_desde_inicio_poliza": 1,
+                "dias_desde_fin_poliza": 364,
+                "dias_entre_ocurrencia_reporte": 5,
+                "denuncia_horas": 72,
+                "documentos_completos": False,
+            },
+        )
+        self.assertEqual(invalid_branch.status_code, 422)
+
+        invalid_amount = client.post(
+            "/score-candidate",
+            json={
+                "ramo": "Vehiculos",
+                "cobertura": "Perdida Total por Robo",
+                "monto_reclamado": 35000,
+                "suma_asegurada": 30000,
+                "dias_desde_inicio_poliza": 1,
+                "dias_desde_fin_poliza": 364,
+                "dias_entre_ocurrencia_reporte": 5,
+                "denuncia_horas": 72,
+                "documentos_completos": False,
+            },
+        )
+        self.assertEqual(invalid_amount.status_code, 422)
+
 
 if __name__ == "__main__":
     unittest.main()
