@@ -6,4 +6,5 @@ venv/
 .env
 .streamlit/secrets.toml
 *.log
+.local-backups/
 data/company_synthetic/

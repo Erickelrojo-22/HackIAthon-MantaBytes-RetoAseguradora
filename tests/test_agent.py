@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 import unittest
+from decimal import Decimal
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -10,6 +11,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from fraudia_claims.offline_agent import answer_offline
+from fraudia_claims.openai_agent import _json_safe, _with_disclaimer
 from fraudia_claims.storage import initialize_demo_data
 
 
@@ -66,6 +68,14 @@ class AgentTests(unittest.TestCase):
         )
         self.assertIn("TMP001", answer)
         self.assertIn("revision humana", answer.lower())
+
+    def test_openai_tool_output_serializes_database_decimals(self) -> None:
+        payload = {"rows": [{"score_promedio": Decimal("76.50"), "nested": (Decimal("1.25"),)}]}
+        self.assertEqual(_json_safe(payload), {"rows": [{"score_promedio": 76.5, "nested": [1.25]}]})
+
+    def test_disclaimer_detection_handles_accents(self) -> None:
+        answer = "El score es una alerta de revisión humana, no una acusación."
+        self.assertEqual(_with_disclaimer(answer), answer)
 
 
 if __name__ == "__main__":

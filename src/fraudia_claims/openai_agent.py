@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import date, datetime
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +23,7 @@ from fraudia_claims.agent_tools import (
 )
 from fraudia_claims.config import DEFAULT_DB_PATH
 from fraudia_claims.offline_agent import answer_offline
+from fraudia_claims.utils import normalize_text
 
 
 TOOLS = [
@@ -164,6 +167,23 @@ def _dispatch(name: str, arguments: dict[str, Any], db_path: Path) -> Any:
     raise ValueError(f"Herramienta no soportada: {name}")
 
 
+def _json_safe(value: Any) -> Any:
+    if isinstance(value, Decimal):
+        return float(value)
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_json_safe(item) for item in value]
+    if hasattr(value, "item") and callable(value.item):
+        try:
+            return _json_safe(value.item())
+        except Exception:
+            return str(value)
+    return value
+
+
 def _should_answer_from_session(question: str) -> bool:
     text = question.lower()
     return "ultimo caso" in text or "caso evaluado" in text or "evaluado en vivo" in text
@@ -180,7 +200,7 @@ def ask_with_openai(
 
 def _with_disclaimer(answer: str) -> str:
     required = "alerta de revision humana"
-    normalized = answer.lower()
+    normalized = normalize_text(answer)
     if required in normalized or "revision humana" in normalized:
         return answer
     return (
@@ -230,7 +250,7 @@ def ask_with_openai_status(
                     {
                         "type": "function_call_output",
                         "call_id": getattr(item, "call_id"),
-                        "output": json.dumps(result, ensure_ascii=False),
+                        "output": json.dumps(_json_safe(result), ensure_ascii=False),
                     }
                 )
         if pending_outputs:

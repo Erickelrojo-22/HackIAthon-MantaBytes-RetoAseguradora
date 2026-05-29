@@ -4,6 +4,7 @@ import { BotMessageSquare, Loader2, Send, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
+import { MarkdownMessage } from '../components/ui/MarkdownMessage';
 import { useAuth } from '../contexts/useAuth';
 
 const suggestions = [
@@ -90,7 +91,7 @@ export function Agent() {
           {messages.map((message, index) => (
             <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[82%] rounded-3xl p-4 text-sm ${message.role === 'user' ? 'rounded-br-sm bg-cyan-700 text-white' : 'rounded-bl-sm border border-navy-100 bg-navy-50 text-navy-900'}`}>
-                <div className="whitespace-pre-wrap">{message.content}</div>
+                {message.role === 'agent' ? <MarkdownMessage content={message.content} /> : <div className="whitespace-pre-wrap">{message.content}</div>}
                 {message.source && <p className="mt-3 text-xs font-semibold text-cyan-700">Fuente: {message.source}</p>}
               </div>
             </div>

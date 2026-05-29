@@ -7,6 +7,7 @@ import { api, dateTime, money, type ClaimDetail as ClaimDetailType, type ReviewD
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { MarkdownMessage } from '../components/ui/MarkdownMessage';
 
 const reviewStatuses: ReviewStatus[] = ['En revision', 'Descartado', 'Escalado', 'Confirmado para investigacion'];
 
@@ -124,7 +125,7 @@ export function ClaimDetail() {
                 {aiMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <BotMessageSquare className="h-4 w-4" />}
                 Explicar este caso con IA
               </Button>
-              {aiAnswer && <div className="whitespace-pre-wrap rounded-2xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-navy-800">{aiAnswer}</div>}
+              {aiAnswer && <div className="rounded-2xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-navy-800"><MarkdownMessage content={aiAnswer} /></div>}
               <div className="grid gap-2 md:grid-cols-2">
                 {suggested?.questions?.map((question) => (
                   <button key={question} onClick={() => aiMutation.mutate(question)} className="rounded-xl border border-navy-200 bg-white p-3 text-left text-sm transition hover:bg-navy-50">
