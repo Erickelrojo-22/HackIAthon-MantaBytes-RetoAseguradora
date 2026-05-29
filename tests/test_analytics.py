@@ -10,6 +10,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from fraudia_claims.analytics import executive_kpis, provider_pareto, top_cases
+from fraudia_claims.database import read_sql
 from fraudia_claims.storage import initialize_demo_data
 
 
@@ -20,7 +21,8 @@ class AnalyticsTests(unittest.TestCase):
 
     def test_executive_kpis_are_consistent(self) -> None:
         kpis = executive_kpis()
-        self.assertIn(kpis["total_siniestros"], {500, 3000})
+        expected_total = int(read_sql("SELECT COUNT(*) AS n FROM siniestros")["n"].iloc[0])
+        self.assertEqual(kpis["total_siniestros"], expected_total)
         self.assertGreater(kpis["casos_priorizados"], 0)
         self.assertGreaterEqual(kpis["monto_expuesto"], kpis["monto_priorizado"])
 
