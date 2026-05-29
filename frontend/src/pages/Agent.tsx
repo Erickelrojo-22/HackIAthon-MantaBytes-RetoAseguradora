@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BotMessageSquare, Loader2, Send, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
 import { Button } from '../components/ui/Button';
@@ -32,23 +32,27 @@ export function Agent() {
   const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<AgentMessage[]>(() => readStoredMessages(storageKey));
   const [loading, setLoading] = useState(false);
+  const pendingRef = useRef(false);
 
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(messages));
   }, [messages, storageKey]);
 
   const ask = async (text: string) => {
-    if (!text.trim()) return;
+    const trimmed = text.trim();
+    if (!trimmed || pendingRef.current) return;
+    pendingRef.current = true;
     const next = [...messages, { role: 'user' as const, content: text }];
     setMessages(next);
     setQuestion('');
     setLoading(true);
     try {
-      const response = await api.post('/agent/question', { question: text, scope: 'global' });
+      const response = await api.post('/agent/question', { question: trimmed, scope: 'global' });
       setMessages([...next, { role: 'agent', content: response.data.answer, source: response.data.source }]);
     } catch {
       setMessages([...next, { role: 'agent', content: 'No pude conectar con el agente. Verifica que FastAPI este activo.' }]);
     } finally {
+      pendingRef.current = false;
       setLoading(false);
     }
   };
@@ -78,7 +82,16 @@ export function Agent() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {suggestions.map((item) => <button key={item} onClick={() => ask(item)} className="rounded-full border border-navy-200 bg-white px-3 py-1.5 text-xs font-semibold text-navy-700 transition hover:bg-cyan-50">{item}</button>)}
+        {suggestions.map((item) => (
+          <button
+            key={item}
+            onClick={() => ask(item)}
+            disabled={loading}
+            className="rounded-full border border-navy-200 bg-white px-3 py-1.5 text-xs font-semibold text-navy-700 transition hover:bg-cyan-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white"
+          >
+            {item}
+          </button>
+        ))}
       </div>
 
       <Card className="flex min-h-0 flex-1 flex-col">
@@ -99,7 +112,7 @@ export function Agent() {
           {loading && <Loader2 className="h-5 w-5 animate-spin text-cyan-700" />}
         </CardContent>
         <form onSubmit={handleSend} className="flex gap-2 border-t border-navy-100 bg-white p-4">
-          <input value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Escribe tu pregunta..." className="flex-1 rounded-xl border border-navy-200 px-4 py-2 outline-none focus:ring-2 focus:ring-cyan-400" />
+          <input value={question} onChange={(event) => setQuestion(event.target.value)} disabled={loading} placeholder="Escribe tu pregunta..." className="flex-1 rounded-xl border border-navy-200 px-4 py-2 outline-none focus:ring-2 focus:ring-cyan-400 disabled:cursor-not-allowed disabled:bg-navy-50 disabled:text-navy-400" />
           <Button type="submit" disabled={loading || !question.trim()}><Send className="h-4 w-4" /></Button>
         </form>
       </Card>
