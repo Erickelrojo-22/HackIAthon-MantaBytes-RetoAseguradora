@@ -39,7 +39,7 @@ export function Login() {
   };
 
   return (
-    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-navy-950 px-4 py-10">
+    <div className="relative grid min-h-dvh place-items-center overflow-hidden bg-navy-950 px-4 py-10">
       <div className="absolute -left-28 -top-28 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
       <div className="absolute -bottom-28 -right-28 h-[28rem] w-[28rem] rounded-full bg-blue-900/40 blur-3xl" />
 

@@ -18,8 +18,13 @@
 }
 
 @layer base {
+  html,
+  #root {
+    height: 100%;
+  }
+
   body {
-    @apply bg-navy-50 text-navy-900 font-sans antialiased min-h-screen flex flex-col;
+    @apply h-full min-h-0 overflow-hidden bg-navy-50 text-navy-900 font-sans antialiased;
   }
 }
 

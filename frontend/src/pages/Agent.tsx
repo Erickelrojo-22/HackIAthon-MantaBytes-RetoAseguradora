@@ -75,7 +75,7 @@ export function Agent() {
   };
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-9rem)] max-w-5xl flex-col space-y-5">
+    <div className="mx-auto flex max-w-5xl flex-col space-y-5 lg:h-[calc(100dvh-9rem)]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-3xl font-black text-navy-950">Agente IA</h1>
@@ -100,8 +100,8 @@ export function Agent() {
         ))}
       </div>
 
-      <Card className="flex min-h-0 flex-1 flex-col">
-        <CardContent className="min-h-0 flex-1 space-y-4 overflow-y-auto p-6">
+      <Card className="flex min-h-[28rem] flex-1 flex-col lg:min-h-0">
+        <CardContent className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
           {messages.length === 0 && (
             <div className="grid h-full place-items-center text-center text-navy-400">
               <div><BotMessageSquare className="mx-auto mb-4 h-16 w-16 opacity-50" /><p>Haz una pregunta ejecutiva sobre riesgo, proveedores, documentos o un caso SINxxxxx.</p></div>
@@ -117,7 +117,7 @@ export function Agent() {
           ))}
           {loading && <Loader2 className="h-5 w-5 animate-spin text-cyan-700" />}
         </CardContent>
-        <form onSubmit={handleSend} className="flex gap-2 border-t border-navy-100 bg-white p-4">
+        <form onSubmit={handleSend} className="flex gap-2 border-t border-navy-100 bg-white p-3 sm:p-4">
           <input value={question} onChange={(event) => setQuestion(event.target.value)} disabled={loading} placeholder="Escribe tu pregunta..." className="flex-1 rounded-xl border border-navy-200 px-4 py-2 outline-none focus:ring-2 focus:ring-cyan-400 disabled:cursor-not-allowed disabled:bg-navy-50 disabled:text-navy-400" />
           <Button type="submit" disabled={loading || !question.trim()}><Send className="h-4 w-4" /></Button>
         </form>

@@ -84,13 +84,13 @@ export function AppLayout() {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-navy-50">
+    <div className="flex h-dvh overflow-hidden bg-navy-50">
       <aside className="z-20 hidden w-72 shrink-0 flex-col bg-navy-950 text-white shadow-2xl lg:flex">
         {sidebarContent}
       </aside>
 
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden" aria-modal="true" role="dialog">
+        <div className="fixed inset-0 z-40 h-dvh lg:hidden" aria-modal="true" role="dialog">
           <button
             type="button"
             aria-label="Cerrar menu"
