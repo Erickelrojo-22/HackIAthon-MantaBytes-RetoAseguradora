@@ -23,7 +23,27 @@ from fraudia_claims.agent_tools import (
 )
 from fraudia_claims.config import DEFAULT_DB_PATH
 from fraudia_claims.offline_agent import answer_offline
-from fraudia_claims.utils import normalize_text
+from fraudia_claims.utils import money, normalize_text
+
+
+FAST_LOCAL_QUESTIONS = {
+    "cuales son los 10 siniestros con mayor riesgo",
+    "cuales son los 10 siniestros con mayor riesgo de posible fraude",
+    "que proveedores concentran mas alertas",
+    "que proveedores concentran mas alertas rojas",
+    "que proveedores concentran el 80 de las alertas rojas",
+    "que ramos tienen mayor porcentaje de casos sospechosos",
+    "que ciudades presentan mayor concentracion de alertas",
+    "que asegurados tienen mayor frecuencia de reclamos",
+    "que documentos faltan en los casos criticos",
+    "que casos tienen montos atipicos",
+    "que siniestros ocurrieron cerca del inicio de la poliza",
+    "que patrones se repiten en los reclamos sospechosos",
+    "genera un resumen ejecutivo de los casos criticos",
+    "recomienda que casos deberia revisar primero el analista",
+    "cual es el ahorro potencial simulado",
+    "que metricas tiene el modelo supervisado",
+}
 
 
 TOOLS = [
@@ -189,6 +209,57 @@ def _should_answer_from_session(question: str) -> bool:
     return "ultimo caso" in text or "caso evaluado" in text or "evaluado en vivo" in text
 
 
+def _is_fast_local_question(question: str) -> bool:
+    return normalize_text(question) in FAST_LOCAL_QUESTIONS
+
+
+def _format_local_table(rows: list[dict[str, Any]], columns: list[str]) -> str:
+    if not rows:
+        return "No encontre resultados para esa consulta."
+    header = "| " + " | ".join(columns) + " |"
+    sep = "| " + " | ".join(["---"] * len(columns)) + " |"
+    body = ["| " + " | ".join(str(row.get(col, "")) for col in columns) + " |" for row in rows]
+    return "\n".join([header, sep, *body])
+
+
+def _format_local_cases(rows: list[dict[str, Any]]) -> str:
+    formatted = [
+        {
+            "id": row.get("id_siniestro"),
+            "score": row.get("score_final"),
+            "nivel": row.get("nivel_riesgo"),
+            "ramo": row.get("ramo"),
+            "ciudad": row.get("ciudad"),
+            "monto": money(row.get("monto_reclamado")),
+            "proveedor": row.get("proveedor"),
+        }
+        for row in rows
+    ]
+    return _format_local_table(formatted, ["id", "score", "nivel", "ramo", "ciudad", "monto", "proveedor"])
+
+
+def _fast_local_answer(question: str, db_path: Path, session_cases: list[dict[str, Any]] | None = None) -> str:
+    text = normalize_text(question)
+    if "resumen ejecutivo" in text or text == "genera un resumen ejecutivo de los casos criticos":
+        report = executive_report(db_path=db_path)
+        savings = report["ahorro_potencial_simulado"]
+        return (
+            "### Resumen ejecutivo\n"
+            "El prototipo prioriza casos para revision humana con reglas trazables, anomalias, NLP y modelo supervisado demo. "
+            "Los scores no constituyen acusaciones ni decisiones automaticas.\n\n"
+            f"- Total de siniestros: **{report['resumen'].get('total_siniestros', 0)}**\n"
+            f"- Casos rojos: **{report['resumen'].get('rojos', 0)}**\n"
+            f"- Casos amarillos: **{report['resumen'].get('amarillos', 0)}**\n"
+            f"- Ahorro potencial simulado: **{money(savings['monto_estimado'])}** "
+            f"sobre una base de revision de {money(savings['base_revision_rojo_amarillo'])}.\n\n"
+            "Casos mas urgentes:\n\n"
+            f"{_format_local_cases(report['top_casos'][:5])}\n\n"
+            "Proveedores destacados por concentracion de alertas rojas:\n\n"
+            f"{_format_local_table(report['proveedores_80_20'][:5], ['proveedor', 'tipo', 'alertas_rojas', 'porcentaje_acumulado', 'score_promedio'])}"
+        )
+    return answer_offline(question, db_path, session_cases=session_cases)
+
+
 def ask_with_openai(
     question: str,
     db_path: Path = DEFAULT_DB_PATH,
@@ -216,6 +287,9 @@ def ask_with_openai_status(
 ) -> tuple[str, str]:
     if _should_answer_from_session(question):
         return answer_offline(question, db_path, session_cases=session_cases), "Sesion local"
+
+    if _is_fast_local_question(question):
+        return _fast_local_answer(question, db_path, session_cases=session_cases), "Herramientas locales rapidas"
 
     api_key = os.getenv("OPENAI_API_KEY")
     model = os.getenv("OPENAI_MODEL")
