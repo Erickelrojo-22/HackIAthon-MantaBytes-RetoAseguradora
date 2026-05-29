@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import type { ClipboardEvent, FormEvent, KeyboardEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { AlertTriangle, BotMessageSquare, Loader2 } from 'lucide-react';
 import { api, money } from '../lib/api';
@@ -46,6 +46,16 @@ type NumericFieldName =
 type FieldErrors = Partial<Record<keyof CandidateForm | 'vigencia', string>>;
 
 const branchOptions = Object.keys(candidateCoverages) as Branch[];
+const displayLabels: Record<string, string> = {
+  Vehiculos: 'Vehículos',
+  'Perdida Total por Robo': 'Pérdida total por robo',
+  'Robo de Accesorios': 'Robo de accesorios',
+  'Responsabilidad Civil': 'Responsabilidad civil',
+  Hospitalizacion: 'Hospitalización',
+  'Procedimiento Ambulatorio': 'Procedimiento ambulatorio',
+  'Danio Agua': 'Daño por agua',
+};
+const displayLabel = (value: string) => displayLabels[value] ?? value;
 
 const defaultCase: CandidateForm = {
   ramo: 'Vehiculos',
@@ -126,7 +136,7 @@ export function JuryTest() {
         question: [
           'Explica este caso temporal para el jurado sin acusar fraude ni tomar decision automatica.',
           `Score ${result.score_final}, nivel ${result.nivel_riesgo}.`,
-          `Ramo ${formData.ramo}, cobertura ${formData.cobertura}.`,
+          `Ramo ${displayLabel(formData.ramo)}, cobertura ${displayLabel(formData.cobertura)}.`,
           `Monto reclamado ${formData.monto_reclamado}, suma asegurada ${formData.suma_asegurada}.`,
           `Dias desde inicio ${formData.dias_desde_inicio_poliza}, dias hasta fin ${formData.dias_desde_fin_poliza}, dias hasta reporte ${formData.dias_entre_ocurrencia_reporte}, horas hasta denuncia ${formData.denuncia_horas}.`,
           `Alertas: ${result.alertas.map((alert) => `${alert.codigo} ${alert.descripcion}`).join('; ') || 'sin alertas materiales'}.`,
@@ -162,6 +172,7 @@ export function JuryTest() {
                     const ramo = value as Branch;
                     updateForm({ ramo, cobertura: candidateCoverages[ramo][0] });
                   }}
+                  formatOption={displayLabel}
                   error={validationErrors.ramo}
                 />
                 <SelectField
@@ -169,6 +180,7 @@ export function JuryTest() {
                   value={formData.cobertura}
                   options={[...coverageOptions]}
                   onChange={(value) => updateForm({ cobertura: value })}
+                  formatOption={displayLabel}
                   error={validationErrors.cobertura}
                 />
                 <NumberField
@@ -176,7 +188,6 @@ export function JuryTest() {
                   value={formData.monto_reclamado}
                   min={100}
                   max={100000}
-                  step={100}
                   error={validationErrors.monto_reclamado}
                   onChange={(value) => updateForm({ monto_reclamado: value })}
                 />
@@ -185,7 +196,6 @@ export function JuryTest() {
                   value={formData.suma_asegurada}
                   min={500}
                   max={200000}
-                  step={100}
                   error={validationErrors.suma_asegurada}
                   onChange={(value) => updateForm({ suma_asegurada: value })}
                 />
@@ -194,7 +204,6 @@ export function JuryTest() {
                   value={formData.dias_desde_inicio_poliza}
                   min={0}
                   max={365}
-                  step={1}
                   error={validationErrors.dias_desde_inicio_poliza || validationErrors.vigencia}
                   onChange={(value) => updateForm({ dias_desde_inicio_poliza: value })}
                 />
@@ -203,7 +212,6 @@ export function JuryTest() {
                   value={formData.dias_desde_fin_poliza}
                   min={0}
                   max={365}
-                  step={1}
                   error={validationErrors.dias_desde_fin_poliza || validationErrors.vigencia}
                   onChange={(value) => updateForm({ dias_desde_fin_poliza: value })}
                 />
@@ -212,7 +220,6 @@ export function JuryTest() {
                   value={formData.dias_entre_ocurrencia_reporte}
                   min={0}
                   max={365}
-                  step={1}
                   error={validationErrors.dias_entre_ocurrencia_reporte}
                   onChange={(value) => updateForm({ dias_entre_ocurrencia_reporte: value })}
                 />
@@ -221,7 +228,6 @@ export function JuryTest() {
                   value={formData.denuncia_horas}
                   min={0}
                   max={720}
-                  step={1}
                   error={validationErrors.denuncia_horas}
                   onChange={(value) => updateForm({ denuncia_horas: value })}
                 />
@@ -346,12 +352,14 @@ function SelectField({
   options,
   onChange,
   error,
+  formatOption,
 }: {
   label: string;
   value: string;
   options: readonly string[];
   onChange: (value: string) => void;
   error?: string;
+  formatOption?: (value: string) => string;
 }) {
   return (
     <label className="text-sm font-semibold text-navy-700">
@@ -361,7 +369,7 @@ function SelectField({
         onChange={(event) => onChange(event.target.value)}
         className={`mt-1 w-full rounded-xl border bg-white px-3 py-2 ${error ? 'border-red-300 ring-2 ring-red-100' : 'border-navy-200'}`}
       >
-        {options.map((option) => <option key={option} value={option}>{option}</option>)}
+        {options.map((option) => <option key={option} value={option}>{formatOption ? formatOption(option) : option}</option>)}
       </select>
       {error && <span className="mt-1 block text-xs font-semibold text-red-600">{error}</span>}
     </label>
@@ -373,7 +381,6 @@ function NumberField({
   value,
   min,
   max,
-  step,
   onChange,
   error,
 }: {
@@ -381,23 +388,71 @@ function NumberField({
   value: number;
   min: number;
   max: number;
-  step: number;
   onChange: (value: number) => void;
   error?: string;
 }) {
+  const [entryError, setEntryError] = useState('');
+  const shownError = entryError || error;
+  const maxLength = String(max).length;
+
+  const rejectInput = () => {
+    setEntryError('Solo números. Ingresa el dato correctamente.');
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    const isShortcut = event.ctrlKey || event.metaKey;
+    if (allowedKeys.includes(event.key) || isShortcut) return;
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
+      rejectInput();
+      return;
+    }
+    setEntryError('');
+  };
+
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    const pasted = event.clipboardData.getData('text');
+    if (!/^\d+$/.test(pasted)) {
+      event.preventDefault();
+      rejectInput();
+      return;
+    }
+    setEntryError('');
+  };
+
+  const handleChange = (raw: string) => {
+    if (raw === '') {
+      setEntryError('');
+      onChange(Number.NaN);
+      return;
+    }
+    if (!/^\d+$/.test(raw)) {
+      rejectInput();
+      const sanitized = raw.replace(/\D/g, '');
+      onChange(sanitized ? Number(sanitized) : Number.NaN);
+      return;
+    }
+    setEntryError('');
+    onChange(Number(raw));
+  };
+
   return (
     <label className="text-sm font-semibold text-navy-700">
       {label}
       <input
-        type="number"
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
         value={Number.isFinite(value) ? value : ''}
-        min={min}
-        max={max}
-        step={step}
-        onChange={(event) => onChange(event.target.value === '' ? Number.NaN : Number(event.target.value))}
-        className={`mt-1 w-full rounded-xl border px-3 py-2 ${error ? 'border-red-300 ring-2 ring-red-100' : 'border-navy-200'}`}
+        minLength={String(min).length}
+        maxLength={maxLength}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        onChange={(event) => handleChange(event.target.value)}
+        className={`mt-1 w-full rounded-xl border px-3 py-2 ${shownError ? 'border-red-300 ring-2 ring-red-100' : 'border-navy-200'}`}
       />
-      {error && <span className="mt-1 block text-xs font-semibold text-red-600">{error}</span>}
+      {shownError && <span className="mt-1 block text-xs font-semibold text-red-600">{shownError}</span>}
     </label>
   );
 }
