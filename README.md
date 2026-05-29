@@ -72,6 +72,28 @@ $env:FRAUDIA_COMPANY_DATA_DIR="data/company_synthetic"
 
 El loader valida columnas antes de cargar. No se debe versionar ese dataset hasta confirmar autorizacion y naturaleza 100% sintetica.
 
+## Usar Supabase / PostgreSQL localmente
+
+La configuracion de base vive en `.env` en la raiz del repo, no dentro de `frontend/`.
+El frontend no decide si muestra 500 o 3.000 siniestros; solo consume el backend configurado en `VITE_API_URL`.
+
+Para usar Supabase o PostgreSQL con el dataset empresarial:
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
+
+Configura:
+
+```text
+FRAUDIA_DB_BACKEND=postgres
+FRAUDIA_DATA_SOURCE=company_synthetic
+FRAUDIA_DATABASE_URL=postgresql+psycopg://usuario:password@host:5432/base
+```
+
+Despues detén cualquier backend viejo y vuelve a levantar FastAPI. Verifica `http://127.0.0.1:8000/health`; debe indicar `backend: postgres` y `data_source: company_synthetic`.
+
 ## Ejecutar backend API
 
 ```powershell
