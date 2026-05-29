@@ -6,9 +6,10 @@ Esta matriz resume como FraudIA Claims cubre los puntos principales del document
 | --- | --- | --- | --- |
 | Datos minimos | Siniestros, polizas, asegurados, vehiculos, proveedores y documentos | Online: dataset empresarial sintetico en Supabase/PostgreSQL. Offline: SQLite reconstruido desde CSV versionados | `docs/datos_supabase.md`, `data/company_synthetic/`, `data/synthetic/`, `database.py` |
 | Score de riesgo | Puntaje por siniestro y semaforo verde/amarillo/rojo | `score_final` 0-100 con nivel y accion sugerida | `scoring.py`, tabla `scores` |
-| Reglas de negocio | Senales por vigencia, denuncia, frecuencia, documentos, proveedor, monto y dinamica | Motor de reglas con codigos RF/RS/RH, puntos y evidencia | `rules.py`, tabla `alertas` |
+| Reglas de negocio | Senales por vigencia, denuncia, frecuencia, documentos, proveedor, monto y dinamica | Motor de reglas con codigos RF/RS/RH, puntos y evidencia | `rules.py`, `docs/reglas_negocio.md`, tabla `alertas` |
+| Rubrica de alertas | Reglas o criterios usados para generar alertas | Semaforo, pesos, reglas criticas, reglas amarillas y acciones sugeridas | `docs/rubrica_alertas.md`, tabla `alertas` |
 | Reglas criticas | Perdida total por robo, adulteracion, lista restrictiva, dinamica imposible | Escalamiento automatico minimo a rojo cuando aplica | `rules.py`, `agent_tools.score_candidate_claim` |
-| IA / ML | Modelo de anomalias o clasificacion | IsolationForest por ramo y RandomForest supervisado con etiqueta sintetica | `models.py`, tabla `metricas_modelo` |
+| IA / ML | Modelo de anomalias o clasificacion | IsolationForest por ramo, TF-IDF narrativo, RandomForest demo y agente con herramientas locales | `docs/uso_ia.md`, `models.py`, tabla `metricas_modelo` |
 | NLP | Analisis de descripcion y narrativas similares | TF-IDF por ramo y similitud narrativa trazada | `nlp.py`, columnas `similitud_narrativa`, `siniestro_similar` |
 | Agente IA | Consultas en lenguaje natural | Agente offline y OpenAI opcional con herramientas locales | `offline_agent.py`, `openai_agent.py` |
 | Dashboard | Interfaz funcional para analista | Frontend React con centro de mando, bandeja, expediente, agente, auditoria, red, reporte, carga CSV, Vision y prueba del jurado | `frontend/`, `api.py` |

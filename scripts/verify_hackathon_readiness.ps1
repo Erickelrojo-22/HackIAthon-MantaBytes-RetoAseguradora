@@ -134,6 +134,7 @@ try {
         "docs\arquitectura.md",
         "docs\modelo_datos.md",
         "docs\reglas_negocio.md",
+        "docs\rubrica_alertas.md",
         "docs\uso_ia.md",
         "docs\limitaciones.md",
         "docs\datos_supabase.md",

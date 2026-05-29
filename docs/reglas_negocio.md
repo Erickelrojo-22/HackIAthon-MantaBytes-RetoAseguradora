@@ -1,5 +1,7 @@
 # Reglas de negocio y scoring
 
+La rubrica ejecutiva de alertas vive en `docs/rubrica_alertas.md`. Este documento complementa esa rubrica con la logica de scoring usada por la implementacion.
+
 ## Formula
 
 ```text

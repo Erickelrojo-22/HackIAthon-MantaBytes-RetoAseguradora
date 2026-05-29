@@ -253,6 +253,7 @@ Documentos utiles:
 - `docs/arquitectura.md`
 - `docs/modelo_datos.md`
 - `docs/reglas_negocio.md`
+- `docs/rubrica_alertas.md`
 - `docs/uso_ia.md`
 - `docs/datos_supabase.md`
 - `docs/checklist_entrega.md`

@@ -16,8 +16,8 @@
 | README | OK | `README.md` |
 | Arquitectura | OK | `docs/arquitectura.md` |
 | Modelo de datos | OK | `docs/modelo_datos.md` |
-| Explicacion modelo IA | OK | `docs/uso_ia.md`, `docs/reglas_negocio.md` |
-| Rubrica de alertas | OK | `docs/reglas_negocio.md`, tabla `alertas` |
+| Explicacion modelo IA | OK | `docs/uso_ia.md` |
+| Rubrica de alertas | OK | `docs/rubrica_alertas.md`, `docs/reglas_negocio.md`, tabla `alertas` |
 | Demo funcional | OK | Login demo, dashboard, bandeja, expediente, agente, red, reporte, prueba del jurado |
 | Presentacion ejecutiva | OK | `presentation/pitch_ejecutivo.md`, `presentation/pitch_ejecutivo.pdf` |
 
@@ -33,6 +33,18 @@
 8. Preguntar al agente: `Que proveedores concentran el 80% de las alertas rojas?`
 9. Ejecutar `Prueba del Jurado`.
 10. Descargar `Reporte ejecutivo`.
+
+## Paquete minimo para enviar por correo
+
+- Repositorio GitHub con codigo fuente.
+- URL del frontend en Render y URL de API docs.
+- `README.md`.
+- `docs/arquitectura.md`.
+- `docs/modelo_datos.md`.
+- `docs/uso_ia.md`.
+- `docs/rubrica_alertas.md`.
+- `docs/matriz_cumplimiento_pdf.md`.
+- `presentation/pitch_ejecutivo.pdf`.
 
 ## Verificacion automatizada
 
