@@ -1,7 +1,8 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { BotMessageSquare, ClipboardCheck, FileText, Gauge, Inbox, LogOut, Scale, ShieldCheck, UserCog } from 'lucide-react';
+import { BotMessageSquare, ClipboardCheck, FileText, Gauge, Inbox, LogOut, Scale, UserCog } from 'lucide-react';
 import { useAuth } from '../../contexts/useAuth';
 import { Disclaimer } from '../ui/Disclaimer';
+import mantaBytesLogo from '../../assets/manta-bytes-logo.svg';
 
 const baseNav = [
   { to: '/', icon: Gauge, label: 'Centro de Mando' },
@@ -29,9 +30,7 @@ export function AppLayout() {
       <aside className="z-20 flex w-72 flex-col bg-navy-950 text-white shadow-2xl">
         <div className="border-b border-white/10 px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-cyan-400/15 text-cyan-300">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
+            <img src={mantaBytesLogo} alt="Manta Bytes" className="h-14 w-14 rounded-2xl bg-white object-contain p-1.5 shadow-lg ring-1 ring-cyan-300/20" />
             <div>
               <p className="text-lg font-black tracking-tight">FraudIA Claims</p>
               <p className="text-xs text-cyan-300">Manta Bytes Command Center</p>
@@ -78,9 +77,12 @@ export function AppLayout() {
 
       <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <header className="flex h-16 items-center justify-between border-b border-navy-200 bg-white/85 px-8 shadow-sm backdrop-blur">
-          <div>
-            <p className="text-sm font-semibold text-navy-900">Demo empresarial</p>
-            <p className="text-xs text-navy-500">Alertas explicables para revision humana</p>
+          <div className="flex items-center gap-3">
+            <img src={mantaBytesLogo} alt="" className="h-10 w-10 rounded-xl bg-white object-contain p-1 shadow-sm ring-1 ring-navy-100" />
+            <div>
+              <p className="text-sm font-semibold text-navy-900">Demo empresarial Manta Bytes</p>
+              <p className="text-xs text-navy-500">Alertas explicables para revision humana</p>
+            </div>
           </div>
           <div className="flex items-center gap-3 text-sm text-navy-600">
             <ClipboardCheck className="h-5 w-5 text-cyan-700" />

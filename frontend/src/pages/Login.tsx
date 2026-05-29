@@ -1,12 +1,13 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, Lock, ShieldAlert, User } from 'lucide-react';
+import { Loader2, Lock, User } from 'lucide-react';
 import { api, type LoginResponse } from '../lib/api';
 import { useAuth } from '../contexts/useAuth';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Disclaimer } from '../components/ui/Disclaimer';
+import mantaBytesLogo from '../assets/manta-bytes-logo.svg';
 
 const demoUsers = [
   { label: 'Analista', email: 'analista@fraudia.demo' },
@@ -44,9 +45,7 @@ export function Login() {
 
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-3xl bg-cyan-400/15 text-cyan-300 ring-1 ring-cyan-300/25">
-            <ShieldAlert className="h-9 w-9" />
-          </div>
+          <img src={mantaBytesLogo} alt="Manta Bytes" className="mx-auto mb-5 h-28 w-28 rounded-[2rem] bg-white object-contain p-2 shadow-2xl ring-1 ring-cyan-300/30" />
           <h1 className="text-3xl font-black tracking-tight text-white">FraudIA Claims</h1>
           <p className="mt-2 text-sm text-navy-300">Centro de mando para revision de siniestros</p>
         </div>

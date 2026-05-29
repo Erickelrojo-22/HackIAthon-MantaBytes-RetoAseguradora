@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Manta Bytes</title>
+  <desc id="desc">Logo del equipo Manta Bytes con ola tecnologica.</desc>
+  <defs>
+    <linearGradient id="wave" x1="92" x2="397" y1="151" y2="266" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#082a4d" />
+      <stop offset=".48" stop-color="#0a6f8c" />
+      <stop offset="1" stop-color="#40d5c7" />
+    </linearGradient>
+    <linearGradient id="aqua" x1="282" x2="405" y1="126" y2="247" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#48ddd1" />
+      <stop offset="1" stop-color="#0b7896" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="48" fill="#ffffff" />
+  <path fill="url(#wave)" d="M75 205c73-21 86-114 174-112 62 1 110 35 126 78 13 36 1 70-35 99 75-19 113-67 123-98-18 79-77 128-153 139-75 11-143-14-193-57-16-14-31-30-42-49Z" />
+  <path fill="url(#aqua)" d="M274 117c45 1 83 26 95 59 12 34-5 61-40 81 37-9 70-34 91-68-10 73-79 126-152 112-50-10-86-46-91-91-5-51 31-94 97-93Zm18 43c-39 0-66 24-63 58 2 28 25 51 57 57-19-13-31-33-29-57 3-28 23-49 57-56-7-1-14-2-22-2Z" />
+  <g fill="#13aeb7">
+    <rect x="151" y="82" width="19" height="19" rx="2" />
+    <rect x="177" y="73" width="22" height="22" rx="2" />
+    <rect x="202" y="91" width="20" height="20" rx="2" />
+    <rect x="129" y="111" width="17" height="17" rx="2" />
+    <rect x="157" y="119" width="19" height="19" rx="2" />
+    <rect x="190" y="127" width="17" height="17" rx="2" />
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+    <path d="M169 179l34-34h43l30-30h53" />
+    <path d="M200 211l31-31h49" />
+    <circle cx="169" cy="179" r="8" fill="#ffffff" />
+    <circle cx="203" cy="145" r="8" fill="#ffffff" />
+    <circle cx="246" cy="145" r="8" fill="#ffffff" />
+    <circle cx="329" cy="115" r="8" fill="#ffffff" />
+    <circle cx="200" cy="211" r="8" fill="#ffffff" />
+    <circle cx="280" cy="180" r="8" fill="#ffffff" />
+  </g>
+  <text x="256" y="388" fill="#082a4d" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800" letter-spacing="10" text-anchor="middle">MANTA</text>
+  <text x="256" y="455" fill="#082a4d" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="700" letter-spacing="9" text-anchor="middle">BYTES</text>
+  <path fill="none" stroke="#0a6f8c" stroke-linecap="round" stroke-width="4" d="M143 470h217" />
+</svg>
