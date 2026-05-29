@@ -23,7 +23,7 @@ Principio clave: el sistema no acusa fraude, no rechaza reclamos y no decide pag
 
 ## 4. Arquitectura e IA
 
-El prototipo usa FastAPI, React/Vite, SQLite/PostgreSQL, scikit-learn, TF-IDF, NetworkX/Plotly y OpenAI opcional. El LLM solo redacta respuestas usando herramientas locales; el score se calcula fuera del modelo generativo.
+El prototipo usa FastAPI, React/Vite, SQLite/PostgreSQL, scikit-learn, TF-IDF y OpenAI opcional. El LLM solo redacta respuestas usando herramientas locales; el score se calcula fuera del modelo generativo.
 
 ## 5. Impacto operativo
 

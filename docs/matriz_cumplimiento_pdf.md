@@ -12,7 +12,7 @@ Esta matriz resume como FraudIA Claims cubre los puntos principales del document
 | NLP | Analisis de descripcion y narrativas similares | TF-IDF por ramo y similitud narrativa trazada | `nlp.py`, columnas `similitud_narrativa`, `siniestro_similar` |
 | Agente IA | Consultas en lenguaje natural | Agente offline y OpenAI opcional con herramientas locales | `offline_agent.py`, `openai_agent.py` |
 | Dashboard | Interfaz funcional para analista | Frontend React con centro de mando, bandeja, expediente, agente, auditoria y prueba del jurado | `frontend/`, `api.py` |
-| Red de relaciones | Asegurados, proveedores y casos conectados | Grafo NetworkX/Plotly sobre casos de mayor riesgo | `network.py` |
+| Red de relaciones | Asegurados, proveedores y casos conectados | Endpoint de relaciones para frontend y agente | `GET /relationships`, `agent_tools.py` |
 | Reporte ejecutivo | Resumen para auditoria o gerencia | Reporte HTML con KPIs, top casos, proveedores, ciudades y documentos | `reports.py` |
 | API futura | Integracion con otros sistemas | API minima FastAPI | `api.py` |
 | Seguridad y etica | No acusar, no rechazar, no usar datos reales | Datos sinteticos, disclaimers y revision humana obligatoria | `docs/limitaciones.md`, README, dashboard |

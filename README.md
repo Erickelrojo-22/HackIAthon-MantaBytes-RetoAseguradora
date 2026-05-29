@@ -211,7 +211,7 @@ src/fraudia_claims/
 tests/
 ```
 
-La documentacion tecnica vive en `docs/` y el guion del pitch en `presentation/pitch.md`.
+La documentacion tecnica vive en `docs/` y el guion del pitch en `presentation/pitch_ejecutivo.md`.
 
 Documentos utiles:
 
