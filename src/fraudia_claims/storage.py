@@ -9,6 +9,7 @@ from fraudia_claims.config import COMPANY_DATA_DIR, DATA_SOURCE, DEFAULT_DB_PATH
 from fraudia_claims.database import (
     active_backend,
     database_label,
+    clear_query_cache,
     execute_statement,
     read_sql,
     table_columns,
@@ -66,9 +67,11 @@ def ensure_operational_tables(db_path: Path = DEFAULT_DB_PATH) -> None:
 
 
 def save_tables_to_database(tables: dict[str, pd.DataFrame], db_path: Path = DEFAULT_DB_PATH) -> Path:
+    clear_query_cache()
     for name, frame in tables.items():
         write_frame(name, frame, if_exists="replace", db_path=db_path)
     create_indexes(db_path)
+    clear_query_cache()
     return db_path
 
 

@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import os
 import sqlite3
+from copy import deepcopy
 from dataclasses import dataclass
+from functools import lru_cache
+from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
@@ -56,6 +59,27 @@ def database_label(db_path: Path = DEFAULT_DB_PATH) -> str:
     return f"sqlite:{settings.sqlite_path}"
 
 
+def _cache_key(db_path: Path = DEFAULT_DB_PATH) -> tuple[str, str, str, str, str]:
+    settings = database_settings(db_path)
+    url_hash = sha256(settings.url.encode("utf-8")).hexdigest() if settings.url else ""
+    return (
+        settings.backend,
+        url_hash,
+        str(settings.sqlite_path.resolve()),
+        os.getenv("FRAUDIA_DATA_SOURCE", "demo"),
+        os.getenv("FRAUDIA_COMPANY_DATA_DIR", ""),
+    )
+
+
+def _params_key(params: dict[str, Any] | None = None) -> tuple[tuple[str, Any], ...]:
+    return tuple(sorted((params or {}).items()))
+
+
+def clear_query_cache() -> None:
+    _read_sql_cached.cache_clear()
+    _execute_rows_cached.cache_clear()
+
+
 def _sqlite_connection(db_path: Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
     settings = database_settings(db_path)
     settings.sqlite_path.parent.mkdir(parents=True, exist_ok=True)
@@ -93,6 +117,21 @@ def read_sql(query: str, params: dict[str, Any] | None = None, db_path: Path = D
         engine.dispose()
 
 
+@lru_cache(maxsize=128)
+def _read_sql_cached(
+    query: str,
+    params: tuple[tuple[str, Any], ...],
+    db_path_value: str,
+    cache_key: tuple[str, str, str, str, str],
+) -> pd.DataFrame:
+    del cache_key
+    return read_sql(query, params=dict(params), db_path=Path(db_path_value))
+
+
+def read_sql_cached(query: str, params: dict[str, Any] | None = None, db_path: Path = DEFAULT_DB_PATH) -> pd.DataFrame:
+    return _read_sql_cached(query, _params_key(params), str(db_path), _cache_key(db_path)).copy(deep=True)
+
+
 def execute_rows(query: str, params: dict[str, Any] | None = None, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
     settings = database_settings(db_path)
     params = params or {}
@@ -111,8 +150,28 @@ def execute_rows(query: str, params: dict[str, Any] | None = None, db_path: Path
         engine.dispose()
 
 
+@lru_cache(maxsize=256)
+def _execute_rows_cached(
+    query: str,
+    params: tuple[tuple[str, Any], ...],
+    db_path_value: str,
+    cache_key: tuple[str, str, str, str, str],
+) -> list[dict[str, Any]]:
+    del cache_key
+    return execute_rows(query, params=dict(params), db_path=Path(db_path_value))
+
+
+def execute_rows_cached(query: str, params: dict[str, Any] | None = None, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
+    return deepcopy(_execute_rows_cached(query, _params_key(params), str(db_path), _cache_key(db_path)))
+
+
 def execute_one(query: str, params: dict[str, Any] | None = None, db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any] | None:
     rows = execute_rows(query, params=params, db_path=db_path)
+    return rows[0] if rows else None
+
+
+def execute_one_cached(query: str, params: dict[str, Any] | None = None, db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any] | None:
+    rows = execute_rows_cached(query, params=params, db_path=db_path)
     return rows[0] if rows else None
 
 

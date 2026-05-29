@@ -6,7 +6,7 @@ from typing import Any
 import pandas as pd
 
 from fraudia_claims.config import DEFAULT_DB_PATH
-from fraudia_claims.database import read_sql
+from fraudia_claims.database import read_sql_cached
 
 
 REVIEW_LEVELS = ("Rojo", "Amarillo")
@@ -14,7 +14,7 @@ SAVINGS_RATE = 0.12
 
 
 def _read_sql(query: str, db_path: Path = DEFAULT_DB_PATH, params: dict[str, Any] | None = None) -> pd.DataFrame:
-    return read_sql(query, params=params or {}, db_path=db_path)
+    return read_sql_cached(query, params=params or {}, db_path=db_path)
 
 
 def executive_kpis(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:

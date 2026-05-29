@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from fraudia_claims.config import DEFAULT_DB_PATH
-from fraudia_claims.database import execute_one, execute_rows
+from fraudia_claims.database import execute_one, execute_one_cached, execute_rows, execute_rows_cached
 from fraudia_claims.scoring import level_from_score
 
 
@@ -33,7 +33,7 @@ def list_risk_cases(limit: int = 10, level: str | None = None, db_path: Path = D
         ORDER BY sc.score_final DESC, si.monto_reclamado DESC
         LIMIT :limit
     """
-    return execute_rows(query, params, db_path=db_path)
+    return execute_rows_cached(query, params, db_path=db_path)
 
 
 def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
@@ -145,7 +145,7 @@ def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PAT
         """
     else:
         raise ValueError(f"Agrupacion no soportada: {group_by}")
-    return execute_rows(query, db_path=db_path)
+    return execute_rows_cached(query, db_path=db_path)
 
 
 def get_model_metrics(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -164,7 +164,7 @@ def get_model_metrics(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
             metrica
     """
     try:
-        return execute_rows(query, db_path=db_path)
+        return execute_rows_cached(query, db_path=db_path)
     except Exception:
         return []
 
@@ -204,7 +204,7 @@ def provider_red_alert_pareto(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str,
         WHERE 100.0 * (acumulado - alertas_rojas) / NULLIF(total_rojas, 0) < 80
         ORDER BY alertas_rojas DESC, score_promedio DESC
     """
-    return execute_rows(query, db_path=db_path)
+    return execute_rows_cached(query, db_path=db_path)
 
 
 def top_insured_frequency(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -222,7 +222,7 @@ def top_insured_frequency(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> l
         ORDER BY total_siniestros DESC, casos_rojos DESC, score_promedio DESC
         LIMIT :limit
     """
-    return execute_rows(query, {"limit": int(limit)}, db_path=db_path)
+    return execute_rows_cached(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def list_amount_outliers(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -244,7 +244,7 @@ def list_amount_outliers(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> li
         ORDER BY ratio_suma DESC, sc.score_final DESC
         LIMIT :limit
     """
-    return execute_rows(query, {"limit": int(limit)}, db_path=db_path)
+    return execute_rows_cached(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def list_policy_edge_cases(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -271,7 +271,7 @@ def list_policy_edge_cases(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> 
             sc.score_final DESC
         LIMIT :limit
     """
-    return execute_rows(query, {"limit": int(limit)}, db_path=db_path)
+    return execute_rows_cached(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def repeated_claim_patterns(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
@@ -292,11 +292,11 @@ def repeated_claim_patterns(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) ->
         ORDER BY sc.similitud_narrativa DESC, sc.score_final DESC
         LIMIT :limit
     """
-    return execute_rows(query, {"limit": int(limit)}, db_path=db_path)
+    return execute_rows_cached(query, {"limit": int(limit)}, db_path=db_path)
 
 
 def executive_report(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
-    summary = execute_one(
+    summary = execute_one_cached(
         """
         SELECT
             COUNT(*) AS total_siniestros,
@@ -308,7 +308,7 @@ def executive_report(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
         """,
         db_path=db_path,
     ) or {}
-    amounts = execute_one(
+    amounts = execute_one_cached(
         """
         SELECT
             ROUND(SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN si.monto_reclamado ELSE 0 END), 2) AS monto_rojo,

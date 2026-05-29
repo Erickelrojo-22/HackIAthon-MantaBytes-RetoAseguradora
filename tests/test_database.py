@@ -13,7 +13,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from fraudia_claims.database import database_settings, read_sql, table_names, write_frame
+from fraudia_claims.database import clear_query_cache, database_settings, execute_rows_cached, read_sql, table_names, write_frame
 from fraudia_claims.storage import database_status
 
 
@@ -53,6 +53,20 @@ class DatabaseLayerTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["nombre"], "ok")
         self.assertIn("demo", names)
         self.assertEqual(status["backend"], "sqlite")
+
+    def test_cached_rows_reuse_read_query_results(self) -> None:
+        clear_query_cache()
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "cache.db"
+            with patch.dict("os.environ", {"FRAUDIA_DB_BACKEND": "sqlite"}, clear=True):
+                with patch("fraudia_claims.database.execute_rows", return_value=[{"id": 1}]) as mocked:
+                    first = execute_rows_cached("SELECT 1 AS id", db_path=db_path)
+                    first[0]["id"] = 99
+                    second = execute_rows_cached("SELECT 1 AS id", db_path=db_path)
+
+        self.assertEqual(mocked.call_count, 1)
+        self.assertEqual(second, [{"id": 1}])
+        clear_query_cache()
 
 
 if __name__ == "__main__":
