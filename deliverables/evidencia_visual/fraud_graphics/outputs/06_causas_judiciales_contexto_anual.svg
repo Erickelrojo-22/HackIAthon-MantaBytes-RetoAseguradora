@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="48.0" y="62.0" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#111827" text-anchor="start">Contexto judicial: estafa, fraude, defraudacion y falsificacion</text>
+<text x="48.0" y="96.0" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="400" fill="#475569" text-anchor="start">Causas ingresadas por anio. No equivale a fraude de seguros confirmado.</text>
+<line x1="90" y1="590.0" x2="1140" y2="590.0" stroke="#e2e8f0"/>
+<text x="72.0" y="595.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="500" fill="#64748b" text-anchor="end">0</text>
+<line x1="90" y1="480.0" x2="1140" y2="480.0" stroke="#e2e8f0"/>
+<text x="72.0" y="485.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="500" fill="#64748b" text-anchor="end">1,527</text>
+<line x1="90" y1="370.0" x2="1140" y2="370.0" stroke="#e2e8f0"/>
+<text x="72.0" y="375.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="500" fill="#64748b" text-anchor="end">3,054</text>
+<line x1="90" y1="260.0" x2="1140" y2="260.0" stroke="#e2e8f0"/>
+<text x="72.0" y="265.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="500" fill="#64748b" text-anchor="end">4,580</text>
+<line x1="90" y1="150.0" x2="1140" y2="150.0" stroke="#e2e8f0"/>
+<text x="72.0" y="155.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="500" fill="#64748b" text-anchor="end">6,107</text>
+<polygon points="90,590 90.0,150.0 195.0,375.5 300.0,380.9 405.0,358.0 510.0,421.5 615.0,375.4 720.0,410.4 825.0,427.2 930.0,451.7 1035.0,461.2 1140.0,546.1 1140,590" fill="#bfdbfe" opacity="0.65"/>
+<polyline points="90.0,150.0 195.0,375.5 300.0,380.9 405.0,358.0 510.0,421.5 615.0,375.4 720.0,410.4 825.0,427.2 930.0,451.7 1035.0,461.2 1140.0,546.1" fill="none" stroke="#2563eb" stroke-width="5" stroke-linejoin="round"/>
+<circle cx="90.0" cy="150.0" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="90.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2016</text>
+<text x="90.0" y="134.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#0f172a" text-anchor="middle">6,107</text>
+<circle cx="195.0" cy="375.5" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="195.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2017</text>
+<circle cx="300.0" cy="380.9" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="300.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2018</text>
+<circle cx="405.0" cy="358.0" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="405.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2019</text>
+<circle cx="510.0" cy="421.5" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="510.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2020</text>
+<text x="510.0" y="405.5" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#0f172a" text-anchor="middle">2,339</text>
+<circle cx="615.0" cy="375.4" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="615.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2021</text>
+<circle cx="720.0" cy="410.4" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="720.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2022</text>
+<circle cx="825.0" cy="427.2" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="825.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2023</text>
+<circle cx="930.0" cy="451.7" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="930.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2024</text>
+<circle cx="1035.0" cy="461.2" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="1035.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2025</text>
+<circle cx="1140.0" cy="546.1" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<text x="1140.0" y="624.0" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">2026</text>
+<text x="1140.0" y="530.1" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#0f172a" text-anchor="middle">609</text>
+<text x="48.0" y="658.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#64748b" text-anchor="start">Fuente: Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026</text>
+</svg>

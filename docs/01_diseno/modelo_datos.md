@@ -1,4 +1,4 @@
-# Modelo de datos
+﻿# Modelo de datos
 
 ## Tablas principales
 
@@ -36,7 +36,7 @@ La etiqueta de fraude es sintetica y se usa solo para demo, entrenamiento y metr
 
 ## Fuente activa de demo
 
-La demo web no lee los CSV directamente. React consume FastAPI y FastAPI consulta la base activa configurada en `.env`. En el entorno actual del equipo, `FRAUDIA_DB_BACKEND=postgres` y `FRAUDIA_DATA_SOURCE=company_synthetic`, por lo que las consultas se resuelven contra Supabase/PostgreSQL. Ver `docs/datos_supabase.md` para el comando de verificacion y conteos.
+La demo web no lee los CSV directamente. React consume FastAPI y FastAPI consulta la base activa configurada en `.env`. En el entorno actual del equipo, `FRAUDIA_DB_BACKEND=postgres` y `FRAUDIA_DATA_SOURCE=company_synthetic`, por lo que las consultas se resuelven contra Supabase/PostgreSQL. Ver `docs/02_operacion/datos_supabase.md` para el comando de verificacion y conteos.
 
 ## Alineacion con la guia del reto
 
@@ -48,3 +48,4 @@ La demo web no lee los CSV directamente. React consume FastAPI y FastAPI consult
 ## Contexto publico
 
 `contexto_publico.csv` referencia el portal publico de la SCVS para indicadores agregados. Ese contexto no alimenta el score ni etiqueta casos.
+

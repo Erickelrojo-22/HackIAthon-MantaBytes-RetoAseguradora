@@ -1,4 +1,4 @@
-# FraudIA Claims
+﻿# FraudIA Claims
 
 Prototipo funcional para el reto **Detector de Posibles Fraudes en Siniestros usando Inteligencia Artificial**. La solucion prioriza siniestros de `Vehiculos`, `Salud` y `Hogar` mediante reglas explicables, deteccion de anomalias, similitud narrativa y un agente consultable.
 
@@ -101,7 +101,7 @@ FRAUDIA_DATA_SOURCE=company_synthetic
 FRAUDIA_DATABASE_URL=postgresql+psycopg://usuario:password@host:5432/base
 ```
 
-Despues detén cualquier backend viejo y vuelve a levantar FastAPI. Verifica `http://127.0.0.1:8000/health`; debe indicar `backend: postgres` y `data_source: company_synthetic`.
+Despues detÃ©n cualquier backend viejo y vuelve a levantar FastAPI. Verifica `http://127.0.0.1:8000/health`; debe indicar `backend: postgres` y `data_source: company_synthetic`.
 
 Tambien puedes verificar la fuente activa y los conteos con:
 
@@ -238,24 +238,32 @@ Preguntas del jurado cubiertas por el agente:
 
 ```text
 data/
+deliverables/
+  evidencia_visual/
+  pitch/
 docs/
+  01_diseno/
+  02_operacion/
+  03_entrega/
 frontend/
-presentation/
 scripts/
 src/fraudia_claims/
 tests/
 ```
 
-La documentacion tecnica vive en `docs/` y el guion del pitch en `presentation/pitch_ejecutivo.md`.
+La documentacion se organizo por uso: diseno tecnico, operacion/despliegue y evidencia de entrega. El pitch y los graficos de apoyo viven en `deliverables/`.
 
 Documentos utiles:
 
-- `docs/arquitectura.md`
-- `docs/modelo_datos.md`
-- `docs/reglas_negocio.md`
-- `docs/rubrica_alertas.md`
-- `docs/uso_ia.md`
-- `docs/datos_supabase.md`
-- `docs/checklist_entrega.md`
-- `docs/despliegue.md`
-- `docs/api_frontend.md`
+- `docs/01_diseno/arquitectura.md`
+- `docs/01_diseno/modelo_datos.md`
+- `docs/01_diseno/reglas_negocio.md`
+- `docs/01_diseno/rubrica_alertas.md`
+- `docs/03_entrega/uso_ia.md`
+- `docs/02_operacion/datos_supabase.md`
+- `docs/03_entrega/checklist_entrega.md`
+- `docs/02_operacion/despliegue.md`
+- `docs/02_operacion/api_frontend.md`
+- `deliverables/pitch/pitch_ejecutivo.md`
+- `deliverables/evidencia_visual/fraud_graphics/README.md`
+

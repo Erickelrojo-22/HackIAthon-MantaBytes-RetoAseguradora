@@ -1,4 +1,4 @@
-# Checklist de entrega hackIAthon
+﻿# Checklist de entrega hackIAthon
 
 ## Fuente de datos
 
@@ -14,12 +14,12 @@
 | Codigo fuente | OK | Repositorio GitHub |
 | Dataset sintetico o publico | OK | Supabase, `data/company_synthetic/`, `data/synthetic/` |
 | README | OK | `README.md` |
-| Arquitectura | OK | `docs/arquitectura.md` |
-| Modelo de datos | OK | `docs/modelo_datos.md` |
-| Explicacion modelo IA | OK | `docs/uso_ia.md` |
-| Rubrica de alertas | OK | `docs/rubrica_alertas.md`, `docs/reglas_negocio.md`, tabla `alertas` |
+| Arquitectura | OK | `docs/01_diseno/arquitectura.md` |
+| Modelo de datos | OK | `docs/01_diseno/modelo_datos.md` |
+| Explicacion modelo IA | OK | `docs/03_entrega/uso_ia.md` |
+| Rubrica de alertas | OK | `docs/01_diseno/rubrica_alertas.md`, `docs/01_diseno/reglas_negocio.md`, tabla `alertas` |
 | Demo funcional | OK | Login demo, dashboard, bandeja, expediente, agente, red, reporte, prueba del jurado |
-| Presentacion ejecutiva | OK | `presentation/pitch_ejecutivo.md`, `presentation/pitch_ejecutivo.pdf` |
+| Presentacion ejecutiva | OK | `deliverables/pitch/pitch_ejecutivo.md`, `deliverables/pitch/pitch_ejecutivo.pdf` |
 
 ## Flujo sugerido de demo
 
@@ -39,12 +39,12 @@
 - Repositorio GitHub con codigo fuente.
 - URL del frontend en Render y URL de API docs.
 - `README.md`.
-- `docs/arquitectura.md`.
-- `docs/modelo_datos.md`.
-- `docs/uso_ia.md`.
-- `docs/rubrica_alertas.md`.
-- `docs/matriz_cumplimiento_pdf.md`.
-- `presentation/pitch_ejecutivo.pdf`.
+- `docs/01_diseno/arquitectura.md`.
+- `docs/01_diseno/modelo_datos.md`.
+- `docs/03_entrega/uso_ia.md`.
+- `docs/01_diseno/rubrica_alertas.md`.
+- `docs/03_entrega/matriz_cumplimiento_pdf.md`.
+- `deliverables/pitch/pitch_ejecutivo.pdf`.
 
 ## Verificacion automatizada
 
@@ -53,3 +53,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\verify_hackathon_rea
 ```
 
 Este script valida Supabase, offline CSV, tests, smoke API, build frontend y entregables.
+

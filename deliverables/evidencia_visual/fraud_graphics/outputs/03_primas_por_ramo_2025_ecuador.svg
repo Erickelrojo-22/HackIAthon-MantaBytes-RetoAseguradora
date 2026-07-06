@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="48.0" y="62.0" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#111827" text-anchor="start">Primas netas emitidas por ramo en Ecuador, 2025</text>
+<text x="48.0" y="96.0" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="400" fill="#475569" text-anchor="start">Los ramos con mayor volumen concentran mayor presion operativa de revision.</text>
+<line x1="310" y1="132" x2="1070" y2="132" stroke="#cbd5e1" stroke-width="1"/>
+<text x="48.0" y="170.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Vida colectiva</text>
+<rect x="310" y="150" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="150" width="760.0" height="35" rx="6" fill="#0f766e"/>
+<text x="1084.0" y="173.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$735.9M</text>
+<text x="48.0" y="223.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Vehiculos</text>
+<rect x="310" y="203" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="203" width="444.8" height="35" rx="6" fill="#2563eb"/>
+<text x="768.8" y="226.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$430.7M</text>
+<text x="48.0" y="276.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Incendios</text>
+<rect x="310" y="256" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="256" width="306.2" height="35" rx="6" fill="#dc2626"/>
+<text x="630.2" y="279.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$296.5M</text>
+<text x="48.0" y="329.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Asistencia medica</text>
+<rect x="310" y="309" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="309" width="159.2" height="35" rx="6" fill="#ca8a04"/>
+<text x="483.2" y="332.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$154.2M</text>
+<text x="48.0" y="382.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Ramos tecnicos</text>
+<rect x="310" y="362" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="362" width="106.3" height="35" rx="6" fill="#7c3aed"/>
+<text x="430.3" y="385.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$102.9M</text>
+<text x="48.0" y="435.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Accidentes personales</text>
+<rect x="310" y="415" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="415" width="93.8" height="35" rx="6" fill="#059669"/>
+<text x="417.8" y="438.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$90.8M</text>
+<text x="48.0" y="488.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Responsabilidad civil</text>
+<rect x="310" y="468" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="468" width="89.8" height="35" rx="6" fill="#ea580c"/>
+<text x="413.8" y="491.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$87.0M</text>
+<text x="48.0" y="541.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Fianzas</text>
+<rect x="310" y="521" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="521" width="87.5" height="35" rx="6" fill="#0891b2"/>
+<text x="411.5" y="544.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$84.7M</text>
+<text x="48.0" y="594.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Transporte</text>
+<rect x="310" y="574" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="574" width="83.3" height="35" rx="6" fill="#be185d"/>
+<text x="407.3" y="597.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$80.7M</text>
+<text x="48.0" y="647.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Multirriesgo</text>
+<rect x="310" y="627" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="627" width="69.8" height="35" rx="6" fill="#4b5563"/>
+<text x="393.8" y="650.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$67.6M</text>
+<text x="48.0" y="718.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#64748b" text-anchor="start">Fuente: Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025</text>
+</svg>

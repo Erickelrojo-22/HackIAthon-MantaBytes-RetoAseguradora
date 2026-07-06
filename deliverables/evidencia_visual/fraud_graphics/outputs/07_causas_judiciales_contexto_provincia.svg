@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="48.0" y="62.0" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#111827" text-anchor="start">Contexto judicial por provincia</text>
+<text x="48.0" y="96.0" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="400" fill="#475569" text-anchor="start">Top 10 provincias por causas ingresadas asociadas a estafa/fraude/falsificacion.</text>
+<line x1="310" y1="132" x2="1070" y2="132" stroke="#cbd5e1" stroke-width="1"/>
+<text x="48.0" y="170.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Pichincha</text>
+<rect x="310" y="150" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="150" width="760.0" height="35" rx="6" fill="#0f766e"/>
+<text x="1084.0" y="173.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">5,753</text>
+<text x="48.0" y="223.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Guayas</text>
+<rect x="310" y="203" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="203" width="716.1" height="35" rx="6" fill="#2563eb"/>
+<text x="1040.1" y="226.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">5,421</text>
+<text x="48.0" y="276.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Azuay</text>
+<rect x="310" y="256" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="256" width="269.6" height="35" rx="6" fill="#dc2626"/>
+<text x="593.6" y="279.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">2,041</text>
+<text x="48.0" y="329.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">El Oro</text>
+<rect x="310" y="309" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="309" width="255.2" height="35" rx="6" fill="#ca8a04"/>
+<text x="579.2" y="332.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">1,932</text>
+<text x="48.0" y="382.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Manabi</text>
+<rect x="310" y="362" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="362" width="236.9" height="35" rx="6" fill="#7c3aed"/>
+<text x="560.9" y="385.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">1,793</text>
+<text x="48.0" y="435.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Loja</text>
+<rect x="310" y="415" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="415" width="178.9" height="35" rx="6" fill="#059669"/>
+<text x="502.9" y="438.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">1,354</text>
+<text x="48.0" y="488.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Chimborazo</text>
+<rect x="310" y="468" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="468" width="167.5" height="35" rx="6" fill="#ea580c"/>
+<text x="491.5" y="491.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">1,268</text>
+<text x="48.0" y="541.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Canar</text>
+<rect x="310" y="521" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="521" width="162.2" height="35" rx="6" fill="#0891b2"/>
+<text x="486.2" y="544.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">1,228</text>
+<text x="48.0" y="594.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Los Rios</text>
+<rect x="310" y="574" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="574" width="155.2" height="35" rx="6" fill="#be185d"/>
+<text x="479.2" y="597.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">1,175</text>
+<text x="48.0" y="647.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Tungurahua</text>
+<rect x="310" y="627" width="760" height="35" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="627" width="129.9" height="35" rx="6" fill="#4b5563"/>
+<text x="453.9" y="650.5" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">983</text>
+<text x="48.0" y="718.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#64748b" text-anchor="start">Fuente: Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026</text>
+</svg>

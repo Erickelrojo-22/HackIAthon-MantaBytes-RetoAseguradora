@@ -1,0 +1,55 @@
+serie,categoria,unidad,valor,fuente
+ramos_vulnerables_fraude,Vida,%,36,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+ramos_vulnerables_fraude,Vehiculos,%,27,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+ramos_vulnerables_fraude,Incendio,%,18,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+ramos_vulnerables_fraude,Robo,%,9,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+ramos_vulnerables_fraude,Transporte,%,9,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+medios_deteccion_fraude,Quejas,%,36,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+medios_deteccion_fraude,Informantes internos,%,27,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+medios_deteccion_fraude,Informantes externos,%,27,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+medios_deteccion_fraude,Casualidad,%,9,Eumed/OEL 2017: Analisis de los fraudes en el sistema asegurador en el Ecuador
+primas_por_ramo_2025,Vida colectiva,USD millones,735.9,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Vehiculos,USD millones,430.7,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Incendios,USD millones,296.5,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Asistencia medica,USD millones,154.2,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Ramos tecnicos,USD millones,102.9,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Accidentes personales,USD millones,90.8,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Responsabilidad civil,USD millones,87.0,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Fianzas,USD millones,84.7,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Transporte,USD millones,80.7,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+primas_por_ramo_2025,Multirriesgo,USD millones,67.6,"Forbes Ecuador 2026, con datos Fedeseg: seguros con mayor prima neta 2025"
+indicadores_sector_abril_2026,Primas netas emitidas,USD millones,802.8,"CAMSEG: estadisticas sectoriales, abril 2026"
+indicadores_sector_abril_2026,Patrimonio,USD millones,690.6,"CAMSEG: estadisticas sectoriales, abril 2026"
+indicadores_sector_abril_2026,Siniestros pagados,USD millones,296.1,"CAMSEG: estadisticas sectoriales, abril 2026"
+indicadores_sector_abril_2026,Resultados tecnicos,USD millones,78.2,"CAMSEG: estadisticas sectoriales, abril 2026"
+top_aseguradoras_2025,Equisuiza Seguros,USD millones,318.2,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,Seguros Pichincha,USD millones,271.0,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,Chubb Seguros Ecuador,USD millones,228.9,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,Latina Seguros,USD millones,175.2,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,Hispana de Seguros,USD millones,167.0,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,Aseguradora del Sur,USD millones,148.5,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,AIG Metropolitana,USD millones,141.0,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,Zurich Seguros Ecuador,USD millones,124.3,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,Sweaden,USD millones,111.6,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+top_aseguradoras_2025,Mapfre Ecuador,USD millones,79.8,"Forbes Ecuador 2026, con datos SCVS: aseguradoras con mayor prima neta 2025"
+causas_judiciales_contexto_por_anio,2016,causas ingresadas,6107,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2017,causas ingresadas,2977,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2018,causas ingresadas,2902,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2019,causas ingresadas,3220,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2020,causas ingresadas,2339,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2021,causas ingresadas,2978,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2022,causas ingresadas,2493,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2023,causas ingresadas,2259,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2024,causas ingresadas,1919,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2025,causas ingresadas,1788,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_anio,2026,causas ingresadas,609,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Pichincha,causas ingresadas,5753,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Guayas,causas ingresadas,5421,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Azuay,causas ingresadas,2041,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,El Oro,causas ingresadas,1932,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Manabi,causas ingresadas,1793,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Loja,causas ingresadas,1354,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Chimborazo,causas ingresadas,1268,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Canar,causas ingresadas,1228,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Los Rios,causas ingresadas,1175,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"
+causas_judiciales_contexto_por_provincia,Tungurahua,causas ingresadas,983,"Datos Abiertos Ecuador / Consejo de la Judicatura: causas judiciales, corte abril 2026"

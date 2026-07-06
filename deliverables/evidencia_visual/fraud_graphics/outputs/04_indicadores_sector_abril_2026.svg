@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="48.0" y="62.0" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#111827" text-anchor="start">Indicadores del sector asegurador ecuatoriano</text>
+<text x="48.0" y="96.0" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="400" fill="#475569" text-anchor="start">Cifras publicadas por CAMSEG para abril de 2026.</text>
+<line x1="310" y1="132" x2="1070" y2="132" stroke="#cbd5e1" stroke-width="1"/>
+<text x="48.0" y="170.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Primas netas emitidas</text>
+<rect x="310" y="150" width="760" height="116" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="150" width="760.0" height="116" rx="6" fill="#0f766e"/>
+<text x="1084.0" y="214.0" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$802.8M</text>
+<text x="48.0" y="304.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Patrimonio</text>
+<rect x="310" y="284" width="760" height="116" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="284" width="653.8" height="116" rx="6" fill="#2563eb"/>
+<text x="977.8" y="348.0" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$690.6M</text>
+<text x="48.0" y="438.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Siniestros pagados</text>
+<rect x="310" y="418" width="760" height="116" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="418" width="280.3" height="116" rx="6" fill="#dc2626"/>
+<text x="604.3" y="482.0" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$296.1M</text>
+<text x="48.0" y="572.0" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155" text-anchor="start">Resultados tecnicos</text>
+<rect x="310" y="552" width="760" height="116" rx="6" fill="#e2e8f0"/>
+<rect x="310" y="552" width="74.0" height="116" rx="6" fill="#ca8a04"/>
+<text x="398.0" y="616.0" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="start">$78.2M</text>
+<text x="48.0" y="718.0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#64748b" text-anchor="start">Fuente: CAMSEG: estadisticas sectoriales, abril 2026</text>
+</svg>

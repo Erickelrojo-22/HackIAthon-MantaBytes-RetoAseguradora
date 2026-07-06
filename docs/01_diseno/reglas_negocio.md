@@ -1,6 +1,6 @@
-# Reglas de negocio y scoring
+﻿# Reglas de negocio y scoring
 
-La rubrica ejecutiva de alertas vive en `docs/rubrica_alertas.md`. Este documento complementa esa rubrica con la logica de scoring usada por la implementacion.
+La rubrica ejecutiva de alertas vive en `docs/01_diseno/rubrica_alertas.md`. Este documento complementa esa rubrica con la logica de scoring usada por la implementacion.
 
 ## Formula
 
@@ -43,3 +43,4 @@ Si una regla critica se activa, el caso escala como minimo a `76` puntos. Si se 
 - NLP: TF-IDF por ramo, con fallback para narrativas clonadas.
 - Modelo supervisado: `RandomForestClassifier` con etiqueta sintetica `etiqueta_fraude_simulada`, probabilidad trazada y metricas `precision`, `recall`, `f1`, `auc_roc` y matriz de confusion.
 - El score supervisado aporta hasta 15 puntos y no reemplaza las reglas criticas ni la revision humana.
+

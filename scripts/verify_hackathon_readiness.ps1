@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$ApiPort = 8010
 )
 
@@ -131,16 +131,16 @@ try {
         "README.md",
         "requirements.txt",
         ".env.example",
-        "docs\arquitectura.md",
-        "docs\modelo_datos.md",
-        "docs\reglas_negocio.md",
-        "docs\rubrica_alertas.md",
-        "docs\uso_ia.md",
-        "docs\limitaciones.md",
-        "docs\datos_supabase.md",
-        "docs\checklist_entrega.md",
-        "presentation\pitch_ejecutivo.md",
-        "presentation\pitch_ejecutivo.pdf"
+        "docs\01_diseno\arquitectura.md",
+        "docs\01_diseno\modelo_datos.md",
+        "docs\01_diseno\reglas_negocio.md",
+        "docs\01_diseno\rubrica_alertas.md",
+        "docs\03_entrega\uso_ia.md",
+        "docs\02_operacion\limitaciones.md",
+        "docs\02_operacion\datos_supabase.md",
+        "docs\03_entrega\checklist_entrega.md",
+        "deliverables\pitch\pitch_ejecutivo.md",
+        "deliverables\pitch\pitch_ejecutivo.pdf"
     )
     foreach ($file in $RequiredFiles) {
         if (-not (Test-Path $file)) {
@@ -154,3 +154,4 @@ try {
 } finally {
     Restore-Env $EnvSnapshot
 }
+

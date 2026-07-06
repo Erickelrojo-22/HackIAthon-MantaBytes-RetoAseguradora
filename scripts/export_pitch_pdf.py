@@ -6,8 +6,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "presentation" / "pitch_ejecutivo.md"
-TARGET = ROOT / "presentation" / "pitch_ejecutivo.pdf"
+SOURCE = ROOT / "deliverables" / "pitch" / "pitch_ejecutivo.md"
+TARGET = ROOT / "deliverables" / "pitch" / "pitch_ejecutivo.pdf"
 
 PAGE_WIDTH = 612
 PAGE_HEIGHT = 792

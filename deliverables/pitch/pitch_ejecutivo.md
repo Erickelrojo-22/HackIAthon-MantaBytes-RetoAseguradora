@@ -1,4 +1,4 @@
-# Presentacion ejecutiva - FraudIA Claims
+﻿# Presentacion ejecutiva - FraudIA Claims
 
 ## 1. Problema
 
@@ -50,15 +50,16 @@ Principio central: FraudIA no acusa fraude, no rechaza reclamos y no decide pago
 
 ## 7. Evidencia tecnica para el jurado
 
-- Arquitectura: `docs/arquitectura.md`.
-- Modelo de datos: `docs/modelo_datos.md`.
-- Explicacion IA: `docs/uso_ia.md`.
-- Rubrica de alertas: `docs/rubrica_alertas.md`.
-- Matriz de cumplimiento: `docs/matriz_cumplimiento_pdf.md`.
-- Checklist de entrega: `docs/checklist_entrega.md`.
+- Arquitectura: `docs/01_diseno/arquitectura.md`.
+- Modelo de datos: `docs/01_diseno/modelo_datos.md`.
+- Explicacion IA: `docs/03_entrega/uso_ia.md`.
+- Rubrica de alertas: `docs/01_diseno/rubrica_alertas.md`.
+- Matriz de cumplimiento: `docs/03_entrega/matriz_cumplimiento_pdf.md`.
+- Checklist de entrega: `docs/03_entrega/checklist_entrega.md`.
 
 ## 8. Limitaciones y evolucion
 
 Los datos son sinteticos y las metricas supervisadas son demostrativas. Para produccion se requiere validacion con expertos, calibracion con historicos autorizados, monitoreo de sesgo, seguridad productiva y gobierno de datos.
 
 Proxima evolucion: persistencia de analisis visual, roles productivos, integracion con core asegurador, monitoreo 24/7 y mejora continua del modelo.
+
