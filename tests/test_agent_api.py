@@ -35,31 +35,34 @@ class AgentAndApiTests(unittest.TestCase):
 
     def test_api_health_metrics_and_candidate_score(self) -> None:
         client = TestClient(app)
+        auth = {"Authorization": "Bearer demo-token-analista"}
+
         health = client.get("/health")
         self.assertEqual(health.status_code, 200)
         self.assertEqual(health.json()["status"], "ok")
 
-        metrics = client.get("/metrics")
+        self.assertEqual(client.get("/metrics").status_code, 401)
+        metrics = client.get("/metrics", headers=auth)
         self.assertEqual(metrics.status_code, 200)
         self.assertTrue(any(row["metrica"] in {"f1", "status"} for row in metrics.json()))
 
-        pareto = client.get("/alerts/provider-pareto")
+        pareto = client.get("/alerts/provider-pareto", headers=auth)
         self.assertEqual(pareto.status_code, 200)
         self.assertIsInstance(pareto.json(), list)
 
-        relationships = client.get("/relationships?limit=20")
+        relationships = client.get("/relationships?limit=20", headers=auth)
         self.assertEqual(relationships.status_code, 200)
         self.assertIn("nodes", relationships.json())
         self.assertIn("edges", relationships.json())
 
-        report = client.get("/report/summary")
+        report = client.get("/report/summary", headers=auth)
         self.assertEqual(report.status_code, 200)
         self.assertIn("resumen", report.json())
 
         vision = client.post(
             "/vision/analyze",
             files={"file": ("demo.jpg", b"fake-image", "image/jpeg")},
-            headers={"Authorization": "Bearer demo-token-analista"},
+            headers=auth,
         )
         self.assertEqual(vision.status_code, 200)
         self.assertIn("disclaimer", vision.json())
@@ -77,6 +80,7 @@ class AgentAndApiTests(unittest.TestCase):
                 "denuncia_horas": 72,
                 "documentos_completos": False,
             },
+            headers=auth,
         )
         self.assertEqual(candidate.status_code, 200)
         self.assertEqual(candidate.json()["nivel_riesgo"], "Rojo")
@@ -94,6 +98,7 @@ class AgentAndApiTests(unittest.TestCase):
                 "denuncia_horas": 72,
                 "documentos_completos": False,
             },
+            headers=auth,
         )
         self.assertEqual(invalid_branch.status_code, 422)
 
@@ -110,6 +115,7 @@ class AgentAndApiTests(unittest.TestCase):
                 "denuncia_horas": 72,
                 "documentos_completos": False,
             },
+            headers=auth,
         )
         self.assertEqual(invalid_amount.status_code, 422)
 

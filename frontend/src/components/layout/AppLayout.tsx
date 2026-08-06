@@ -5,26 +5,26 @@ import { useAuth } from '../../contexts/useAuth';
 import { Disclaimer } from '../ui/Disclaimer';
 import mantaBytesLogo from '../../assets/manta-bytes-logo.svg';
 
-const baseNav = [
-  { to: '/', icon: Gauge, label: 'Centro de Mando' },
-  { to: '/claims', icon: Inbox, label: 'Bandeja' },
-  { to: '/relationships', icon: Network, label: 'Red de relaciones' },
-  { to: '/report', icon: FileText, label: 'Reporte ejecutivo' },
-  { to: '/jury-test', icon: Scale, label: 'Prueba del Jurado' },
-  { to: '/vision', icon: Image, label: 'Analisis visual' },
-  { to: '/upload-csv', icon: Upload, label: 'Carga CSV' },
-  { to: '/agent', icon: BotMessageSquare, label: 'Agente IA' },
-];
-
 export function AppLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navItems = [...baseNav];
 
-  if (user?.role === 'Jefatura' || user?.role === 'Auditoria') {
-    navItems.push({ to: '/audit', icon: ClipboardCheck, label: 'Auditoria' });
-  }
+  const navItems = [
+    { to: '/', icon: Gauge, label: 'Centro de Mando' },
+    { to: '/claims', icon: Inbox, label: 'Bandeja' },
+    { to: '/relationships', icon: Network, label: 'Red de relaciones' },
+    { to: '/report', icon: FileText, label: 'Reporte ejecutivo' },
+    { to: '/jury-test', icon: Scale, label: 'Prueba del Jurado' },
+    { to: '/vision', icon: Image, label: 'Analisis visual' },
+    ...(user?.role === 'Analista' || user?.role === 'Jefatura'
+      ? [{ to: '/upload-csv', icon: Upload, label: 'Carga CSV' }]
+      : []),
+    { to: '/agent', icon: BotMessageSquare, label: 'Agente IA' },
+    ...(user?.role === 'Jefatura' || user?.role === 'Auditoria'
+      ? [{ to: '/audit', icon: ClipboardCheck, label: 'Auditoria' }]
+      : []),
+  ];
 
   const handleLogout = () => {
     setIsMobileMenuOpen(false);

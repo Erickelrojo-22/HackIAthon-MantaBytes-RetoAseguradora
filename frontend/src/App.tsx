@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthProvider';
 import { useAuth } from './contexts/useAuth';
 import { AppLayout } from './components/layout/AppLayout';
+import type { Role } from './lib/api';
 
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
@@ -27,6 +28,20 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const RoleRoute = ({
+  children,
+  roles,
+}: {
+  children: React.ReactNode;
+  roles: Role[];
+}) => {
+  const { user } = useAuth();
+  if (!user || !roles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+};
+
 function AppRoutes() {
   return (
     <Routes>
@@ -45,10 +60,24 @@ function AppRoutes() {
         <Route path="jury-test" element={<JuryTest />} />
         <Route path="relationships" element={<Relationships />} />
         <Route path="report" element={<ExecutiveReportPage />} />
-        <Route path="upload-csv" element={<UploadCsv />} />
+        <Route
+          path="upload-csv"
+          element={
+            <RoleRoute roles={['Analista', 'Jefatura']}>
+              <UploadCsv />
+            </RoleRoute>
+          }
+        />
         <Route path="vision" element={<Vision />} />
         <Route path="agent" element={<Agent />} />
-        <Route path="audit" element={<Audit />} />
+        <Route
+          path="audit"
+          element={
+            <RoleRoute roles={['Jefatura', 'Auditoria']}>
+              <Audit />
+            </RoleRoute>
+          }
+        />
       </Route>
     </Routes>
   );

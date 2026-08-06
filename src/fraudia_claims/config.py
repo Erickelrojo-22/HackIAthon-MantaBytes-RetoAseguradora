@@ -18,6 +18,19 @@ DATABASE_URL = os.getenv("FRAUDIA_DATABASE_URL", "")
 DATA_SOURCE = os.getenv("FRAUDIA_DATA_SOURCE", "demo")
 COMPANY_DATA_DIR = Path(os.getenv("FRAUDIA_COMPANY_DATA_DIR", DATA_DIR / "company_synthetic"))
 
+# Comma-separated origins. Empty => localhost defaults for local demo.
+_CORS_RAW = os.getenv("FRAUDIA_CORS_ORIGINS", "").strip()
+CORS_ORIGINS = [origin.strip() for origin in _CORS_RAW.split(",") if origin.strip()] or [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "http://127.0.0.1:4173",
+    "http://localhost:4173",
+]
+
+MAX_CSV_UPLOAD_BYTES = int(os.getenv("FRAUDIA_MAX_CSV_BYTES", str(2 * 1024 * 1024)))
+RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("FRAUDIA_RATE_LIMIT_WINDOW", "60"))
+RATE_LIMIT_MAX_REQUESTS = int(os.getenv("FRAUDIA_RATE_LIMIT_MAX", "60"))
+
 SEED = 2026
 RAMOS = ("Vehiculos", "Salud", "Hogar")
 LEVELS = {

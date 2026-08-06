@@ -8,7 +8,7 @@ from pathlib import Path
 from threading import Lock
 
 import pandas as pd
-from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -25,10 +25,11 @@ from fraudia_claims.agent_tools import (
 )
 from fraudia_claims.analytics import city_concentration, executive_kpis, provider_pareto, risk_matrix
 from fraudia_claims.audit import list_audit_events, log_event
-from fraudia_claims.auth import DemoUser, authenticate_demo_user, current_user, optional_user, require_roles, user_to_dict
-from fraudia_claims.config import DEFAULT_DB_PATH
+from fraudia_claims.auth import DemoUser, authenticate_demo_user, current_user, require_roles, user_to_dict
+from fraudia_claims.config import CORS_ORIGINS, DEFAULT_DB_PATH, MAX_CSV_UPLOAD_BYTES
 from fraudia_claims.ingestion import REQUIRED_COLUMNS, data_quality_report, missing_required_columns, validate_company_tables
 from fraudia_claims.openai_agent import ask_agent_with_status
+from fraudia_claims.rate_limit import enforce_rate_limit
 from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
 from fraudia_claims.vision import analyze_claim_image
@@ -79,10 +80,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
 
@@ -206,6 +207,7 @@ def health() -> dict[str, Any]:
 def claims_risk(
     limit: int = Query(default=10, ge=1, le=100),
     level: str | None = Query(default=None, pattern="^(Verde|Amarillo|Rojo)$"),
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
 ) -> list[dict[str, Any]]:
     ensure_app_ready()
     return list_risk_cases(limit=limit, level=level, db_path=DEFAULT_DB_PATH)
@@ -215,11 +217,11 @@ def claims_risk(
 def claim_detail(
     id_siniestro: str,
     background_tasks: BackgroundTasks,
-    user: DemoUser | None = Depends(optional_user),
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
 ) -> dict[str, Any]:
     ensure_app_ready()
     detail = get_claim_detail(id_siniestro.upper(), db_path=DEFAULT_DB_PATH)
-    if user is not None and "error" not in detail:
+    if "error" not in detail:
         queue_log_event(background_tasks, user.email, user.role, "claim.detail.viewed", "claim", id_siniestro.upper())
     return detail
 
@@ -299,9 +301,11 @@ def audit_log(
 def agent_question(
     payload: AgentQuestionPayload,
     background_tasks: BackgroundTasks,
+    request: Request,
     user: DemoUser = Depends(current_user),
 ) -> dict[str, Any]:
     ensure_app_ready()
+    enforce_rate_limit(request, "agent")
     question = payload.question
     if payload.id_siniestro and payload.id_siniestro.upper() not in question.upper():
         question = f"{question}\n\nSiniestro relacionado: {payload.id_siniestro.upper()}"
@@ -366,23 +370,34 @@ def agent_executive_summary(
 @app.post("/claims/upload-csv")
 async def upload_claims_csv(
     background_tasks: BackgroundTasks,
+    request: Request,
     file: UploadFile = File(...),
     user: DemoUser = Depends(require_roles("Analista", "Jefatura")),
 ) -> dict[str, Any]:
     ensure_app_ready()
-    content = await file.read()
+    enforce_rate_limit(request, "upload")
+    content = await file.read(MAX_CSV_UPLOAD_BYTES + 1)
+    if len(content) > MAX_CSV_UPLOAD_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail=f"CSV supera el limite de {MAX_CSV_UPLOAD_BYTES} bytes.",
+        )
+    temp_path: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp:
             tmp.write(content)
             temp_path = Path(tmp.name)
         frame = pd.read_csv(temp_path)
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"CSV invalido: {exc}") from exc
     finally:
-        try:
-            temp_path.unlink(missing_ok=True)  # type: ignore[name-defined]
-        except Exception:
-            pass
+        if temp_path is not None:
+            try:
+                temp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
 
     stem = Path(file.filename or "").stem
     required = REQUIRED_COLUMNS.get(stem, set())
@@ -411,11 +426,13 @@ async def upload_claims_csv(
 @app.post("/vision/analyze")
 async def vision_analyze(
     background_tasks: BackgroundTasks,
+    request: Request,
     file: UploadFile = File(...),
     id_siniestro: str | None = None,
     user: DemoUser = Depends(current_user),
 ) -> dict[str, Any]:
     ensure_app_ready()
+    enforce_rate_limit(request, "vision")
     content = await file.read()
     claim_context: dict[str, Any] = {
         "filename": file.filename or "imagen_siniestro",
@@ -450,31 +467,44 @@ async def vision_analyze(
 @app.get("/alerts/aggregate")
 def alerts_aggregate(
     group_by: str = Query(default="proveedor", pattern="^(proveedor|ramo|ciudad|documentos)$"),
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
 ) -> list[dict[str, Any]]:
     ensure_app_ready()
     return aggregate_alerts(group_by=group_by, db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/alerts/provider-pareto")
-def alerts_provider_pareto() -> list[dict[str, Any]]:
+def alerts_provider_pareto(
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> list[dict[str, Any]]:
     ensure_app_ready()
     return provider_red_alert_pareto(db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/relationships")
-def relationships(limit: int = Query(default=60, ge=10, le=120)) -> dict[str, list[dict[str, Any]]]:
+def relationships(
+    limit: int = Query(default=60, ge=10, le=120),
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> dict[str, list[dict[str, Any]]]:
     ensure_app_ready()
     return get_relationship_network(limit=limit, db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/report/summary")
-def report_summary() -> dict[str, Any]:
+def report_summary(
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> dict[str, Any]:
     ensure_app_ready()
     return executive_report(db_path=DEFAULT_DB_PATH)
 
 
 @app.post("/score-candidate")
-def score_candidate(payload: CandidateScorePayload) -> dict[str, Any]:
+def score_candidate(
+    payload: CandidateScorePayload,
+    request: Request,
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> dict[str, Any]:
+    enforce_rate_limit(request, "score-candidate")
     data = candidate_payload_data(payload)
     errors = validate_candidate_payload(data)
     if errors:
@@ -483,6 +513,8 @@ def score_candidate(payload: CandidateScorePayload) -> dict[str, Any]:
 
 
 @app.get("/metrics")
-def metrics() -> list[dict[str, Any]]:
+def metrics(
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> list[dict[str, Any]]:
     ensure_app_ready()
     return get_model_metrics(db_path=DEFAULT_DB_PATH)

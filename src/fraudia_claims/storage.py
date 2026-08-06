@@ -33,6 +33,7 @@ BASE_TABLES = [
 ]
 
 REQUIRED_DATABASE_TABLES = [*BASE_TABLES, "scores", "alertas", "metricas_modelo"]
+ALLOWED_LOAD_TABLES = frozenset(REQUIRED_DATABASE_TABLES)
 
 REQUIRED_DATABASE_COLUMNS = {
     "scores": {"score_final", "nivel_riesgo", "score_modelo", "regla_min_amarillo", "nlp_min_amarillo"},
@@ -89,6 +90,8 @@ def load_tables_from_csv(directory: Path = SYNTHETIC_DIR) -> dict[str, pd.DataFr
 
 
 def load_table(name: str, db_path: Path = DEFAULT_DB_PATH) -> pd.DataFrame:
+    if name not in ALLOWED_LOAD_TABLES:
+        raise ValueError(f"Tabla no permitida para carga: {name!r}.")
     return read_sql(f"SELECT * FROM {name}", db_path=db_path)
 
 
