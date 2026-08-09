@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 import { Loader2, Lock, User } from 'lucide-react';
 import { api, type LoginResponse } from '../lib/api';
 import { useAuth } from '../contexts/useAuth';
@@ -31,8 +32,20 @@ export function Login() {
       const response = await api.post<LoginResponse>('/auth/login', { email, password });
       login(response.data.access_token, response.data.user);
       navigate('/');
-    } catch {
-      setError('Credenciales demo invalidas. Usa demo123.');
+    } catch (err) {
+      if (isAxiosError(err)) {
+        if (err.response?.status === 401) {
+          setError('Credenciales demo invalidas. Usa demo123.');
+        } else if (err.response?.status === 429) {
+          setError('Demasiados intentos. Espera unos segundos y vuelve a intentar.');
+        } else if (!err.response) {
+          setError('No se pudo conectar con el servidor. Verifica VITE_API_URL y que el origen del frontend este permitido en FRAUDIA_CORS_ORIGINS.');
+        } else {
+          setError(`Error inesperado del servidor (${err.response.status}). Intenta de nuevo.`);
+        }
+      } else {
+        setError('Error inesperado. Intenta de nuevo.');
+      }
     } finally {
       setLoading(false);
     }
