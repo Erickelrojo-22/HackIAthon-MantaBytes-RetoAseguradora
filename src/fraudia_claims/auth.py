@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from typing import Annotated
 
@@ -7,7 +8,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 
-DEMO_PASSWORD = "demo123"
+DEMO_PASSWORD = os.getenv("FRAUDIA_DEMO_PASSWORD", "demo123")
 
 
 @dataclass(frozen=True)
@@ -23,10 +24,13 @@ DEMO_USERS = {
     "auditoria@fraudia.demo": DemoUser("auditoria@fraudia.demo", "Auditoria Demo", "Auditoria"),
 }
 
+# Los tokens demo tienen un valor por defecto conocido publicamente (repo abierto), por lo
+# que cualquier despliegue expuesto a internet deberia sobrescribirlos con variables de
+# entorno propias (FRAUDIA_TOKEN_ANALISTA / _JEFATURA / _AUDITORIA).
 TOKEN_TO_EMAIL = {
-    "demo-token-analista": "analista@fraudia.demo",
-    "demo-token-jefatura": "jefatura@fraudia.demo",
-    "demo-token-auditoria": "auditoria@fraudia.demo",
+    os.getenv("FRAUDIA_TOKEN_ANALISTA", "demo-token-analista"): "analista@fraudia.demo",
+    os.getenv("FRAUDIA_TOKEN_JEFATURA", "demo-token-jefatura"): "jefatura@fraudia.demo",
+    os.getenv("FRAUDIA_TOKEN_AUDITORIA", "demo-token-auditoria"): "auditoria@fraudia.demo",
 }
 EMAIL_TO_TOKEN = {email: token for token, email in TOKEN_TO_EMAIL.items()}
 

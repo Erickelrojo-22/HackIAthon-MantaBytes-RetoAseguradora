@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Literal
 
 import json
+import re
 import tempfile
 from pathlib import Path
 from threading import Lock
@@ -27,12 +28,12 @@ from fraudia_claims.analytics import city_concentration, executive_kpis, provide
 from fraudia_claims.audit import list_audit_events, log_event
 from fraudia_claims.auth import DemoUser, authenticate_demo_user, current_user, require_roles, user_to_dict
 from fraudia_claims.config import CORS_ORIGINS, DEFAULT_DB_PATH, MAX_CSV_UPLOAD_BYTES
-from fraudia_claims.ingestion import REQUIRED_COLUMNS, data_quality_report, missing_required_columns, validate_company_tables
+from fraudia_claims.ingestion import REQUIRED_COLUMNS, missing_required_columns
 from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.rate_limit import enforce_rate_limit
 from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
-from fraudia_claims.vision import analyze_claim_image
+from fraudia_claims.vision import MAX_IMAGE_BYTES, analyze_claim_image
 
 
 _APP_READY = False
@@ -92,8 +93,11 @@ class LoginPayload(BaseModel):
     password: str
 
 
+_REVIEW_STATUS_PATTERN = "^(" + "|".join(re.escape(status) for status in REVIEW_STATUSES) + ")$"
+
+
 class ReviewDecisionPayload(BaseModel):
-    status: str = Field(pattern="^(En revision|Descartado|Escalado|Confirmado para investigacion)$")
+    status: str = Field(pattern=_REVIEW_STATUS_PATTERN)
     comentario: str = ""
 
 
@@ -187,7 +191,8 @@ def startup() -> None:
 
 
 @app.post("/auth/login")
-def login(payload: LoginPayload) -> dict[str, Any]:
+def login(payload: LoginPayload, request: Request) -> dict[str, Any]:
+    enforce_rate_limit(request, "login")
     token, user = authenticate_demo_user(payload.email, payload.password)
     return {"access_token": token, "user": user_to_dict(user)}
 
@@ -433,7 +438,12 @@ async def vision_analyze(
 ) -> dict[str, Any]:
     ensure_app_ready()
     enforce_rate_limit(request, "vision")
-    content = await file.read()
+    content = await file.read(MAX_IMAGE_BYTES + 1)
+    if len(content) > MAX_IMAGE_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Imagen supera el limite de {MAX_IMAGE_BYTES} bytes.",
+        )
     claim_context: dict[str, Any] = {
         "filename": file.filename or "imagen_siniestro",
         "mime_type": file.content_type or "application/octet-stream",

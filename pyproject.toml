@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+# Deliberately narrow: syntax errors and pyflakes (unused imports/names, undefined
+# names, etc.). Style/formatting rules (import sorting, bugbear, blind-except...) are
+# left out for now since enabling them would require a broader reformat pass that is
+# out of scope for this change; this still catches real bugs in CI.
+select = ["E9", "F"]

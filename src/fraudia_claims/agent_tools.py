@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from fraudia_claims.config import DEFAULT_DB_PATH
-from fraudia_claims.database import execute_one, execute_one_cached, execute_rows, execute_rows_cached
+from fraudia_claims.database import execute_one_cached, execute_rows, execute_rows_cached
 from fraudia_claims.scoring import level_from_score
 
 

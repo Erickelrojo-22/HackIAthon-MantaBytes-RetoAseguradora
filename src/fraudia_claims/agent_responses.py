@@ -242,9 +242,24 @@ def _metrics_answer(db_path: Path) -> str:
     if not rows:
         return "No hay métricas supervisadas disponibles en esta base. La demo mantiene reglas explicables y trazabilidad."
     lines = ["### Métricas del modelo supervisado"]
+    near_perfect = False
     for row in rows:
-        lines.append(f"- **{_human(row.get('metrica'))}**: {_num(row.get('valor'))}. {_human(row.get('detalle'))}")
+        metric_name = str(row.get("metrica"))
+        try:
+            value = float(row.get("valor"))
+        except (TypeError, ValueError):
+            value = None
+        if metric_name in {"accuracy", "precision", "recall", "f1", "auc_roc"} and value is not None and value >= 0.98:
+            near_perfect = True
+        lines.append(f"- **{_human(metric_name)}**: {_num(row.get('valor'))}. {_human(row.get('detalle'))}")
     lines.append("\nSon métricas sobre etiqueta sintética reproducible; no equivalen a validación legal.")
+    if near_perfect:
+        lines.append(
+            "\n**Nota de interpretación:** en el generador sintético, la etiqueta de fraude determina también otras "
+            "variables (monto, demora de reporte, etc.) que el modelo usa como entrada. Un valor cercano a 1.0 "
+            "confirma que el pipeline reproduce la etiqueta simulada, no que detecte fraude real; úsalo como prueba "
+            "de integración del modelo, no como evidencia de desempeño."
+        )
     return "\n".join(lines)
 
 

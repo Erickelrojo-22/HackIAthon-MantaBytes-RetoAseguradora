@@ -19,6 +19,8 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Lint
+        run: ruff check src tests
       - name: Run unit tests
         env:
           FRAUDIA_DATA_SOURCE: demo
