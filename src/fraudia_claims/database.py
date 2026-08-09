@@ -38,6 +38,22 @@ class DatabaseSettings:
     sqlite_path: Path
 
 
+def _normalize_postgres_url(url: str) -> str:
+    """Upgrade a bare postgres(ql):// URL to the psycopg (v3) dialect.
+
+    Supabase, Heroku-style providers, etc. hand out connection strings with no
+    driver suffix (postgres:// or postgresql://). SQLAlchemy's default DBAPI for
+    that scheme is psycopg2, which this project does not install (requirements.txt
+    ships psycopg[binary], i.e. psycopg v3) - so pasting a URL as-is crashes the
+    app at startup with "ModuleNotFoundError: No module named 'psycopg2'". Rewrite
+    it so FRAUDIA_DATABASE_URL works whether or not the driver suffix is included.
+    """
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix) :]
+    return url
+
+
 def database_settings(db_path: Path = DEFAULT_DB_PATH) -> DatabaseSettings:
     backend = os.getenv("FRAUDIA_DB_BACKEND", "sqlite").strip().lower() or "sqlite"
     if backend == "postgresql":
@@ -45,6 +61,8 @@ def database_settings(db_path: Path = DEFAULT_DB_PATH) -> DatabaseSettings:
     if backend not in SUPPORTED_BACKENDS:
         raise ValueError(f"FRAUDIA_DB_BACKEND debe ser sqlite o postgres, no {backend!r}.")
     url = os.getenv("FRAUDIA_DATABASE_URL", "").strip() or None
+    if url:
+        url = _normalize_postgres_url(url)
     sqlite_path = Path(os.getenv("FRAUDIA_DB_PATH", str(db_path)))
     if backend == "postgres" and not url:
         raise ValueError("FRAUDIA_DATABASE_URL es requerido cuando FRAUDIA_DB_BACKEND=postgres.")
