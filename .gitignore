@@ -9,3 +9,4 @@ venv/
 data/company_synthetic/
 data/processed/*.db
 data/processed/*.sqlite*
+.claude/settings.local.json
