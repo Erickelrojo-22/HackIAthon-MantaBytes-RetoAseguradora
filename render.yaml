@@ -17,6 +17,8 @@ services:
         value: gpt-5.4-mini
       - key: FRAUDIA_DATA_SOURCE
         value: company_synthetic
+      - key: FRAUDIA_CORS_ORIGINS
+        value: https://fraudia-frontend.onrender.com
   - type: web
     name: fraudia-frontend
     runtime: static

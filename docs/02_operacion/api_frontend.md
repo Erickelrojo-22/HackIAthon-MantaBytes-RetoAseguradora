@@ -24,6 +24,10 @@ Usar en endpoints protegidos:
 Authorization: Bearer demo-token-analista
 ```
 
+Publicos: `POST /auth/login`, `GET /health`.
+
+El resto de endpoints de negocio requieren Bearer (roles segun endpoint).
+
 ## Centro de mando
 
 ```http

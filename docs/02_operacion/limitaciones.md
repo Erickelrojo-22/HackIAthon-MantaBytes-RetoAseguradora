@@ -11,10 +11,14 @@
 
 ## Seguridad
 
-- No se versionan credenciales.
-- `.env` queda ignorado por Git.
+- No se versionan credenciales reales (`.env` ignorado por Git).
 - Los identificadores son anonimos.
 - La integracion OpenAI es opcional y de solo lectura.
+- Solo `/auth/login` y `/health` son publicos; el resto exige Bearer demo.
+- CORS se restringe con `FRAUDIA_CORS_ORIGINS` (localhost por defecto; Render apunta al frontend).
+- Upload CSV limita tamano (`FRAUDIA_MAX_CSV_BYTES`) y hay rate limit basico en agent/vision/upload/score.
+- Auth sigue siendo demo (password/tokens estaticos): apta para jurado, no para produccion.
+- `data/company_synthetic/` esta en `.gitignore`; no re-versionar datasets no autorizados.
 
 ## Principio etico
 

@@ -49,8 +49,22 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertIn("proveedores_criticos", body)
         self.assertGreater(body["kpis"]["total_siniestros"], 0)
 
+    def test_sensitive_reads_require_auth(self) -> None:
+        for path in (
+            "/claims/risk?limit=1",
+            "/relationships?limit=20",
+            "/report/summary",
+            "/alerts/aggregate",
+            "/metrics",
+        ):
+            self.assertEqual(self.client.get(path).status_code, 401, path)
+
+        authorized = self.client.get("/claims/risk?limit=1", headers=self.auth(self.analyst_token))
+        self.assertEqual(authorized.status_code, 200)
+        self.assertGreater(len(authorized.json()), 0)
+
     def test_review_decision_persists_without_modifying_scores_and_logs_event(self) -> None:
-        claim_id = self.client.get("/claims/risk?limit=1").json()[0]["id_siniestro"]
+        claim_id = self.client.get("/claims/risk?limit=1", headers=self.auth(self.analyst_token)).json()[0]["id_siniestro"]
         with sqlite3.connect(DEFAULT_DB_PATH) as conn:
             before = conn.execute("SELECT COUNT(*) FROM scores").fetchone()[0]
 
@@ -78,7 +92,7 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertEqual(before, after)
 
     def test_agent_question_and_csv_validation(self) -> None:
-        claim_id = self.client.get("/claims/risk?limit=1").json()[0]["id_siniestro"]
+        claim_id = self.client.get("/claims/risk?limit=1", headers=self.auth(self.analyst_token)).json()[0]["id_siniestro"]
         agent = self.client.post(
             "/agent/question",
             json={"question": "Explica este caso", "id_siniestro": claim_id, "scope": "claim"},
@@ -96,6 +110,13 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertEqual(upload.status_code, 200)
         self.assertEqual(upload.json()["status"], "revisar")
         self.assertIn("id_poliza", upload.json()["missing_columns"])
+
+        oversized = self.client.post(
+            "/claims/upload-csv",
+            files={"file": ("huge.csv", b"x" * (2 * 1024 * 1024 + 10), "text/csv")},
+            headers=self.auth(self.analyst_token),
+        )
+        self.assertEqual(oversized.status_code, 413)
 
 
 if __name__ == "__main__":
