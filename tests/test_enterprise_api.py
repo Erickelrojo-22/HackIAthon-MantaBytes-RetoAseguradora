@@ -13,8 +13,9 @@ if str(SRC) not in sys.path:
 from fastapi.testclient import TestClient
 
 from fraudia_claims.api import app
-from fraudia_claims.config import DEFAULT_DB_PATH
+from fraudia_claims.config import DEFAULT_DB_PATH, RATE_LIMIT_MAX_REQUESTS
 from fraudia_claims.storage import initialize_demo_data
+from fraudia_claims.vision import MAX_IMAGE_BYTES
 
 
 class EnterpriseApiTests(unittest.TestCase):
@@ -117,6 +118,47 @@ class EnterpriseApiTests(unittest.TestCase):
             headers=self.auth(self.analyst_token),
         )
         self.assertEqual(oversized.status_code, 413)
+
+    def test_rbac_denies_roles_without_permission(self) -> None:
+        claim_id = self.client.get("/claims/risk?limit=1", headers=self.auth(self.analyst_token)).json()[0]["id_siniestro"]
+
+        # Auditoria no puede registrar decisiones humanas (solo Analista/Jefatura).
+        forbidden_review = self.client.post(
+            f"/claims/{claim_id}/review-decision",
+            json={"status": "Escalado", "comentario": "No deberia poder."},
+            headers=self.auth(self.audit_token),
+        )
+        self.assertEqual(forbidden_review.status_code, 403)
+
+        # Analista no puede leer el log de auditoria (solo Jefatura/Auditoria).
+        forbidden_audit = self.client.get("/audit-log", headers=self.auth(self.analyst_token))
+        self.assertEqual(forbidden_audit.status_code, 403)
+
+    def test_vision_analyze_rejects_oversized_upload(self) -> None:
+        oversized_image = self.client.post(
+            "/vision/analyze",
+            files={"file": ("huge.jpg", b"x" * (MAX_IMAGE_BYTES + 10), "image/jpeg")},
+            headers=self.auth(self.analyst_token),
+        )
+        self.assertEqual(oversized_image.status_code, 413)
+
+    def test_rate_limit_blocks_excessive_requests(self) -> None:
+        payload = {
+            "ramo": "Vehiculos",
+            "cobertura": "Perdida Total por Robo",
+            "monto_reclamado": 29500,
+            "suma_asegurada": 30000,
+            "dias_desde_inicio_poliza": 1,
+            "dias_desde_fin_poliza": 364,
+            "dias_entre_ocurrencia_reporte": 5,
+            "denuncia_horas": 72,
+            "documentos_completos": False,
+        }
+        statuses = [
+            self.client.post("/score-candidate", json=payload, headers=self.auth(self.analyst_token)).status_code
+            for _ in range(RATE_LIMIT_MAX_REQUESTS + 15)
+        ]
+        self.assertIn(429, statuses)
 
 
 if __name__ == "__main__":

@@ -81,11 +81,14 @@ export function ClaimDetail() {
         <div className="space-y-6 xl:col-span-2">
           <Card>
             <CardHeader><CardTitle>Score dividido</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <ScorePart label="Reglas" value={claim.score_reglas} />
-              <ScorePart label="Anomalias" value={claim.score_anomalia} />
-              <ScorePart label="NLP" value={claim.score_nlp} />
-              <ScorePart label="Modelo" value={claim.score_modelo} />
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <ScorePart label="Reglas (max 60)" value={Math.min(claim.score_reglas, 60)} raw={claim.score_reglas} />
+                <ScorePart label="Anomalias" value={claim.score_anomalia} />
+                <ScorePart label="NLP" value={claim.score_nlp} />
+                <ScorePart label="Modelo" value={claim.score_modelo} />
+              </div>
+              <ScoreReconciliation claim={claim} />
             </CardContent>
           </Card>
 
@@ -202,8 +205,36 @@ export function ClaimDetail() {
   );
 }
 
-function ScorePart({ label, value }: { label: string; value: number }) {
-  return <div className="rounded-2xl bg-navy-50 p-4"><p className="text-xs font-semibold uppercase text-navy-500">{label}</p><p className="mt-2 text-3xl font-black text-navy-950">{value}</p></div>;
+function ScorePart({ label, value, raw }: { label: string; value: number; raw?: number }) {
+  return (
+    <div className="rounded-2xl bg-navy-50 p-4">
+      <p className="text-xs font-semibold uppercase text-navy-500">{label}</p>
+      <p className="mt-2 text-3xl font-black text-navy-950">{value}</p>
+      {raw !== undefined && raw > value && <p className="mt-1 text-xs text-navy-400">Bruto: {raw} pts, limitado a {value}</p>}
+    </div>
+  );
+}
+
+function ScoreReconciliation({ claim }: { claim: ClaimDetailType }) {
+  const cappedRules = Math.min(claim.score_reglas, 60);
+  const sumBeforeFloor = Math.min(100, cappedRules + claim.score_anomalia + claim.score_nlp + claim.score_modelo);
+  const hasCritical = claim.alertas?.some((alert) => alert.es_critica) ?? false;
+  const matchesSum = sumBeforeFloor === claim.score_final;
+
+  return (
+    <div className="rounded-2xl border border-navy-100 bg-white p-4 text-sm text-navy-700">
+      <p>
+        Suma de partes: <strong>{sumBeforeFloor}</strong> = min(60, {claim.score_reglas}) reglas + {claim.score_anomalia} anomalias + {claim.score_nlp} NLP + {claim.score_modelo} modelo.
+      </p>
+      {!matchesSum && (
+        <p className="mt-1 text-xs font-semibold text-cyan-700">
+          Score final ajustado a <strong>{claim.score_final}</strong> porque se activo un piso minimo
+          {hasCritical ? ' por una regla critica (minimo Rojo, 76 pts)' : ' por una regla de escalamiento obligatorio (minimo Amarillo, 41 pts)'}.
+          Ver alertas marcadas como criticas u obligatorias abajo.
+        </p>
+      )}
+    </div>
+  );
 }
 
 function TimelineItem({ label, value }: { label: string; value: string }) {

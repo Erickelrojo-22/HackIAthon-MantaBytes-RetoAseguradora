@@ -28,7 +28,7 @@ Si una regla critica se activa, el caso escala como minimo a `76` puntos. Si se 
 ## Escalamientos oficiales del reto
 
 - Minimo rojo: `RF-01` perdida total por robo, `RF-02` adulteracion documental, `RF-03` lista restrictiva y `RF-04` dinamica fisicamente imposible.
-- Minimo amarillo: `RF-05` siniestro extremo al borde de vigencia menor a 48 horas, `RF-06` denuncia de robo mayor a 4 dias y `RF-07` narrativa identica o clonada.
+- Minimo amarillo: `RF-05` siniestro extremo al borde de vigencia menor a 24 horas, `RF-06` denuncia de robo mayor a 4 dias y `RF-07` narrativa identica o clonada.
 - El escalamiento no acusa fraude; solo garantiza que el caso aparezca en la bandeja de revision humana.
 
 ## Reglas por ramo
