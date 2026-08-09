@@ -143,13 +143,15 @@ Endpoints principales:
 
 ## Despliegue Render
 
-El despliegue continuo queda separado en dos servicios:
+El despliegue continuo queda separado en dos servicios definidos en `render.yaml`:
 
-- Frontend React: `https://fraudia-frontend.onrender.com`
-- Backend FastAPI: `https://fraudia-api.onrender.com`
-- API docs: `https://fraudia-api.onrender.com/docs`
+- Frontend React (sitio estatico, con rewrite SPA): `fraudia-frontend`
+- Backend FastAPI: `fraudia-api`
+- API docs: `<url-del-backend>/docs`
 
-Render puede operar en `sqlite/demo` para generar una demo estable, en `sqlite/csv` para usar los CSV versionados sin depender de servicios externos, o en `postgres/company_synthetic` si se configuran `FRAUDIA_DATABASE_URL` y `FRAUDIA_DATA_SOURCE` en el panel del backend. En todos los casos el frontend solo consume `VITE_API_URL`.
+`render.yaml` fija por defecto `FRAUDIA_DATA_SOURCE=demo` (3.000 siniestros reproducibles, las 27 reglas activas) sobre el backend configurado en `FRAUDIA_DATABASE_URL` (Supabase/Postgres). Render tambien puede operar en `sqlite/demo` o `sqlite/csv` sin depender de servicios externos, o en `postgres/company_synthetic` si el equipo cura y autoriza su propio dataset localmente (no se versiona en este repo). En todos los casos el frontend solo consume `VITE_API_URL`.
+
+Antes de compartir las URLs con el jurado, verifica que ambos servicios esten activos (`GET /health` en el backend debe responder `200`) y que la URL configurada en `VITE_API_URL` del frontend coincida con el backend realmente desplegado.
 
 ## Ejecutar en VS Code
 

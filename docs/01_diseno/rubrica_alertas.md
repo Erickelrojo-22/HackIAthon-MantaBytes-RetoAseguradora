@@ -16,7 +16,7 @@ Esta rubrica describe como FraudIA Claims convierte senales de riesgo en alertas
 | --- | ---: | --- |
 | Reglas de negocio | 60 | Vigencia, reporte tardio, frecuencia, proveedor, documentos, monto y reglas por ramo |
 | Anomalia numerica | 20 | Percentil alto de anomalia por ramo |
-| NLP narrativo | 20 | Narrativa clonada o muy similar dentro del mismo ramo |
+| NLP narrativo | 8 | Narrativa clonada o muy similar (>0.85) dentro del mismo ramo; 4 pts entre 0.70 y 0.85 |
 | Modelo supervisado demo | 15 | Probabilidad sintetica alta, usada solo como apoyo |
 
 El score final se limita a 100. Las reglas criticas y amarillas pueden elevar el nivel minimo aunque la suma base sea menor.
@@ -34,7 +34,7 @@ El score final se limita a 100. Las reglas criticas y amarillas pueden elevar el
 
 | Codigo | Senal | Justificacion |
 | --- | --- | --- |
-| RF-05 | Siniestro extremo dentro de 48 horas de vigencia | Cercania al inicio/fin de poliza con impacto alto |
+| RF-05 | Siniestro extremo dentro de 24 horas de vigencia | Cercania al inicio/fin de poliza con impacto alto |
 | RF-06 | Denuncia de robo con demora mayor a 4 dias | Demora atipica en reporte de robo |
 | RF-07 | Narrativa identica o clonada | Posible patron repetido que debe verificarse |
 

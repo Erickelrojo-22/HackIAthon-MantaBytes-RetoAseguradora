@@ -2,9 +2,10 @@
 
 ## Fuente de datos
 
-- Online con internet: FastAPI usa Supabase/PostgreSQL con `FRAUDIA_DB_BACKEND=postgres` y `FRAUDIA_DATA_SOURCE=company_synthetic`.
+- Despliegue publico (Render/`render.yaml`): FastAPI usa Supabase/PostgreSQL con `FRAUDIA_DB_BACKEND=postgres` y `FRAUDIA_DATA_SOURCE=demo` (3.000 siniestros generados de forma reproducible con seed fija; las 27 reglas de negocio quedan activas).
 - Offline sin internet: FastAPI usa SQLite local reconstruido desde `data/synthetic/*.csv` y `data/raw/contexto_publico.csv` con `FRAUDIA_DB_BACKEND=sqlite` y `FRAUDIA_DATA_SOURCE=csv`.
-- En ambos casos el frontend React no lee CSV directamente; siempre consume la API configurada en `VITE_API_URL`.
+- `company_synthetic` (dataset provisto por la empresa) sigue soportado para uso **local** del equipo, cargando los CSV fuera del repo en `data/company_synthetic` (ver README). No se despliega publicamente porque el paquete recibido tiene columnas degeneradas (banderas constantes, coberturas con nombres distintos a las reglas) que dejan inactivas 11 de las 27 reglas; requiere curaduria antes de usarse en demo publica.
+- En todos los casos el frontend React no lee CSV directamente; siempre consume la API configurada en `VITE_API_URL`.
 
 ## Entregables obligatorios del PDF
 
