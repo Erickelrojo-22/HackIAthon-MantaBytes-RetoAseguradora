@@ -85,7 +85,7 @@ def provider_pareto(limit: int = 15, db_path: Path = DEFAULT_DB_PATH) -> pd.Data
             COUNT(*) AS total_siniestros,
             SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS alertas_rojas,
             SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN si.monto_reclamado ELSE 0 END) AS monto_priorizado,
-            ROUND(AVG(sc.score_final), 2) AS score_promedio
+            ROUND(CAST(AVG(sc.score_final) AS NUMERIC), 2) AS score_promedio
         FROM siniestros si
         JOIN scores sc ON sc.id_siniestro = si.id_siniestro
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
@@ -106,7 +106,7 @@ def risk_matrix(db_path: Path = DEFAULT_DB_PATH) -> pd.DataFrame:
             si.ramo,
             sc.nivel_riesgo,
             COUNT(*) AS total,
-            ROUND(SUM(si.monto_reclamado), 2) AS monto_reclamado
+            ROUND(CAST(SUM(si.monto_reclamado) AS NUMERIC), 2) AS monto_reclamado
         FROM scores sc
         JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
         GROUP BY si.ramo, sc.nivel_riesgo
@@ -123,8 +123,8 @@ def city_concentration(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> pd.D
             si.sucursal AS ciudad,
             COUNT(*) AS total_siniestros,
             SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN 1 ELSE 0 END) AS casos_revision,
-            ROUND(100.0 * SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN 1 ELSE 0 END) / COUNT(*), 2) AS porcentaje_revision,
-            ROUND(AVG(sc.score_final), 2) AS score_promedio
+            ROUND(CAST(100.0 * SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN 1 ELSE 0 END) / COUNT(*) AS NUMERIC), 2) AS porcentaje_revision,
+            ROUND(CAST(AVG(sc.score_final) AS NUMERIC), 2) AS score_promedio
         FROM siniestros si
         JOIN scores sc ON sc.id_siniestro = si.id_siniestro
         GROUP BY si.sucursal

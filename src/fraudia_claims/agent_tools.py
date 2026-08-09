@@ -108,7 +108,7 @@ def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PAT
                 pr.tipo,
                 COUNT(*) AS total_siniestros,
                 SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS alertas_rojas,
-                ROUND(AVG(sc.score_final), 2) AS score_promedio
+                ROUND(CAST(AVG(sc.score_final) AS NUMERIC), 2) AS score_promedio
             FROM siniestros si
             JOIN scores sc ON sc.id_siniestro = si.id_siniestro
             LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
@@ -123,8 +123,8 @@ def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PAT
                 si.ramo AS grupo,
                 COUNT(*) AS total_siniestros,
                 SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS alertas_rojas,
-                ROUND(100.0 * SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) / COUNT(*), 2) AS porcentaje_rojo,
-                ROUND(AVG(sc.score_final), 2) AS score_promedio
+                ROUND(CAST(100.0 * SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) / COUNT(*) AS NUMERIC), 2) AS porcentaje_rojo,
+                ROUND(CAST(AVG(sc.score_final) AS NUMERIC), 2) AS score_promedio
             FROM siniestros si
             JOIN scores sc ON sc.id_siniestro = si.id_siniestro
             GROUP BY si.ramo
@@ -136,7 +136,7 @@ def aggregate_alerts(group_by: str = "proveedor", db_path: Path = DEFAULT_DB_PAT
                 si.sucursal AS grupo,
                 COUNT(*) AS total_siniestros,
                 SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN 1 ELSE 0 END) AS alertas_revision,
-                ROUND(AVG(sc.score_final), 2) AS score_promedio
+                ROUND(CAST(AVG(sc.score_final) AS NUMERIC), 2) AS score_promedio
             FROM siniestros si
             JOIN scores sc ON sc.id_siniestro = si.id_siniestro
             GROUP BY si.sucursal
@@ -232,7 +232,7 @@ def provider_red_alert_pareto(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str,
                 pr.nombre AS proveedor,
                 pr.tipo,
                 COUNT(*) AS alertas_rojas,
-                ROUND(AVG(sc.score_final), 2) AS score_promedio
+                ROUND(CAST(AVG(sc.score_final) AS NUMERIC), 2) AS score_promedio
             FROM siniestros si
             JOIN scores sc ON sc.id_siniestro = si.id_siniestro
             LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
@@ -254,8 +254,8 @@ def provider_red_alert_pareto(db_path: Path = DEFAULT_DB_PATH) -> list[dict[str,
             tipo,
             alertas_rojas,
             score_promedio,
-            ROUND(100.0 * alertas_rojas / NULLIF(total_rojas, 0), 2) AS porcentaje_rojas,
-            ROUND(100.0 * acumulado / NULLIF(total_rojas, 0), 2) AS porcentaje_acumulado
+            ROUND(CAST(100.0 * alertas_rojas / NULLIF(total_rojas, 0) AS NUMERIC), 2) AS porcentaje_rojas,
+            ROUND(CAST(100.0 * acumulado / NULLIF(total_rojas, 0) AS NUMERIC), 2) AS porcentaje_acumulado
         FROM ranked
         WHERE 100.0 * (acumulado - alertas_rojas) / NULLIF(total_rojas, 0) < 80
         ORDER BY alertas_rojas DESC, score_promedio DESC
@@ -269,8 +269,8 @@ def top_insured_frequency(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> l
             si.id_asegurado,
             COUNT(*) AS total_siniestros,
             SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS casos_rojos,
-            ROUND(AVG(sc.score_final), 2) AS score_promedio,
-            ROUND(SUM(si.monto_reclamado), 2) AS monto_total_reclamado
+            ROUND(CAST(AVG(sc.score_final) AS NUMERIC), 2) AS score_promedio,
+            ROUND(CAST(SUM(si.monto_reclamado) AS NUMERIC), 2) AS monto_total_reclamado
         FROM siniestros si
         JOIN scores sc ON sc.id_siniestro = si.id_siniestro
         GROUP BY si.id_asegurado
@@ -290,7 +290,7 @@ def list_amount_outliers(limit: int = 10, db_path: Path = DEFAULT_DB_PATH) -> li
             si.ramo,
             si.cobertura,
             si.monto_reclamado,
-            ROUND(sc.monto_reclamado / NULLIF(po.suma_asegurada, 0), 3) AS ratio_suma,
+            ROUND(CAST(sc.monto_reclamado / NULLIF(po.suma_asegurada, 0) AS NUMERIC), 3) AS ratio_suma,
             sc.explicacion_resumen
         FROM scores sc
         JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
@@ -359,7 +359,7 @@ def executive_report(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
             SUM(CASE WHEN nivel_riesgo = 'Rojo' THEN 1 ELSE 0 END) AS rojos,
             SUM(CASE WHEN nivel_riesgo = 'Amarillo' THEN 1 ELSE 0 END) AS amarillos,
             SUM(CASE WHEN nivel_riesgo = 'Verde' THEN 1 ELSE 0 END) AS verdes,
-            ROUND(AVG(score_final), 2) AS score_promedio
+            ROUND(CAST(AVG(score_final) AS NUMERIC), 2) AS score_promedio
         FROM scores
         """,
         db_path=db_path,
@@ -367,8 +367,8 @@ def executive_report(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
     amounts = execute_one_cached(
         """
         SELECT
-            ROUND(SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN si.monto_reclamado ELSE 0 END), 2) AS monto_rojo,
-            ROUND(SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN si.monto_reclamado ELSE 0 END), 2) AS monto_revision
+            ROUND(CAST(SUM(CASE WHEN sc.nivel_riesgo = 'Rojo' THEN si.monto_reclamado ELSE 0 END) AS NUMERIC), 2) AS monto_rojo,
+            ROUND(CAST(SUM(CASE WHEN sc.nivel_riesgo IN ('Rojo', 'Amarillo') THEN si.monto_reclamado ELSE 0 END) AS NUMERIC), 2) AS monto_revision
         FROM scores sc
         JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
         """,
