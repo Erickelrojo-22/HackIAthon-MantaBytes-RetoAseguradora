@@ -42,6 +42,23 @@ class DatabaseLayerTests(unittest.TestCase):
         self.assertEqual(settings.backend, "postgres")
         self.assertEqual(settings.url, "postgresql+psycopg://user:pass@localhost:5432/fraudia")
 
+    def test_bare_postgres_url_is_upgraded_to_psycopg_dialect(self) -> None:
+        # Supabase and Heroku-style providers hand out postgres:// / postgresql://
+        # with no driver suffix. SQLAlchemy would default that to psycopg2, which
+        # isn't installed here (we ship psycopg v3), so it must be rewritten.
+        cases = {
+            "postgres://user:pass@localhost:5432/fraudia": "postgresql+psycopg://user:pass@localhost:5432/fraudia",
+            "postgresql://user:pass@localhost:5432/fraudia": "postgresql+psycopg://user:pass@localhost:5432/fraudia",
+        }
+        for raw, expected in cases.items():
+            with patch.dict(
+                "os.environ",
+                {"FRAUDIA_DB_BACKEND": "postgres", "FRAUDIA_DATABASE_URL": raw},
+                clear=True,
+            ):
+                settings = database_settings()
+            self.assertEqual(settings.url, expected)
+
     def test_sqlite_roundtrip_uses_abstraction(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             db_path = Path(tmp) / "roundtrip.db"
