@@ -231,7 +231,7 @@ def _savings_answer(db_path: Path) -> str:
     return (
         "### Ahorro potencial simulado\n"
         f"- Base de revisión rojo/amarillo: **{money(savings['base_revision_rojo_amarillo'])}**\n"
-        f"- Tasa evitable estimada: **{savings['tasa_evitable_demo']:.0%}**\n"
+        f"- Tasa evitable estimada: **{savings['tasa_evitable_estimada']:.0%}**\n"
         f"- Monto estimado: **{money(savings['monto_estimado'])}**\n\n"
         "Este valor sirve para priorizar revisión humana y explicar impacto potencial; no representa ahorro contable real."
     )

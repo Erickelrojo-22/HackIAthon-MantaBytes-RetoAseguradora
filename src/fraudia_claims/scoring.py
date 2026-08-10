@@ -71,7 +71,7 @@ def _model_alerts(anomaly: pd.DataFrame, nlp: pd.DataFrame, supervised: pd.DataF
                 "severidad": "Alta" if row.score_modelo >= 15 else "Media",
                 "puntos": int(row.score_modelo),
                 "descripcion": "Modelo supervisado detecta probabilidad elevada sobre etiqueta sintetica.",
-                "evidencia": f"Probabilidad demo {float(row.probabilidad_modelo):.1%}.",
+                "evidencia": f"Probabilidad del modelo {float(row.probabilidad_modelo):.1%}.",
                 "es_critica": False,
             }
         )

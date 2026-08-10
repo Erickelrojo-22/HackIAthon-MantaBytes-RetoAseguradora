@@ -161,7 +161,7 @@ export interface ExecutiveReport {
   exposicion: Record<string, number | string | null>;
   ahorro_potencial_simulado: {
     base_revision_rojo_amarillo: number;
-    tasa_evitable_demo: number;
+    tasa_evitable_estimada: number;
     monto_estimado: number;
     nota: string;
   };

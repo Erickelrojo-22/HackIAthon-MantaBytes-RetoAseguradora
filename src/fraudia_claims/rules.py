@@ -89,7 +89,7 @@ def apply_rules(features: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
                 "Critica",
                 10,
                 "Coincidencia exacta con lista restrictiva simulada.",
-                "Proveedor o asegurado marcado en lista restrictiva de demo.",
+                "Proveedor o asegurado marcado en lista restrictiva simulada.",
                 critical=True,
             )
 
