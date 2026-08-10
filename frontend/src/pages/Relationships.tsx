@@ -14,8 +14,12 @@ interface PositionedNode extends RelationshipNode {
 }
 
 const filters: GraphFilter[] = ['Todos', 'Solo rojos', 'Vehiculos', 'Salud', 'Hogar'];
+const limitOptions = [10, 20, 40, 60, 80, 100, 120];
 const graphWidth = 1180;
-const graphHeight = 720;
+const minGraphHeight = 480;
+// Minimum vertical space per node so circles (up to r=23 with high-degree
+// bonus) and their labels below them don't visually merge into each other.
+const minNodeSpacing = 48;
 const columnX: Record<string, number> = {
   Asegurado: 150,
   Siniestro: 590,
@@ -24,14 +28,16 @@ const columnX: Record<string, number> = {
 
 export function Relationships() {
   const [filter, setFilter] = useState<GraphFilter>('Todos');
+  const [limit, setLimit] = useState(60);
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
   const { data, isLoading, error } = useQuery({
-    queryKey: ['relationships'],
-    queryFn: async () => (await api.get<RelationshipNetwork>('/relationships?limit=80')).data,
+    queryKey: ['relationships', limit],
+    queryFn: async () => (await api.get<RelationshipNetwork>(`/relationships?limit=${limit}`)).data,
   });
 
   const graph = useMemo(() => buildGraph(data, filter), [data, filter]);
   const selectedNode = graph.nodes.find((node) => node.id === selectedNodeId) ?? graph.nodes[0];
+  const graphHeight = graph.graphHeight;
 
   return (
     <div className="space-y-6">
@@ -62,7 +68,7 @@ export function Relationships() {
                 <CardTitle>Grafo de relaciones</CardTitle>
                 <p className="mt-1 text-sm text-navy-500">Asegurado anonimo {'->'} siniestro {'->'} proveedor vinculado</p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {filters.map((item) => (
                   <button
                     key={item}
@@ -77,6 +83,19 @@ export function Relationships() {
                     {item}
                   </button>
                 ))}
+                <label className="ml-2 flex items-center gap-2 text-xs font-bold text-navy-600">
+                  Casos a cargar
+                  <select
+                    value={limit}
+                    onChange={(event) => {
+                      setLimit(Number(event.target.value));
+                      setSelectedNodeId('');
+                    }}
+                    className="rounded-full border border-navy-200 bg-white px-2 py-1.5 text-xs font-bold text-navy-700"
+                  >
+                    {limitOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                  </select>
+                </label>
               </div>
             </CardHeader>
             <CardContent className="space-y-5">
@@ -89,7 +108,7 @@ export function Relationships() {
                         <feDropShadow dx="0" dy="5" stdDeviation="5" floodOpacity="0.16" />
                       </filter>
                     </defs>
-                    <GraphColumns />
+                    <GraphColumns graphHeight={graphHeight} />
                     {graph.edges.map((edge, index) => (
                       <GraphLine key={`${edge.source}-${edge.target}-${index}`} edge={edge} nodesById={graph.nodesById} />
                     ))}
@@ -109,7 +128,14 @@ export function Relationships() {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>Relaciones principales</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>
+                Relaciones principales
+                {graph.edges.length > 35 && (
+                  <span className="ml-2 text-xs font-normal text-navy-400">(mostrando 35 de {graph.edges.length})</span>
+                )}
+              </CardTitle>
+            </CardHeader>
             <CardContent className="overflow-x-auto p-0">
               <table className="w-full text-left text-sm">
                 <thead className="bg-navy-50 text-xs uppercase text-navy-500">
@@ -174,13 +200,19 @@ function buildGraph(data: RelationshipNetwork | undefined, filter: GraphFilter) 
     Proveedor: sourceNodes.filter((node) => includedIds.has(node.id) && node.tipo === 'Proveedor'),
   };
 
-  const positioned = Object.entries(groups).flatMap(([type, nodes]) => positionGroup(type, nodes, degree));
+  // Scale height to the largest column so node spacing never drops below a
+  // legible minimum, regardless of how many nodes are loaded (limit=10..120).
+  const maxColumnSize = Math.max(1, groups.Asegurado.length, groups.Siniestro.length, groups.Proveedor.length);
+  const graphHeight = Math.max(minGraphHeight, maxColumnSize * minNodeSpacing);
+
+  const positioned = Object.entries(groups).flatMap(([type, nodes]) => positionGroup(type, nodes, degree, graphHeight));
   const nodesById = new Map(positioned.map((node) => [node.id, node]));
 
   return {
     nodes: positioned,
     edges: edges.filter((edge) => nodesById.has(edge.source) && nodesById.has(edge.target)),
     nodesById,
+    graphHeight,
     counts: {
       claims: groups.Siniestro.length,
       providers: groups.Proveedor.length,
@@ -188,7 +220,7 @@ function buildGraph(data: RelationshipNetwork | undefined, filter: GraphFilter) 
   };
 }
 
-function positionGroup(type: string, nodes: RelationshipNode[], degree: Map<string, number>): PositionedNode[] {
+function positionGroup(type: string, nodes: RelationshipNode[], degree: Map<string, number>, graphHeight: number): PositionedNode[] {
   const sorted = [...nodes].sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || (degree.get(b.id) ?? 0) - (degree.get(a.id) ?? 0));
   const top = 76;
   const bottom = graphHeight - 76;
@@ -201,7 +233,7 @@ function positionGroup(type: string, nodes: RelationshipNode[], degree: Map<stri
   }));
 }
 
-function GraphColumns() {
+function GraphColumns({ graphHeight }: { graphHeight: number }) {
   const columns = [
     { x: columnX.Asegurado, label: 'Asegurados anonimos' },
     { x: columnX.Siniestro, label: 'Siniestros' },
@@ -224,7 +256,7 @@ function GraphLine({ edge, nodesById }: { edge: RelationshipEdge; nodesById: Map
   const target = nodesById.get(edge.target);
   if (!source || !target) return null;
   const claim = source.tipo === 'Siniestro' ? source : target.tipo === 'Siniestro' ? target : undefined;
-  const stroke = claim?.nivel === 'Rojo' ? '#ef4444' : claim?.nivel === 'Amarillo' ? '#eab308' : '#0891b2';
+  const stroke = claim?.nivel === 'Rojo' ? '#ef4444' : claim?.nivel === 'Amarillo' ? '#eab308' : claim?.nivel === 'Verde' ? '#22c55e' : '#94a3b8';
   const width = 1.4 + Math.min((claim?.score ?? 0) / 45, 2);
   return (
     <line
