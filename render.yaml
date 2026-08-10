@@ -18,13 +18,16 @@ services:
       - key: FRAUDIA_DATA_SOURCE
         value: demo
       - key: FRAUDIA_CORS_ORIGINS
-        # fraudia-frontend.onrender.com may already be claimed by another Render
-        # account (the exact subdomain is first-come-first-served), in which case
-        # this project's static site gets an auto-suffixed hostname instead (e.g.
-        # fraudia-frontend-XXXX.onrender.com). List both so login/API calls don't
-        # get silently CORS-blocked; update the suffixed one to match whatever
-        # hostname your fraudia-frontend service actually gets assigned.
-        value: https://fraudia-frontend.onrender.com,https://fraudia-frontend-r65k.onrender.com
+        # IMPORTANTE: fraudia-frontend.onrender.com fue reclamado por OTRA cuenta de
+        # Render (subdominios son first-come-first-served); ese hostname sirve una
+        # aplicacion completamente distinta (titulo "fraudIA - Deteccion de fraude
+        # con IA", bundle sin ninguna referencia a fraudia-api). Nuestro sitio
+        # estatico quedo con el hostname auto-sufijado fraudia-frontend-r65k.onrender.com.
+        # No listar el hostname ajeno aqui: no sirve para nada (nuestro frontend real
+        # nunca envia requests desde ese origen) y no conviene confiar en un origen que
+        # no controlamos. Si el hostname real de tu servicio fraudia-frontend cambia,
+        # actualiza este valor para que coincida exactamente.
+        value: https://fraudia-frontend-r65k.onrender.com
   - type: web
     name: fraudia-frontend
     runtime: static

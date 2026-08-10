@@ -383,7 +383,7 @@ def generate_documentos(rng: np.random.Generator, siniestros: pd.DataFrame) -> p
                     "fecha_emision": claim["fecha_reporte"],
                     "inconsistencia_detectada": inconsistent or altered,
                     "adulteracion_confirmada": altered,
-                    "observacion": "Alteracion simulada para demo" if altered else "",
+                    "observacion": "Alteracion documental simulada (dataset sintetico)" if altered else "",
                 }
             )
             doc_counter += 1

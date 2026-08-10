@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { Loader2, Lock, User } from 'lucide-react';
@@ -10,7 +10,7 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Disclaimer } from '../components/ui/Disclaimer';
 import mantaBytesLogo from '../assets/manta-bytes-logo.svg';
 
-const demoUsers = [
+const accessAccounts = [
   { label: 'Analista', email: 'analista@fraudia.demo' },
   { label: 'Jefatura', email: 'jefatura@fraudia.demo' },
   { label: 'Auditoria', email: 'auditoria@fraudia.demo' },
@@ -21,8 +21,31 @@ export function Login() {
   const [password, setPassword] = useState('demo123');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // El backend corre en el plan free de Render: si estuvo inactivo se "duerme"
+  // y la primera solicitud puede tardar 30-60s en responder mientras arranca.
+  // Sin este aviso, esa espera se ve identica a una falla real.
+  const [serverWaking, setServerWaking] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let cancelled = false;
+    const wakeTimer = setTimeout(() => {
+      if (!cancelled) setServerWaking(true);
+    }, 1500);
+    api
+      .get('/health')
+      .catch(() => undefined)
+      .finally(() => {
+        cancelled = true;
+        clearTimeout(wakeTimer);
+        setServerWaking(false);
+      });
+    return () => {
+      cancelled = true;
+      clearTimeout(wakeTimer);
+    };
+  }, []);
 
   const handleLogin = async (event: FormEvent) => {
     event.preventDefault();
@@ -35,11 +58,13 @@ export function Login() {
     } catch (err) {
       if (isAxiosError(err)) {
         if (err.response?.status === 401) {
-          setError('Credenciales demo invalidas. Usa demo123.');
+          setError('Credenciales invalidas.');
         } else if (err.response?.status === 429) {
           setError('Demasiados intentos. Espera unos segundos y vuelve a intentar.');
+        } else if (err.code === 'ECONNABORTED') {
+          setError('El servidor esta tardando en responder (puede estar iniciandose tras un periodo sin uso). Espera unos segundos y vuelve a intentar.');
         } else if (!err.response) {
-          setError('No se pudo conectar con el servidor. Verifica VITE_API_URL y que el origen del frontend este permitido en FRAUDIA_CORS_ORIGINS.');
+          setError('No se pudo conectar con el servidor. Verifica tu conexion a internet y vuelve a intentar en unos segundos.');
         } else {
           setError(`Error inesperado del servidor (${err.response.status}). Intenta de nuevo.`);
         }
@@ -66,10 +91,16 @@ export function Login() {
         <Card className="border-white/10 bg-white/10 shadow-2xl backdrop-blur-xl">
           <CardContent className="p-8">
             <form className="space-y-5" onSubmit={handleLogin}>
+              {serverWaking && !error && (
+                <div className="flex items-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-400/10 p-3 text-center text-sm text-cyan-100">
+                  <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin" />
+                  <span>Conectando con el servidor. El primer ingreso tras un rato de inactividad puede tardar unos segundos.</span>
+                </div>
+              )}
               {error && <div className="rounded-xl border border-red-400/50 bg-red-500/10 p-3 text-center text-sm text-red-200">{error}</div>}
 
               <div>
-                <label className="mb-2 block text-sm font-semibold text-navy-100">Correo demo</label>
+                <label className="mb-2 block text-sm font-semibold text-navy-100">Correo</label>
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-5 w-5 text-navy-400" />
                   <input
@@ -95,9 +126,9 @@ export function Login() {
               </div>
 
               <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-navy-300">Roles demo</p>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-navy-300">Acceso por rol</p>
                 <div className="grid grid-cols-3 gap-2">
-                  {demoUsers.map((item) => (
+                  {accessAccounts.map((item) => (
                     <button
                       key={item.email}
                       type="button"

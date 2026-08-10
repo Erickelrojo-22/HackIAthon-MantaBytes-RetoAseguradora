@@ -451,7 +451,7 @@ def executive_report(db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:
         "exposicion": amounts,
         "ahorro_potencial_simulado": {
             "base_revision_rojo_amarillo": round(monto_revision, 2),
-            "tasa_evitable_demo": 0.12,
+            "tasa_evitable_estimada": 0.12,
             "monto_estimado": round(monto_revision * 0.12, 2),
             "nota": "Simulacion ejecutiva para priorizacion; no representa ahorro contable real.",
         },

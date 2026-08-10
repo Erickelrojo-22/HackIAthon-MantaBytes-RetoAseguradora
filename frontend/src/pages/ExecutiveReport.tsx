@@ -83,7 +83,7 @@ export function ExecutiveReportPage() {
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <SimpleTable title="Proveedores que concentran alertas rojas" rows={data.proveedores_80_20} />
             <div className="space-y-3">
-              <SimpleTable title="Metricas del modelo demo" rows={data.metricas_modelo} />
+              <SimpleTable title="Metricas del modelo" rows={data.metricas_modelo} />
               <p className="rounded-2xl border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-900">
                 <strong>Nota de interpretacion:</strong> la etiqueta es sintetica y comparte generador con otras variables
                 del dataset (monto, demora de reporte, etc.). Valores de precision/recall/AUC cercanos a 1.0 confirman que

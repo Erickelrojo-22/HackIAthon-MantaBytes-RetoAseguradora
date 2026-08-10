@@ -35,7 +35,7 @@ def build_agent_answer(
     if not text:
         return "Escribe una pregunta sobre riesgo, documentos, proveedores, métricas o un caso SIN. " + DISCLAIMER
     if len(text) > 1200:
-        return "La pregunta es demasiado larga para la demo. Resume el pedido en una sola consulta ejecutiva. " + DISCLAIMER
+        return "La pregunta es demasiado larga. Resume el pedido en una sola consulta ejecutiva. " + DISCLAIMER
     try:
         intent = detect_intent(text)
         return _with_disclaimer(_answer_intent(intent, db_path, session_cases=session_cases))
@@ -231,7 +231,7 @@ def _savings_answer(db_path: Path) -> str:
     return (
         "### Ahorro potencial simulado\n"
         f"- Base de revisión rojo/amarillo: **{money(savings['base_revision_rojo_amarillo'])}**\n"
-        f"- Tasa evitable demo: **{savings['tasa_evitable_demo']:.0%}**\n"
+        f"- Tasa evitable estimada: **{savings['tasa_evitable_estimada']:.0%}**\n"
         f"- Monto estimado: **{money(savings['monto_estimado'])}**\n\n"
         "Este valor sirve para priorizar revisión humana y explicar impacto potencial; no representa ahorro contable real."
     )
@@ -240,7 +240,7 @@ def _savings_answer(db_path: Path) -> str:
 def _metrics_answer(db_path: Path) -> str:
     rows = get_model_metrics(db_path=db_path)
     if not rows:
-        return "No hay métricas supervisadas disponibles en esta base. La demo mantiene reglas explicables y trazabilidad."
+        return "No hay métricas supervisadas disponibles en esta base. El sistema mantiene reglas explicables y trazabilidad."
     lines = ["### Métricas del modelo supervisado"]
     near_perfect = False
     for row in rows:
@@ -269,7 +269,7 @@ def _executive_summary_answer(db_path: Path) -> str:
     savings = report["ahorro_potencial_simulado"]
     return (
         "### Resumen ejecutivo\n"
-        "FraudIA Claims prioriza siniestros para revisión humana combinando reglas, anomalías, similitud narrativa y modelo demo.\n\n"
+        "FraudIA Claims prioriza siniestros para revisión humana combinando reglas, anomalías, similitud narrativa y un modelo supervisado.\n\n"
         f"- Total de siniestros: **{_int(summary.get('total_siniestros'))}**\n"
         f"- Casos rojos: **{_int(summary.get('rojos'))}**\n"
         f"- Casos amarillos: **{_int(summary.get('amarillos'))}**\n"

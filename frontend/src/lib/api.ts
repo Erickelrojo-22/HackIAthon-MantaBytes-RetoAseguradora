@@ -161,7 +161,7 @@ export interface ExecutiveReport {
   exposicion: Record<string, number | string | null>;
   ahorro_potencial_simulado: {
     base_revision_rojo_amarillo: number;
-    tasa_evitable_demo: number;
+    tasa_evitable_estimada: number;
     monto_estimado: number;
     nota: string;
   };
@@ -191,7 +191,11 @@ export interface VisionResult {
   disclaimer: string;
 }
 
-export const api = axios.create({ baseURL: API_URL, timeout: 30000 });
+// 45s: el backend corre en el plan free de Render, que apaga el servicio tras
+// inactividad y puede tardar 30-60s en "despertar" ante la primera solicitud.
+// Con un timeout mas corto, ese arranque en frio se veia (incorrectamente)
+// como un bloqueo de CORS en el login.
+export const api = axios.create({ baseURL: API_URL, timeout: 45000 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');

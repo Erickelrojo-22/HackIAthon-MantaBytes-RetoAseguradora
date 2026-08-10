@@ -38,9 +38,9 @@ def analyze_claim_image(
     claim_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if mime_type not in SUPPORTED_MIME_TYPES:
-        return _offline_result(f"Tipo de archivo no soportado para demo: {mime_type}.")
+        return _offline_result(f"Tipo de archivo no soportado: {mime_type}.")
     if len(image_bytes) > MAX_IMAGE_BYTES:
-        return _offline_result("Imagen demasiado grande para la demo; reduce el tamano antes de analizar.")
+        return _offline_result("Imagen demasiado grande; reduce el tamano antes de analizar.")
     if not image_analysis_available():
         return _offline_result("Faltan OPENAI_API_KEY u OPENAI_MODEL; Vision opera en modo offline.")
 
