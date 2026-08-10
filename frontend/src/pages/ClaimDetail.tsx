@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { AlertTriangle, BotMessageSquare, FileText, Loader2, Send } from 'lucide-react';
 import { api, dateTime, money, type ClaimDetail as ClaimDetailType, type ReviewDecision, type ReviewStatus, type Role } from '../lib/api';
+import { getSessionCases } from '../lib/sessionCases';
 import { useAuth } from '../contexts/useAuth';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -63,7 +64,8 @@ export function ClaimDetail() {
   });
 
   const aiMutation = useMutation({
-    mutationFn: async (question: string) => (await api.post('/agent/question', { question, id_siniestro: id, scope: 'claim' })).data,
+    mutationFn: async (question: string) =>
+      (await api.post('/agent/question', { question, id_siniestro: id, scope: 'claim', session_cases: getSessionCases() })).data,
     onSuccess: (data) => {
       const source = visibleSource(data.source);
       setAiAnswer(source ? `${data.answer}\n\nFuente: ${source}` : data.answer);

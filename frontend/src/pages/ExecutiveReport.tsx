@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Loader2 } from 'lucide-react';
+import { isAxiosError } from 'axios';
 import { api, money, type ExecutiveReport, type ClaimRisk } from '../lib/api';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -11,17 +12,35 @@ export function ExecutiveReportPage() {
     queryKey: ['executive-report'],
     queryFn: async () => (await api.get<ExecutiveReport>('/report/summary')).data,
   });
+  const [downloadError, setDownloadError] = useState('');
+  const [downloading, setDownloading] = useState(false);
 
-  const html = useMemo(() => (data ? buildReportHtml(data) : ''), [data]);
-
-  const download = () => {
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'reporte-ejecutivo-fraudia.html';
-    link.click();
-    URL.revokeObjectURL(url);
+  const download = async () => {
+    setDownloadError('');
+    setDownloading(true);
+    try {
+      // El backend genera el reporte completo (incluye matriz ramo/nivel,
+      // ciudades observadas y documentos criticos, secciones que esta pagina
+      // no muestra en pantalla). Antes esta funcion reimplementaba su propia
+      // version reducida en el cliente; ahora se descarga la misma version
+      // "rica" que ya existia en reports.py pero no estaba expuesta.
+      const response = await api.get<string>('/report/html', { responseType: 'text' });
+      const blob = new Blob([response.data], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'reporte-ejecutivo-fraudia.html';
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setDownloadError(
+        isAxiosError(err) && err.response?.status === 403
+          ? 'Tu rol no tiene permiso para descargar el reporte.'
+          : 'No se pudo generar el archivo del reporte. Intenta nuevamente.',
+      );
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
@@ -34,10 +53,13 @@ export function ExecutiveReportPage() {
             Resumen para gerencia y auditoria con casos prioritarios, proveedores concentrados, exposicion y ahorro simulado.
           </p>
         </div>
-        <Button variant="secondary" onClick={download} disabled={!data}>
-          <Download className="h-4 w-4" />
-          Descargar HTML
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          <Button variant="secondary" onClick={download} disabled={!data || downloading}>
+            {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Descargar HTML
+          </Button>
+          {downloadError && <p className="max-w-xs text-right text-xs font-semibold text-red-300">{downloadError}</p>}
+        </div>
       </div>
 
       {isLoading ? (
@@ -127,9 +149,4 @@ function SimpleTable({ title, rows }: { title: string; rows: Array<Record<string
       </CardContent>
     </Card>
   );
-}
-
-function buildReportHtml(report: ExecutiveReport) {
-  const cases = report.top_casos.map((claim) => `<tr><td>${claim.id_siniestro}</td><td>${claim.nivel_riesgo}</td><td>${claim.score_final}</td><td>${claim.ramo}</td><td>${money(claim.monto_reclamado)}</td><td>${claim.proveedor}</td></tr>`).join('');
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte Ejecutivo FraudIA Claims</title><style>body{font-family:Arial,sans-serif;margin:32px;color:#172033}h1,h2{color:#08345f}.warning{background:#fff4d6;border-left:5px solid #d99a00;padding:12px}.metric{display:inline-block;margin:8px;padding:12px;background:#f3f7fb;border:1px solid #d9e6f2;border-radius:8px}table{border-collapse:collapse;width:100%;font-size:12px}th{background:#08345f;color:white;text-align:left}td,th{padding:7px;border-bottom:1px solid #e5e7eb}</style></head><body><h1>Reporte Ejecutivo FraudIA Claims</h1><div class="warning">FraudIA genera alertas para revision humana. No acusa fraude, no rechaza reclamos y no decide pagos.</div><h2>KPIs</h2><div class="metric">Siniestros: <strong>${report.resumen.total_siniestros ?? 0}</strong></div><div class="metric">Rojos: <strong>${report.resumen.rojos ?? 0}</strong></div><div class="metric">Ahorro simulado: <strong>${money(report.ahorro_potencial_simulado.monto_estimado)}</strong></div><h2>Top casos</h2><table><thead><tr><th>Caso</th><th>Nivel</th><th>Score</th><th>Ramo</th><th>Monto</th><th>Proveedor</th></tr></thead><tbody>${cases}</tbody></table><h2>Metodologia</h2><p>Score por reglas, anomalias, NLP y modelo demo. Datos sinteticos; resultado no decisorio.</p></body></html>`;
 }

@@ -67,11 +67,16 @@ export function UploadCsv() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
               <Info label="Archivo" value={result.filename} />
-              <Info label="Tabla detectada" value={result.table_detected ?? 'N/A'} />
+              <Info label="Tabla detectada" value={result.table_detected ?? 'No reconocida'} />
               <Info label="Filas" value={String(result.rows)} />
-              <div><p className="text-sm text-navy-500">Estado</p><Badge variant={result.status === 'ok' ? 'success' : 'danger'}>{result.status}</Badge></div>
+              <div>
+                <p className="text-sm text-navy-500">Estado</p>
+                <Badge variant={result.status === 'ok' ? 'success' : result.status === 'no_reconocido' ? 'Amarillo' : 'danger'}>
+                  {result.status}
+                </Badge>
+              </div>
             </div>
-            <p className="text-sm text-navy-600">{result.message}</p>
+            <p className={result.status === 'no_reconocido' ? 'text-sm font-semibold text-yellow-700' : 'text-sm text-navy-600'}>{result.message}</p>
             {result.missing_columns.length > 0 && (
               <div className="rounded-xl bg-red-50 p-4 text-sm text-red-700">
                 <strong>Columnas faltantes:</strong> {result.missing_columns.join(', ')}

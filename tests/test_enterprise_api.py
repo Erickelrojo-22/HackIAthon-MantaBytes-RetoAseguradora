@@ -3,7 +3,9 @@ from __future__ import annotations
 import sqlite3
 import sys
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -55,6 +57,7 @@ class EnterpriseApiTests(unittest.TestCase):
             "/claims/risk?limit=1",
             "/relationships?limit=20",
             "/report/summary",
+            "/report/html",
             "/alerts/aggregate",
             "/metrics",
         ):
@@ -63,6 +66,19 @@ class EnterpriseApiTests(unittest.TestCase):
         authorized = self.client.get("/claims/risk?limit=1", headers=self.auth(self.analyst_token))
         self.assertEqual(authorized.status_code, 200)
         self.assertGreater(len(authorized.json()), 0)
+
+    def test_report_html_matches_backend_summary(self) -> None:
+        response = self.client.get("/report/html", headers=self.auth(self.analyst_token))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("text/html", response.headers["content-type"])
+        body = response.text
+        # El reporte HTML expuesto debe ser el generador "rico" de reports.py
+        # (con matriz ramo/nivel, ciudades y documentos criticos), no una
+        # version reducida reimplementada aparte.
+        self.assertIn("Reporte Ejecutivo FraudIA Claims", body)
+        self.assertIn("Matriz ramo / nivel", body)
+        self.assertIn("Ciudades observadas", body)
+        self.assertIn("Documentos criticos", body)
 
     def test_claims_risk_pagination_and_filters(self) -> None:
         first_page = self.client.get("/claims/risk?limit=5&offset=0", headers=self.auth(self.analyst_token))
@@ -128,6 +144,32 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertIn("answer", agent.json())
         self.assertIn("disclaimer", agent.json())
 
+        # Antes /agent/question no aceptaba session_cases en absoluto, asi que
+        # preguntar por "el ultimo caso evaluado en vivo" siempre respondia
+        # que no habia casos, incluso justo despues de puntuar uno en la UI.
+        session_case_agent = self.client.post(
+            "/agent/question",
+            json={
+                "question": "Cuentame del ultimo caso evaluado en vivo",
+                "scope": "global",
+                "session_cases": [
+                    {
+                        "id_temporal": "TMP-TEST01",
+                        "ramo": "Vehiculos",
+                        "cobertura": "Robo",
+                        "score_final": 77,
+                        "nivel_riesgo": "Rojo",
+                        "monto_reclamado": 5000,
+                        "accion_sugerida": "Escalar a revision especializada de campo.",
+                        "alertas": [],
+                    }
+                ],
+            },
+            headers=self.auth(self.analyst_token),
+        )
+        self.assertEqual(session_case_agent.status_code, 200)
+        self.assertIn("TMP-TEST01", session_case_agent.json()["answer"])
+
         upload = self.client.post(
             "/claims/upload-csv",
             files={"file": ("siniestros.csv", b"id_siniestro,ramo\nSINX,Vehiculos\n", "text/csv")},
@@ -136,6 +178,21 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertEqual(upload.status_code, 200)
         self.assertEqual(upload.json()["status"], "revisar")
         self.assertIn("id_poliza", upload.json()["missing_columns"])
+
+        # Un nombre de archivo que no calza con ninguna tabla conocida (p.ej. un
+        # export con fecha en el nombre) no debe reportarse como "ok": antes se
+        # devolvia missing_columns=[] silenciosamente porque nunca se buscaban
+        # las columnas requeridas de una tabla que no se pudo identificar.
+        unrecognized = self.client.post(
+            "/claims/upload-csv",
+            files={"file": ("siniestros_marzo_2026.csv", b"id_siniestro,ramo\nSINX,Vehiculos\n", "text/csv")},
+            headers=self.auth(self.analyst_token),
+        )
+        self.assertEqual(unrecognized.status_code, 200)
+        body = unrecognized.json()
+        self.assertEqual(body["status"], "no_reconocido")
+        self.assertIsNone(body["table_detected"])
+        self.assertEqual(body["missing_columns"], [])
 
         oversized = self.client.post(
             "/claims/upload-csv",
@@ -158,6 +215,32 @@ class EnterpriseApiTests(unittest.TestCase):
         # Analista no puede leer el log de auditoria (solo Jefatura/Auditoria).
         forbidden_audit = self.client.get("/audit-log", headers=self.auth(self.analyst_token))
         self.assertEqual(forbidden_audit.status_code, 403)
+
+    def test_audit_log_pagination_and_total_count(self) -> None:
+        # Genera actividad suficiente para paginar.
+        for _ in range(3):
+            self.client.get("/dashboard/kpis", headers=self.auth(self.analyst_token))
+
+        # El propio GET /audit-log queda registrado como evento "audit_log.viewed"
+        # (via BackgroundTasks), asi que consultarlo inserta una fila nueva cada
+        # vez. Sin fijar un corte temporal, la fila que agrega la primera pagina
+        # desplaza el offset de la segunda y produce solapamiento falso. Se fija
+        # un snapshot ("date_to") para que ambas paginas lean el mismo universo.
+        # El "+" de "+00:00" debe ir url-encoded (quote): en un query string sin
+        # encodear, parse_qsl lo decodifica como espacio y created_at <= date_to
+        # deja de matchear filas creadas en el mismo segundo que el snapshot.
+        snapshot = quote(datetime.now(timezone.utc).replace(microsecond=0).isoformat())
+
+        first_page = self.client.get(f"/audit-log?limit=2&offset=0&date_to={snapshot}", headers=self.auth(self.audit_token))
+        self.assertEqual(first_page.status_code, 200)
+        total = int(first_page.headers["X-Total-Count"])
+        self.assertGreaterEqual(total, 3)
+        self.assertEqual(len(first_page.json()), 2)
+
+        second_page = self.client.get(f"/audit-log?limit=2&offset=2&date_to={snapshot}", headers=self.auth(self.audit_token))
+        first_ids = {row["id_event"] for row in first_page.json()}
+        second_ids = {row["id_event"] for row in second_page.json()}
+        self.assertTrue(first_ids.isdisjoint(second_ids))
 
     def test_vision_analyze_rejects_oversized_upload(self) -> None:
         oversized_image = self.client.post(

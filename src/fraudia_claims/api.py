@@ -11,6 +11,7 @@ from threading import Lock
 import pandas as pd
 from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from fraudia_claims.agent_tools import (
@@ -27,12 +28,13 @@ from fraudia_claims.agent_tools import (
     score_candidate_claim,
 )
 from fraudia_claims.analytics import city_concentration, executive_kpis, provider_pareto, risk_matrix
-from fraudia_claims.audit import list_audit_events, log_event
+from fraudia_claims.audit import count_audit_events, list_audit_events, log_event
 from fraudia_claims.auth import DemoUser, authenticate_demo_user, current_user, require_roles, user_to_dict
 from fraudia_claims.config import CORS_ORIGINS, DEFAULT_DB_PATH, MAX_CSV_UPLOAD_BYTES
 from fraudia_claims.ingestion import REQUIRED_COLUMNS, missing_required_columns
 from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.rate_limit import enforce_rate_limit
+from fraudia_claims.reports import build_executive_report_html
 from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
 from fraudia_claims.vision import MAX_IMAGE_BYTES, analyze_claim_image, image_analysis_available
@@ -108,6 +110,11 @@ class AgentQuestionPayload(BaseModel):
     question: str
     id_siniestro: str | None = None
     scope: str = "general"
+    # Casos temporales evaluados en esta sesion del navegador (via
+    # /score-candidate) que el usuario nunca persiste. Se envian de vuelta al
+    # preguntar "el ultimo caso evaluado en vivo" para que el intent
+    # session_case pueda responder sin re-tipear el caso.
+    session_cases: list[dict[str, Any]] | None = Field(default=None, max_length=10)
 
 
 class CandidateScorePayload(BaseModel):
@@ -307,6 +314,7 @@ def review_history(
 @app.get("/audit-log")
 def audit_log(
     background_tasks: BackgroundTasks,
+    response: Response,
     actor_email: str | None = None,
     action: str | None = None,
     resource_type: str | None = None,
@@ -314,11 +322,12 @@ def audit_log(
     date_from: str | None = None,
     date_to: str | None = None,
     limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
     user: DemoUser = Depends(require_roles("Jefatura", "Auditoria")),
 ) -> list[dict[str, Any]]:
     ensure_app_ready()
     queue_log_event(background_tasks, user.email, user.role, "audit_log.viewed", "audit", "audit_log")
-    return list_audit_events(
+    rows = list_audit_events(
         actor_email=actor_email,
         action=action,
         resource_type=resource_type,
@@ -326,8 +335,20 @@ def audit_log(
         date_from=date_from,
         date_to=date_to,
         limit=limit,
+        offset=offset,
         db_path=DEFAULT_DB_PATH,
     )
+    total = count_audit_events(
+        actor_email=actor_email,
+        action=action,
+        resource_type=resource_type,
+        resource_id=resource_id,
+        date_from=date_from,
+        date_to=date_to,
+        db_path=DEFAULT_DB_PATH,
+    )
+    response.headers["X-Total-Count"] = str(total)
+    return rows
 
 
 @app.post("/agent/question")
@@ -342,7 +363,7 @@ def agent_question(
     question = payload.question
     if payload.id_siniestro and payload.id_siniestro.upper() not in question.upper():
         question = f"{question}\n\nSiniestro relacionado: {payload.id_siniestro.upper()}"
-    answer, source = ask_agent_with_status(question, DEFAULT_DB_PATH)
+    answer, source = ask_agent_with_status(question, DEFAULT_DB_PATH, session_cases=payload.session_cases)
     queue_log_event(
         background_tasks,
         user.email,
@@ -433,9 +454,29 @@ async def upload_claims_csv(
                 pass
 
     stem = Path(file.filename or "").stem
-    required = REQUIRED_COLUMNS.get(stem, set())
-    missing = sorted(missing_required_columns(stem, frame.columns)) if required else []
-    status_value = "revisar" if missing else "ok"
+    table_known = stem in REQUIRED_COLUMNS
+    if table_known:
+        missing = sorted(missing_required_columns(stem, frame.columns))
+        status_value = "revisar" if missing else "ok"
+        message = (
+            "CSV validado. No se detectaron columnas obligatorias faltantes."
+            if not missing
+            else "CSV validado con columnas faltantes: revisa el detalle antes de usarlo."
+        )
+    else:
+        # Antes: un nombre de archivo que no calzara exactamente con una de las
+        # tablas conocidas (p.ej. "siniestros_marzo.csv" en vez de "siniestros.csv")
+        # devolvia missing_columns=[] y status="ok" -- pasando como "valido" un
+        # archivo cuyas columnas nunca se llegaron a revisar.
+        missing = []
+        status_value = "no_reconocido"
+        expected = ", ".join(sorted(REQUIRED_COLUMNS))
+        message = (
+            f"No se reconoce '{file.filename}' como ninguna de las tablas esperadas "
+            f"({expected}). Renombra el archivo exactamente a <tabla>.csv para que sus "
+            "columnas se puedan validar."
+        )
+    message += " En v1 este endpoint no reemplaza tablas persistidas."
     queue_log_event(
         background_tasks,
         user.email,
@@ -447,12 +488,12 @@ async def upload_claims_csv(
     )
     return {
         "filename": file.filename,
-        "table_detected": stem or None,
+        "table_detected": stem if table_known else None,
         "rows": int(len(frame)),
         "columns": list(frame.columns),
         "status": status_value,
         "missing_columns": missing,
-        "message": "CSV validado. En v1 no reemplaza tablas persistidas desde este endpoint.",
+        "message": message,
     }
 
 
@@ -534,6 +575,17 @@ def report_summary(
 ) -> dict[str, Any]:
     ensure_app_ready()
     return executive_report(db_path=DEFAULT_DB_PATH)
+
+
+@app.get("/report/html", response_class=HTMLResponse)
+def report_html(
+    background_tasks: BackgroundTasks,
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> HTMLResponse:
+    ensure_app_ready()
+    html = build_executive_report_html(db_path=DEFAULT_DB_PATH)
+    queue_log_event(background_tasks, user.email, user.role, "report.executive_html.generated", "report", "executive_html")
+    return HTMLResponse(content=html)
 
 
 @app.post("/score-candidate")

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { isAxiosError } from 'axios';
 import { AlertTriangle, BotMessageSquare, Loader2, RotateCw, Send, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
+import { getSessionCases } from '../lib/sessionCases';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { MarkdownMessage } from '../components/ui/MarkdownMessage';
@@ -70,7 +71,7 @@ export function Agent() {
     setQuestion('');
     setLoading(true);
     try {
-      const response = await api.post('/agent/question', { question: trimmed, scope: 'global' });
+      const response = await api.post('/agent/question', { question: trimmed, scope: 'global', session_cases: getSessionCases() });
       setMessages([...next, { role: 'agent', content: response.data.answer, source: response.data.source }]);
     } catch (error) {
       setMessages([...next, { role: 'agent', content: describeAgentError(error), isError: true }]);

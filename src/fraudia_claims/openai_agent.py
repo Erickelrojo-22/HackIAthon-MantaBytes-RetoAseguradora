@@ -28,26 +28,12 @@ from fraudia_claims.offline_agent import answer_offline
 from fraudia_claims.utils import money, normalize_text
 
 
-FAST_LOCAL_QUESTIONS = {
-    "cuales son los 10 siniestros con mayor riesgo",
-    "cuales son los 10 siniestros con mayor riesgo de posible fraude",
-    "que proveedores concentran mas alertas",
-    "que proveedores concentran mas alertas rojas",
-    "que proveedores concentran el 80 de las alertas rojas",
-    "que ramos tienen mayor porcentaje de casos sospechosos",
-    "que ciudades presentan mayor concentracion de alertas",
-    "que asegurados tienen mayor frecuencia de reclamos",
-    "que documentos faltan en los casos criticos",
-    "que casos tienen montos atipicos",
-    "que siniestros ocurrieron cerca del inicio de la poliza",
-    "que patrones se repiten en los reclamos sospechosos",
-    "genera un resumen ejecutivo de los casos criticos",
-    "recomienda que casos deberia revisar primero el analista",
-    "cual es el ahorro potencial simulado",
-    "que metricas tiene el modelo supervisado",
-}
-
 LOGGER = logging.getLogger(__name__)
+
+# El modelo puede necesitar mas de una ronda de tool-calling (p.ej. listar
+# casos y luego pedir el detalle de uno de ellos). Un tope evita loops
+# infinitos si el modelo nunca deja de pedir herramientas.
+MAX_TOOL_ROUNDS = 4
 
 
 TOOLS = [
@@ -324,11 +310,25 @@ def ask_with_openai_status(
             tools=TOOLS,
             tool_choice="auto",
         )
-        pending_outputs = []
-        for item in getattr(response, "output", []) or []:
-            if getattr(item, "type", None) == "function_call":
+        # Antes esto procesaba una unica ronda de tool-calling: si la segunda
+        # respuesta del modelo tambien pedia herramientas (por ejemplo, listar
+        # casos y despues pedir el detalle de uno de ellos), output_text
+        # quedaba vacio y la conversacion caia en silencio a modo offline sin
+        # ningun error visible. Ahora se repite mientras el modelo siga
+        # pidiendo function_call, hasta MAX_TOOL_ROUNDS rondas.
+        for _round in range(MAX_TOOL_ROUNDS):
+            function_calls = [
+                item for item in getattr(response, "output", []) or [] if getattr(item, "type", None) == "function_call"
+            ]
+            if not function_calls:
+                break
+            pending_outputs = []
+            for item in function_calls:
                 args = json.loads(getattr(item, "arguments", "{}") or "{}")
-                result = _dispatch(getattr(item, "name"), args, db_path)
+                try:
+                    result = _dispatch(getattr(item, "name"), args, db_path)
+                except Exception as exc:
+                    result = {"error": str(exc)}
                 pending_outputs.append(
                     {
                         "type": "function_call_output",
@@ -336,7 +336,6 @@ def ask_with_openai_status(
                         "output": json.dumps(_json_safe(result), ensure_ascii=False),
                     }
                 )
-        if pending_outputs:
             response = client.responses.create(
                 model=model,
                 instructions=instructions,

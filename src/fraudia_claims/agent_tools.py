@@ -482,7 +482,6 @@ def get_relationship_network(limit: int = 60, db_path: Path = DEFAULT_DB_PATH) -
     for row in execute_rows(query, {"limit": int(limit)}, db_path=db_path):
         claim = f"claim:{row['id_siniestro']}"
         insured = f"insured:{row['id_asegurado']}"
-        provider = f"provider:{row['id_proveedor']}"
         nodes[claim] = {
             "id": claim,
             "label": row["id_siniestro"],
@@ -502,19 +501,24 @@ def get_relationship_network(limit: int = 60, db_path: Path = DEFAULT_DB_PATH) -
                 "ramo": row["ramo"],
             },
         )
-        nodes.setdefault(
-            provider,
-            {
-                "id": provider,
-                "label": row["proveedor"],
-                "tipo": "Proveedor",
-                "score": row["score_final"],
-                "nivel": row["nivel_riesgo"],
-                "ramo": row["ramo"],
-            },
-        )
         edges.append({"source": insured, "target": claim, "relacion": "reporta"})
-        edges.append({"source": provider, "target": claim, "relacion": "atiende"})
+        # Los siniestros sin proveedor asignado (id_proveedor NULL) no deben colapsar
+        # en un unico nodo "provider:None" compartido: eso dibuja relaciones falsas
+        # entre casos que en realidad no comparten ningun proveedor real.
+        if row["id_proveedor"]:
+            provider = f"provider:{row['id_proveedor']}"
+            nodes.setdefault(
+                provider,
+                {
+                    "id": provider,
+                    "label": row["proveedor"],
+                    "tipo": "Proveedor",
+                    "score": row["score_final"],
+                    "nivel": row["nivel_riesgo"],
+                    "ramo": row["ramo"],
+                },
+            )
+            edges.append({"source": provider, "target": claim, "relacion": "atiende"})
     return {"nodes": list(nodes.values()), "edges": edges}
 
 
