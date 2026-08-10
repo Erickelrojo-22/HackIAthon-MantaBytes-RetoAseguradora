@@ -5,6 +5,7 @@ import sys
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -225,7 +226,10 @@ class EnterpriseApiTests(unittest.TestCase):
         # vez. Sin fijar un corte temporal, la fila que agrega la primera pagina
         # desplaza el offset de la segunda y produce solapamiento falso. Se fija
         # un snapshot ("date_to") para que ambas paginas lean el mismo universo.
-        snapshot = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+        # El "+" de "+00:00" debe ir url-encoded (quote): en un query string sin
+        # encodear, parse_qsl lo decodifica como espacio y created_at <= date_to
+        # deja de matchear filas creadas en el mismo segundo que el snapshot.
+        snapshot = quote(datetime.now(timezone.utc).replace(microsecond=0).isoformat())
 
         first_page = self.client.get(f"/audit-log?limit=2&offset=0&date_to={snapshot}", headers=self.auth(self.audit_token))
         self.assertEqual(first_page.status_code, 200)
