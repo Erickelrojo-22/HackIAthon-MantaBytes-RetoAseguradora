@@ -56,6 +56,7 @@ class EnterpriseApiTests(unittest.TestCase):
             "/claims/risk?limit=1",
             "/relationships?limit=20",
             "/report/summary",
+            "/report/html",
             "/alerts/aggregate",
             "/metrics",
         ):
@@ -64,6 +65,19 @@ class EnterpriseApiTests(unittest.TestCase):
         authorized = self.client.get("/claims/risk?limit=1", headers=self.auth(self.analyst_token))
         self.assertEqual(authorized.status_code, 200)
         self.assertGreater(len(authorized.json()), 0)
+
+    def test_report_html_matches_backend_summary(self) -> None:
+        response = self.client.get("/report/html", headers=self.auth(self.analyst_token))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("text/html", response.headers["content-type"])
+        body = response.text
+        # El reporte HTML expuesto debe ser el generador "rico" de reports.py
+        # (con matriz ramo/nivel, ciudades y documentos criticos), no una
+        # version reducida reimplementada aparte.
+        self.assertIn("Reporte Ejecutivo FraudIA Claims", body)
+        self.assertIn("Matriz ramo / nivel", body)
+        self.assertIn("Ciudades observadas", body)
+        self.assertIn("Documentos criticos", body)
 
     def test_review_decision_persists_without_modifying_scores_and_logs_event(self) -> None:
         claim_id = self.client.get("/claims/risk?limit=1", headers=self.auth(self.analyst_token)).json()[0]["id_siniestro"]

@@ -11,6 +11,7 @@ from threading import Lock
 import pandas as pd
 from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from fraudia_claims.agent_tools import (
@@ -31,6 +32,7 @@ from fraudia_claims.config import CORS_ORIGINS, DEFAULT_DB_PATH, MAX_CSV_UPLOAD_
 from fraudia_claims.ingestion import REQUIRED_COLUMNS, missing_required_columns
 from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.rate_limit import enforce_rate_limit
+from fraudia_claims.reports import build_executive_report_html
 from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
 from fraudia_claims.vision import MAX_IMAGE_BYTES, analyze_claim_image
@@ -541,6 +543,17 @@ def report_summary(
 ) -> dict[str, Any]:
     ensure_app_ready()
     return executive_report(db_path=DEFAULT_DB_PATH)
+
+
+@app.get("/report/html", response_class=HTMLResponse)
+def report_html(
+    background_tasks: BackgroundTasks,
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> HTMLResponse:
+    ensure_app_ready()
+    html = build_executive_report_html(db_path=DEFAULT_DB_PATH)
+    queue_log_event(background_tasks, user.email, user.role, "report.executive_html.generated", "report", "executive_html")
+    return HTMLResponse(content=html)
 
 
 @app.post("/score-candidate")
