@@ -79,6 +79,31 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertIn("Ciudades observadas", body)
         self.assertIn("Documentos criticos", body)
 
+    def test_claims_risk_pagination_and_filters(self) -> None:
+        first_page = self.client.get("/claims/risk?limit=5&offset=0", headers=self.auth(self.analyst_token))
+        self.assertEqual(first_page.status_code, 200)
+        total = int(first_page.headers["X-Total-Count"])
+        self.assertGreater(total, 5)
+        first_ids = [row["id_siniestro"] for row in first_page.json()]
+
+        second_page = self.client.get("/claims/risk?limit=5&offset=5", headers=self.auth(self.analyst_token))
+        second_ids = [row["id_siniestro"] for row in second_page.json()]
+        self.assertTrue(set(first_ids).isdisjoint(second_ids))
+
+        ramo = first_page.json()[0]["ramo"]
+        filtered = self.client.get(f"/claims/risk?limit=100&ramo={ramo}", headers=self.auth(self.analyst_token))
+        self.assertTrue(all(row["ramo"] == ramo for row in filtered.json()))
+
+        high_score = self.client.get("/claims/risk?limit=100&min_score=76", headers=self.auth(self.analyst_token))
+        self.assertTrue(all(row["score_final"] >= 76 for row in high_score.json()))
+
+    def test_claims_filter_options_covers_full_dataset(self) -> None:
+        response = self.client.get("/claims/filter-options", headers=self.auth(self.analyst_token))
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertIn("Vehiculos", body["ramos"])
+        self.assertGreater(len(body["ciudades"]), 0)
+
     def test_review_decision_persists_without_modifying_scores_and_logs_event(self) -> None:
         claim_id = self.client.get("/claims/risk?limit=1", headers=self.auth(self.analyst_token)).json()[0]["id_siniestro"]
         with sqlite3.connect(DEFAULT_DB_PATH) as conn:

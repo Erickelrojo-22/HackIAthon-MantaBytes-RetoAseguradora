@@ -1,10 +1,15 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import { ImagePlus, Loader2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
+import { AlertTriangle, ImagePlus, Loader2, WifiOff } from 'lucide-react';
 import { api, type VisionResult } from '../lib/api';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const SUPPORTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export function Vision() {
   const [file, setFile] = useState<File | null>(null);
@@ -14,11 +19,30 @@ export function Vision() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const { data: health } = useQuery({
+    queryKey: ['health'],
+    queryFn: async () => (await api.get<{ vision_available: boolean }>('/health')).data,
+    staleTime: 60_000,
+  });
+  const visionAvailable = health?.vision_available ?? true; // avoid flashing a false warning before the first response arrives
+
   const selectFile = (nextFile: File | null) => {
-    setFile(nextFile);
     setResult(null);
     setError('');
     if (preview) URL.revokeObjectURL(preview);
+    if (nextFile && !SUPPORTED_TYPES.includes(nextFile.type)) {
+      setFile(null);
+      setPreview('');
+      setError(`Tipo de archivo no soportado: ${nextFile.type || 'desconocido'}. Usa JPG, PNG o WEBP.`);
+      return;
+    }
+    if (nextFile && nextFile.size > MAX_IMAGE_BYTES) {
+      setFile(null);
+      setPreview('');
+      setError(`La imagen pesa ${(nextFile.size / 1024 / 1024).toFixed(1)} MB; el limite es ${MAX_IMAGE_BYTES / 1024 / 1024} MB.`);
+      return;
+    }
+    setFile(nextFile);
     setPreview(nextFile ? URL.createObjectURL(nextFile) : '');
   };
 
@@ -36,8 +60,14 @@ export function Vision() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setResult(response.data);
-    } catch {
-      setError('No fue posible analizar la imagen. Verifica formato y conexion con FastAPI.');
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 413) {
+        setError('La imagen supera el limite de tamano permitido por el servidor.');
+      } else if (isAxiosError(err) && err.response?.status === 429) {
+        setError('Demasiados analisis seguidos; espera unos segundos e intenta de nuevo.');
+      } else {
+        setError('No fue posible analizar la imagen. Verifica formato y conexion con FastAPI.');
+      }
     } finally {
       setLoading(false);
     }
@@ -51,6 +81,12 @@ export function Vision() {
         <p className="mt-3 max-w-3xl text-navy-200">
           Revisa fotos de siniestros como apoyo a la priorizacion. El resultado no modifica scores ni reemplaza peritaje humano.
         </p>
+        {!visionAvailable && (
+          <div className="mt-4 flex items-center gap-2 rounded-xl bg-yellow-500/20 px-4 py-2 text-sm font-semibold text-yellow-100">
+            <WifiOff className="h-4 w-4 shrink-0" />
+            Modo offline activo: no hay credenciales de OpenAI configuradas en el servidor. Cualquier analisis que hagas aqui sera un resultado generico, no una lectura real de la imagen.
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
@@ -81,13 +117,26 @@ export function Vision() {
           <CardHeader><CardTitle>Hallazgos visuales</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             {!result && <p className="text-sm text-navy-500">Sube una imagen para ver hallazgos auxiliares.</p>}
-            {result && (
+            {result && result.status !== 'ok' && (
+              <div className="rounded-2xl border-2 border-yellow-300 bg-yellow-50 p-5">
+                <div className="mb-2 flex items-center gap-2 text-yellow-900">
+                  <AlertTriangle className="h-5 w-5 shrink-0" />
+                  <p className="font-bold">Resultado generico, no un analisis real de la imagen</p>
+                </div>
+                <p className="text-sm text-yellow-800">
+                  {result.observaciones[0] ?? 'Vision opera en modo offline; este resultado no proviene de un modelo de IA analizando tu imagen.'}
+                </p>
+                <p className="mt-3 text-sm text-yellow-800"><strong>Que hacer:</strong> {result.accion_sugerida}</p>
+              </div>
+            )}
+            {result && result.status === 'ok' && (
               <>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <Info label="Estado" value={result.status} />
+                  <Info label="Estado" value="Analisis real (IA)" />
                   <Info label="Severidad" value={result.severidad_visual} />
                   <Info label="Confianza" value={`${Math.round((result.confianza ?? 0) * 100)}%`} />
                 </div>
+                {result.modelo_openai && <p className="text-xs text-navy-400">Modelo: {result.modelo_openai}</p>}
                 <Section title="Observaciones" rows={result.observaciones} />
                 <Section title="Anomalias potenciales" rows={result.anomalias_potenciales} />
                 <div className="rounded-xl bg-cyan-50 p-4 text-sm text-cyan-900">

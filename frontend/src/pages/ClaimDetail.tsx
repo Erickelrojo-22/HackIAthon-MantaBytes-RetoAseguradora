@@ -2,15 +2,18 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 import { AlertTriangle, BotMessageSquare, FileText, Loader2, Send } from 'lucide-react';
-import { api, dateTime, money, type ClaimDetail as ClaimDetailType, type ReviewDecision, type ReviewStatus } from '../lib/api';
+import { api, dateTime, money, type ClaimDetail as ClaimDetailType, type ReviewDecision, type ReviewStatus, type Role } from '../lib/api';
 import { getSessionCases } from '../lib/sessionCases';
+import { useAuth } from '../contexts/useAuth';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { MarkdownMessage } from '../components/ui/MarkdownMessage';
 
 const reviewStatuses: ReviewStatus[] = ['En revision', 'Descartado', 'Escalado', 'Confirmado para investigacion'];
+const REVIEW_DECISION_ROLES: Role[] = ['Analista', 'Jefatura'];
 
 function visibleSource(source?: string) {
   if (!source || source.startsWith('Herramientas locales') || source === 'Sesion local') return '';
@@ -20,16 +23,19 @@ function visibleSource(source?: string) {
 
 export function ClaimDetail() {
   const { id = '' } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<ReviewStatus>('En revision');
   const [comment, setComment] = useState('');
   const [aiAnswer, setAiAnswer] = useState('');
+  const [reviewError, setReviewError] = useState('');
+  const [aiError, setAiError] = useState('');
 
-  const { data: claim, isLoading } = useQuery({
+  const { data: claim, isLoading, isError, refetch } = useQuery({
     queryKey: ['claim', id],
     queryFn: async () => (await api.get<ClaimDetailType>(`/claims/${id}`)).data,
   });
-  const { data: history = [] } = useQuery({
+  const { data: history = [], isError: historyError } = useQuery({
     queryKey: ['claim-history', id],
     queryFn: async () => (await api.get<ReviewDecision[]>(`/claims/${id}/review-history`)).data,
   });
@@ -43,6 +49,17 @@ export function ClaimDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['claim-history', id] });
       setComment('');
+      setReviewError('');
+    },
+    onError: (error: unknown) => {
+      const status = isAxiosError(error) ? error.response?.status : undefined;
+      setReviewError(
+        status === 403
+          ? 'Tu rol no tiene permiso para registrar decisiones humanas.'
+          : status === 422
+            ? 'Revisa el formulario: hay datos invalidos.'
+            : 'No se pudo guardar la decision. Intenta de nuevo.',
+      );
     },
   });
 
@@ -52,6 +69,11 @@ export function ClaimDetail() {
     onSuccess: (data) => {
       const source = visibleSource(data.source);
       setAiAnswer(source ? `${data.answer}\n\nFuente: ${source}` : data.answer);
+      setAiError('');
+    },
+    onError: (error: unknown) => {
+      const status = isAxiosError(error) ? error.response?.status : undefined;
+      setAiError(status === 429 ? 'Demasiadas preguntas seguidas; espera unos segundos.' : 'No se pudo obtener respuesta del agente. Intenta de nuevo.');
     },
   });
 
@@ -61,9 +83,18 @@ export function ClaimDetail() {
   };
 
   if (isLoading) return <div className="grid h-72 place-items-center"><Loader2 className="h-9 w-9 animate-spin text-cyan-700" /></div>;
+  if (isError) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-red-700">
+        <p className="font-semibold">No se pudo cargar el expediente.</p>
+        <button onClick={() => refetch()} className="mt-3 rounded-xl border border-red-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-red-100">Reintentar</button>
+      </div>
+    );
+  }
   if (!claim || 'error' in claim) return <div className="rounded-2xl border bg-white p-8 text-center">No encontrado.</div>;
 
   const city = claim.ciudad ?? claim.sucursal ?? 'N/A';
+  const canReview = Boolean(user && REVIEW_DECISION_ROLES.includes(user.role));
 
   return (
     <div className="space-y-6">
@@ -116,7 +147,7 @@ export function ClaimDetail() {
             <CardHeader><CardTitle>Documentos observados</CardTitle></CardHeader>
             <CardContent className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="text-xs uppercase text-navy-500"><tr><th>Documento</th><th>Entregado</th><th>Legible</th><th>Inconsistencia</th><th>Adulteracion</th></tr></thead>
+                <thead className="text-xs uppercase text-navy-500"><tr><th>Documento</th><th>Entregado</th><th>Legible</th><th>Inconsistencia</th><th>Adulteracion</th><th>Observacion</th></tr></thead>
                 <tbody className="divide-y divide-navy-100">
                   {claim.documentos.map((doc) => (
                     <tr key={doc.tipo_documento}>
@@ -125,6 +156,7 @@ export function ClaimDetail() {
                       <td>{String(Boolean(doc.legible))}</td>
                       <td>{String(Boolean(doc.inconsistencia_detectada))}</td>
                       <td>{String(Boolean(doc.adulteracion_confirmada))}</td>
+                      <td className="text-navy-500">{doc.observacion || '-'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -139,6 +171,7 @@ export function ClaimDetail() {
                 {aiMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <BotMessageSquare className="h-4 w-4" />}
                 Explicar este caso con IA
               </Button>
+              {aiError && <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{aiError}</div>}
               {aiAnswer && <div className="rounded-2xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-navy-800"><MarkdownMessage content={aiAnswer} /></div>}
               <div className="grid gap-2 md:grid-cols-2">
                 {suggested?.questions?.map((question) => (
@@ -155,8 +188,16 @@ export function ClaimDetail() {
           <Card>
             <CardHeader><CardTitle>Resumen operativo</CardTitle></CardHeader>
             <CardContent className="space-y-3 text-sm text-navy-700">
-              <p><strong>Monto:</strong> {money(claim.monto_reclamado)}</p>
-              <p><strong>Proveedor:</strong> {claim.proveedor_nombre ?? claim.proveedor}</p>
+              <p><strong>Monto reclamado:</strong> {money(claim.monto_reclamado)}</p>
+              {claim.monto_estimado != null && <p><strong>Monto estimado:</strong> {money(claim.monto_estimado)}</p>}
+              {claim.monto_pagado != null && <p><strong>Monto pagado:</strong> {money(claim.monto_pagado)}</p>}
+              {claim.estado && <p><strong>Estado:</strong> {claim.estado}</p>}
+              <p>
+                <strong>Proveedor:</strong> {claim.proveedor_nombre ?? claim.proveedor}
+                {Boolean(claim.proveedor_lista_restrictiva) && (
+                  <Badge variant="Rojo" className="ml-2">Lista restrictiva</Badge>
+                )}
+              </p>
               <p><strong>Accion sugerida:</strong> {claim.accion_sugerida}</p>
               <p><strong>Similar:</strong> {claim.siniestro_similar || 'N/A'}</p>
             </CardContent>
@@ -175,23 +216,31 @@ export function ClaimDetail() {
           <Card>
             <CardHeader><CardTitle>Decision humana</CardTitle></CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <select value={status} onChange={(event) => setStatus(event.target.value as ReviewStatus)} className="w-full rounded-xl border border-navy-200 bg-white px-3 py-2 text-sm">
-                  {reviewStatuses.map((item) => <option key={item} value={item}>{item}</option>)}
-                </select>
-                <textarea value={comment} onChange={(event) => setComment(event.target.value)} required rows={4} className="w-full rounded-xl border border-navy-200 px-3 py-2 text-sm" placeholder="Comentario del analista..." />
-                <Button type="submit" className="w-full" disabled={reviewMutation.isPending}>
-                  <Send className="h-4 w-4" />
-                  Guardar decision
-                </Button>
-              </form>
+              {canReview ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <select value={status} onChange={(event) => setStatus(event.target.value as ReviewStatus)} className="w-full rounded-xl border border-navy-200 bg-white px-3 py-2 text-sm">
+                    {reviewStatuses.map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                  <textarea value={comment} onChange={(event) => setComment(event.target.value)} required rows={4} className="w-full rounded-xl border border-navy-200 px-3 py-2 text-sm" placeholder="Comentario del analista..." />
+                  {reviewError && <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{reviewError}</div>}
+                  <Button type="submit" className="w-full" disabled={reviewMutation.isPending}>
+                    <Send className="h-4 w-4" />
+                    Guardar decision
+                  </Button>
+                </form>
+              ) : (
+                <p className="rounded-xl border border-navy-200 bg-navy-50 p-4 text-sm text-navy-500">
+                  Tu rol ({user?.role}) puede consultar el expediente, pero solo Analista o Jefatura pueden registrar decisiones humanas.
+                </p>
+              )}
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader><CardTitle>Historial de revision</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-              {history.length === 0 && <p className="text-sm text-navy-500">Sin decisiones humanas registradas.</p>}
+              {historyError && <p className="text-sm font-semibold text-red-600">No se pudo cargar el historial.</p>}
+              {!historyError && history.length === 0 && <p className="text-sm text-navy-500">Sin decisiones humanas registradas.</p>}
               {history.map((item) => (
                 <div key={item.id_decision} className="border-l-2 border-cyan-500 pl-3 text-sm">
                   <p className="font-bold text-navy-950">{item.status}</p>

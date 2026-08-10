@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { BotMessageSquare, Loader2, Send, Trash2 } from 'lucide-react';
+import { isAxiosError } from 'axios';
+import { AlertTriangle, BotMessageSquare, Loader2, RotateCw, Send, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
 import { getSessionCases } from '../lib/sessionCases';
 import { Button } from '../components/ui/Button';
@@ -15,7 +16,7 @@ const suggestions = [
   'Que documentos faltan en los casos criticos?',
 ];
 
-type AgentMessage = { role: 'user' | 'agent'; content: string; source?: string };
+type AgentMessage = { role: 'user' | 'agent'; content: string; source?: string; isError?: boolean };
 
 function readStoredMessages(storageKey: string): AgentMessage[] {
   try {
@@ -33,6 +34,17 @@ function visibleSource(source?: string) {
   return source;
 }
 
+function describeAgentError(error: unknown): string {
+  if (isAxiosError(error)) {
+    if (error.code === 'ECONNABORTED') return 'La consulta tardo demasiado en responder (timeout). Intenta de nuevo.';
+    if (!error.response) return 'No se pudo conectar con el servidor. Verifica tu conexion o que la API este activa.';
+    if (error.response.status === 429) return 'Demasiadas preguntas seguidas; espera unos segundos y vuelve a intentar.';
+    if (error.response.status === 401) return 'Tu sesion expiro. Vuelve a iniciar sesion.';
+    return `El servidor respondio con un error (${error.response.status}). Intenta de nuevo.`;
+  }
+  return 'Ocurrio un error inesperado. Intenta de nuevo.';
+}
+
 export function Agent() {
   const { user } = useAuth();
   const storageKey = useMemo(() => `fraudia.agent.messages.${user?.email ?? 'anonymous'}`, [user?.email]);
@@ -40,10 +52,15 @@ export function Agent() {
   const [messages, setMessages] = useState<AgentMessage[]>(() => readStoredMessages(storageKey));
   const [loading, setLoading] = useState(false);
   const pendingRef = useRef(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(messages));
   }, [messages, storageKey]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length, loading]);
 
   const ask = async (text: string) => {
     const trimmed = text.trim();
@@ -56,8 +73,8 @@ export function Agent() {
     try {
       const response = await api.post('/agent/question', { question: trimmed, scope: 'global', session_cases: getSessionCases() });
       setMessages([...next, { role: 'agent', content: response.data.answer, source: response.data.source }]);
-    } catch {
-      setMessages([...next, { role: 'agent', content: 'No pude conectar con el agente. Verifica que FastAPI este activo.' }]);
+    } catch (error) {
+      setMessages([...next, { role: 'agent', content: describeAgentError(error), isError: true }]);
     } finally {
       pendingRef.current = false;
       setLoading(false);
@@ -110,13 +127,40 @@ export function Agent() {
           )}
           {messages.map((message, index) => (
             <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[82%] rounded-3xl p-4 text-sm ${message.role === 'user' ? 'rounded-br-sm bg-cyan-700 text-white' : 'rounded-bl-sm border border-navy-100 bg-navy-50 text-navy-900'}`}>
+              <div
+                className={`max-w-[82%] rounded-3xl p-4 text-sm ${
+                  message.role === 'user'
+                    ? 'rounded-br-sm bg-cyan-700 text-white'
+                    : message.isError
+                      ? 'rounded-bl-sm border border-red-200 bg-red-50 text-red-800'
+                      : 'rounded-bl-sm border border-navy-100 bg-navy-50 text-navy-900'
+                }`}
+              >
+                {message.isError && (
+                  <div className="mb-2 flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 shrink-0" />
+                    <span className="font-semibold">No se pudo responder</span>
+                  </div>
+                )}
                 {message.role === 'agent' ? <MarkdownMessage content={message.content} /> : <div className="whitespace-pre-wrap">{message.content}</div>}
                 {visibleSource(message.source) && <p className="mt-3 text-xs font-semibold text-cyan-700">Fuente: {visibleSource(message.source)}</p>}
+                {message.isError && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const lastUser = [...messages].slice(0, index).reverse().find((m) => m.role === 'user');
+                      if (lastUser) ask(lastUser.content);
+                    }}
+                    className="mt-2 flex items-center gap-1 text-xs font-semibold text-red-700 underline hover:text-red-900"
+                  >
+                    <RotateCw className="h-3 w-3" /> Reintentar
+                  </button>
+                )}
               </div>
             </div>
           ))}
           {loading && <Loader2 className="h-5 w-5 animate-spin text-cyan-700" />}
+          <div ref={messagesEndRef} />
         </CardContent>
         <form onSubmit={handleSend} className="flex gap-2 border-t border-navy-100 bg-white p-3 sm:p-4">
           <input value={question} onChange={(event) => setQuestion(event.target.value)} disabled={loading} placeholder="Escribe tu pregunta..." className="flex-1 rounded-xl border border-navy-200 px-4 py-2 outline-none focus:ring-2 focus:ring-cyan-400 disabled:cursor-not-allowed disabled:bg-navy-50 disabled:text-navy-400" />
