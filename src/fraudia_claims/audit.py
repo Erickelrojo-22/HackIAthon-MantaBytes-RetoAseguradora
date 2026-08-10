@@ -8,7 +8,7 @@ from threading import Lock
 from typing import Any
 
 from fraudia_claims.config import DEFAULT_DB_PATH
-from fraudia_claims.database import database_label, execute_rows, execute_statement, execute_write
+from fraudia_claims.database import database_label, execute_one, execute_rows, execute_statement, execute_write
 
 
 _AUDIT_TABLES_READY: set[str] = set()
@@ -81,19 +81,16 @@ def log_event(
     return row
 
 
-def list_audit_events(
+def _audit_filters(
     actor_email: str | None = None,
     action: str | None = None,
     resource_type: str | None = None,
     resource_id: str | None = None,
     date_from: str | None = None,
     date_to: str | None = None,
-    limit: int = 100,
-    db_path: Path = DEFAULT_DB_PATH,
-) -> list[dict[str, Any]]:
-    ensure_audit_table(db_path)
-    clauses = []
-    params: dict[str, Any] = {"limit": int(limit)}
+) -> tuple[list[str], dict[str, Any]]:
+    clauses: list[str] = []
+    params: dict[str, Any] = {}
     filters = {
         "actor_email": actor_email,
         "action": action,
@@ -110,14 +107,32 @@ def list_audit_events(
     if date_to:
         clauses.append("created_at <= :date_to")
         params["date_to"] = date_to
+    return clauses, params
+
+
+def list_audit_events(
+    actor_email: str | None = None,
+    action: str | None = None,
+    resource_type: str | None = None,
+    resource_id: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+    limit: int = 100,
+    offset: int = 0,
+    db_path: Path = DEFAULT_DB_PATH,
+) -> list[dict[str, Any]]:
+    ensure_audit_table(db_path)
+    clauses, params = _audit_filters(actor_email, action, resource_type, resource_id, date_from, date_to)
+    params["limit"] = int(limit)
+    params["offset"] = int(offset)
     where = "WHERE " + " AND ".join(clauses) if clauses else ""
     rows = execute_rows(
         f"""
         SELECT *
         FROM audit_log
         {where}
-        ORDER BY created_at DESC
-        LIMIT :limit
+        ORDER BY created_at DESC, id_event DESC
+        LIMIT :limit OFFSET :offset
         """,
         params,
         db_path=db_path,
@@ -125,3 +140,19 @@ def list_audit_events(
     for row in rows:
         row["metadata"] = json.loads(row.pop("metadata_json") or "{}")
     return rows
+
+
+def count_audit_events(
+    actor_email: str | None = None,
+    action: str | None = None,
+    resource_type: str | None = None,
+    resource_id: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+    db_path: Path = DEFAULT_DB_PATH,
+) -> int:
+    ensure_audit_table(db_path)
+    clauses, params = _audit_filters(actor_email, action, resource_type, resource_id, date_from, date_to)
+    where = "WHERE " + " AND ".join(clauses) if clauses else ""
+    row = execute_one(f"SELECT COUNT(*) AS total FROM audit_log {where}", params, db_path=db_path)
+    return int(row["total"]) if row else 0

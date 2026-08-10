@@ -9,7 +9,7 @@ from pathlib import Path
 from threading import Lock
 
 import pandas as pd
-from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -25,7 +25,7 @@ from fraudia_claims.agent_tools import (
     score_candidate_claim,
 )
 from fraudia_claims.analytics import city_concentration, executive_kpis, provider_pareto, risk_matrix
-from fraudia_claims.audit import list_audit_events, log_event
+from fraudia_claims.audit import count_audit_events, list_audit_events, log_event
 from fraudia_claims.auth import DemoUser, authenticate_demo_user, current_user, require_roles, user_to_dict
 from fraudia_claims.config import CORS_ORIGINS, DEFAULT_DB_PATH, MAX_CSV_UPLOAD_BYTES
 from fraudia_claims.ingestion import REQUIRED_COLUMNS, missing_required_columns
@@ -85,6 +85,7 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "Accept"],
+    expose_headers=["X-Total-Count"],
 )
 
 
@@ -279,6 +280,7 @@ def review_history(
 @app.get("/audit-log")
 def audit_log(
     background_tasks: BackgroundTasks,
+    response: Response,
     actor_email: str | None = None,
     action: str | None = None,
     resource_type: str | None = None,
@@ -286,11 +288,12 @@ def audit_log(
     date_from: str | None = None,
     date_to: str | None = None,
     limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
     user: DemoUser = Depends(require_roles("Jefatura", "Auditoria")),
 ) -> list[dict[str, Any]]:
     ensure_app_ready()
     queue_log_event(background_tasks, user.email, user.role, "audit_log.viewed", "audit", "audit_log")
-    return list_audit_events(
+    rows = list_audit_events(
         actor_email=actor_email,
         action=action,
         resource_type=resource_type,
@@ -298,8 +301,20 @@ def audit_log(
         date_from=date_from,
         date_to=date_to,
         limit=limit,
+        offset=offset,
         db_path=DEFAULT_DB_PATH,
     )
+    total = count_audit_events(
+        actor_email=actor_email,
+        action=action,
+        resource_type=resource_type,
+        resource_id=resource_id,
+        date_from=date_from,
+        date_to=date_to,
+        db_path=DEFAULT_DB_PATH,
+    )
+    response.headers["X-Total-Count"] = str(total)
+    return rows
 
 
 @app.post("/agent/question")
