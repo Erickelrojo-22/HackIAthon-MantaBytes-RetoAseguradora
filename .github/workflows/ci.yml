@@ -44,3 +44,19 @@ jobs:
         run: npm run lint
       - name: Typecheck and build
         run: npm run build
+
+  # Render's GitHub App integration doesn't reliably notify Render of new
+  # pushes (deploys were only happening via Manual Deploy in the dashboard),
+  # so deploys are triggered explicitly here via Render's Deploy Hook URLs
+  # instead of relying on that integration. Runs only after backend+frontend
+  # pass, and only for real pushes to main (never for PRs), so nothing
+  # half-tested ever reaches production.
+  deploy:
+    needs: [backend, frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy - fraudia-api
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_API }}"
+      - name: Trigger Render deploy - fraudia-frontend
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}"
