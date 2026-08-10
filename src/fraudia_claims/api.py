@@ -108,6 +108,11 @@ class AgentQuestionPayload(BaseModel):
     question: str
     id_siniestro: str | None = None
     scope: str = "general"
+    # Casos temporales evaluados en esta sesion del navegador (via
+    # /score-candidate) que el usuario nunca persiste. Se envian de vuelta al
+    # preguntar "el ultimo caso evaluado en vivo" para que el intent
+    # session_case pueda responder sin re-tipear el caso.
+    session_cases: list[dict[str, Any]] | None = Field(default=None, max_length=10)
 
 
 class CandidateScorePayload(BaseModel):
@@ -331,7 +336,7 @@ def agent_question(
     question = payload.question
     if payload.id_siniestro and payload.id_siniestro.upper() not in question.upper():
         question = f"{question}\n\nSiniestro relacionado: {payload.id_siniestro.upper()}"
-    answer, source = ask_agent_with_status(question, DEFAULT_DB_PATH)
+    answer, source = ask_agent_with_status(question, DEFAULT_DB_PATH, session_cases=payload.session_cases)
     queue_log_event(
         background_tasks,
         user.email,

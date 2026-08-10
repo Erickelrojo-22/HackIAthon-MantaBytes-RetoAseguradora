@@ -89,39 +89,26 @@ def detect_intent(question: str) -> AgentIntent:
     claim_id = extract_claim_id(question)
     if _mentions_session_case(normalized):
         return AgentIntent("session_case", normalized, claim_id=claim_id)
-    if claim_id and _mentions_claim_detail(normalized):
+    if claim_id:
+        # Un SIN valido en la pregunta ya es suficiente para pedir el detalle
+        # del expediente: antes se exigia ademas una palabra clave como
+        # "explica" o "detalle", asi que "cuentame sobre SIN-1023" nunca
+        # disparaba este intent y caia en una respuesta generica.
         return AgentIntent("claim_detail", normalized, claim_id=claim_id)
 
     fuzzy = _best_fuzzy_intent(normalized)
     if fuzzy:
         return AgentIntent(fuzzy, normalized, claim_id=claim_id)
 
-    if "proveedor" in normalized and ("80" in normalized or "ochenta" in normalized):
-        return AgentIntent("provider_pareto", normalized)
-    if "proveedor" in normalized and _has_any(normalized, ("roja", "alerta", "concentran", "critico")):
-        return AgentIntent("provider_alerts", normalized)
-    if _has_any(normalized, ("top", "mayor riesgo", "revisar primero", "10 siniestros", "prioridad")):
-        return AgentIntent("top_risk", normalized)
-    if _has_any(normalized, ("documento", "faltan", "faltantes", "ilegible", "inconsistente")):
-        return AgentIntent("documents", normalized)
-    if _has_any(normalized, ("patron", "repiten", "repetidos", "narrativa", "similitud")) and "resumen" not in normalized:
-        return AgentIntent("repeated_patterns", normalized)
-    if _has_any(normalized, ("ramo", "ramos")):
-        return AgentIntent("branch_concentration", normalized)
-    if _has_any(normalized, ("ciudad", "ciudades")):
-        return AgentIntent("city_concentration", normalized)
-    if "ahorro" in normalized:
-        return AgentIntent("savings", normalized)
-    if "asegurado" in normalized and _has_any(normalized, ("frecuencia", "reclamo", "siniestro")):
-        return AgentIntent("insured_frequency", normalized)
-    if "monto" in normalized and _has_any(normalized, ("atipico", "alto", "suma asegurada")):
-        return AgentIntent("amount_outliers", normalized)
-    if _has_any(normalized, ("inicio", "fin", "vigencia", "poliza")) and _has_any(normalized, ("cerca", "ocurrieron")):
-        return AgentIntent("policy_edges", normalized)
-    if _has_any(normalized, ("metrica", "precision", "recall", "auc", "modelo")):
-        return AgentIntent("metrics", normalized)
-    if _has_any(normalized, ("resumen ejecutivo", "resumen", "patrones ejecutivos")):
-        return AgentIntent("executive_summary", normalized)
+    # Antes de aqui habia heuristicas de una sola palabra clave ('ramo' in
+    # normalized, 'modelo' in normalized, etc.) que interceptaban preguntas
+    # libres ("como funciona tu modelo?") y las respondian con una plantilla
+    # generica, incluso con OPENAI_API_KEY configurada. Cualquier pregunta
+    # que no calce con una de las canonicas de la demo (fuzzy match arriba)
+    # ni sea un SIN especifico se deja como "fallback": is_fast_local_question
+    # la excluye de las respuestas locales rapidas, asi que ask_agent_with_status
+    # la envia al modelo cuando hay API key, y solo usa la plantilla generica
+    # como ultimo recurso si OpenAI no esta disponible.
     return AgentIntent("fallback", normalized, claim_id=claim_id)
 
 
@@ -143,11 +130,3 @@ def _best_fuzzy_intent(normalized: str) -> IntentName | None:
 
 def _mentions_session_case(normalized: str) -> bool:
     return "ultimo caso" in normalized or "caso evaluado" in normalized or "evaluado en vivo" in normalized
-
-
-def _mentions_claim_detail(normalized: str) -> bool:
-    return _has_any(normalized, ("por que", "porque", "explica", "detalle", "documento", "proveedor", "accion"))
-
-
-def _has_any(value: str, needles: tuple[str, ...]) -> bool:
-    return any(needle in value for needle in needles)

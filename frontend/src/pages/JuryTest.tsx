@@ -2,6 +2,7 @@ import type { ClipboardEvent, FormEvent, KeyboardEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { AlertTriangle, BotMessageSquare, Loader2 } from 'lucide-react';
 import { api, money } from '../lib/api';
+import { addSessionCase, getSessionCases } from '../lib/sessionCases';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
@@ -86,6 +87,7 @@ interface CandidateScore {
   score_final: number;
   nivel_riesgo: RiskLevel;
   explicacion_resumen: string;
+  accion_sugerida: string;
   alertas: CandidateAlert[];
 }
 
@@ -119,6 +121,15 @@ export function JuryTest() {
       const response = await api.post<CandidateScore>('/score-candidate', formData);
       setResult(response.data);
       setAiAnswer('');
+      addSessionCase({
+        ramo: formData.ramo,
+        cobertura: formData.cobertura,
+        score_final: response.data.score_final,
+        nivel_riesgo: response.data.nivel_riesgo,
+        monto_reclamado: formData.monto_reclamado,
+        accion_sugerida: response.data.accion_sugerida,
+        alertas: response.data.alertas,
+      });
     } catch {
       setResult(null);
       setApiError('No se pudo calcular el score. Revisa los campos e intenta nuevamente.');
@@ -142,6 +153,7 @@ export function JuryTest() {
           `Alertas: ${result.alertas.map((alert) => `${alert.codigo} ${alert.descripcion}`).join('; ') || 'sin alertas materiales'}.`,
         ].join('\n'),
         scope: 'jury-test',
+        session_cases: getSessionCases(),
       });
       setAiAnswer(response.data.answer);
     } catch {

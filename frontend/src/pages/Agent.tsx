@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BotMessageSquare, Loader2, Send, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
+import { getSessionCases } from '../lib/sessionCases';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { MarkdownMessage } from '../components/ui/MarkdownMessage';
@@ -53,7 +54,7 @@ export function Agent() {
     setQuestion('');
     setLoading(true);
     try {
-      const response = await api.post('/agent/question', { question: trimmed, scope: 'global' });
+      const response = await api.post('/agent/question', { question: trimmed, scope: 'global', session_cases: getSessionCases() });
       setMessages([...next, { role: 'agent', content: response.data.answer, source: response.data.source }]);
     } catch {
       setMessages([...next, { role: 'agent', content: 'No pude conectar con el agente. Verifica que FastAPI este activo.' }]);

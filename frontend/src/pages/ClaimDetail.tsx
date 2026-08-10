@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { AlertTriangle, BotMessageSquare, FileText, Loader2, Send } from 'lucide-react';
 import { api, dateTime, money, type ClaimDetail as ClaimDetailType, type ReviewDecision, type ReviewStatus } from '../lib/api';
+import { getSessionCases } from '../lib/sessionCases';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
@@ -46,7 +47,8 @@ export function ClaimDetail() {
   });
 
   const aiMutation = useMutation({
-    mutationFn: async (question: string) => (await api.post('/agent/question', { question, id_siniestro: id, scope: 'claim' })).data,
+    mutationFn: async (question: string) =>
+      (await api.post('/agent/question', { question, id_siniestro: id, scope: 'claim', session_cases: getSessionCases() })).data,
     onSuccess: (data) => {
       const source = visibleSource(data.source);
       setAiAnswer(source ? `${data.answer}\n\nFuente: ${source}` : data.answer);

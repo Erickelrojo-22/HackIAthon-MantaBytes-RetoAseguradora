@@ -118,6 +118,32 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertIn("answer", agent.json())
         self.assertIn("disclaimer", agent.json())
 
+        # Antes /agent/question no aceptaba session_cases en absoluto, asi que
+        # preguntar por "el ultimo caso evaluado en vivo" siempre respondia
+        # que no habia casos, incluso justo despues de puntuar uno en la UI.
+        session_case_agent = self.client.post(
+            "/agent/question",
+            json={
+                "question": "Cuentame del ultimo caso evaluado en vivo",
+                "scope": "global",
+                "session_cases": [
+                    {
+                        "id_temporal": "TMP-TEST01",
+                        "ramo": "Vehiculos",
+                        "cobertura": "Robo",
+                        "score_final": 77,
+                        "nivel_riesgo": "Rojo",
+                        "monto_reclamado": 5000,
+                        "accion_sugerida": "Escalar a revision especializada de campo.",
+                        "alertas": [],
+                    }
+                ],
+            },
+            headers=self.auth(self.analyst_token),
+        )
+        self.assertEqual(session_case_agent.status_code, 200)
+        self.assertIn("TMP-TEST01", session_case_agent.json()["answer"])
+
         upload = self.client.post(
             "/claims/upload-csv",
             files={"file": ("siniestros.csv", b"id_siniestro,ramo\nSINX,Vehiculos\n", "text/csv")},
