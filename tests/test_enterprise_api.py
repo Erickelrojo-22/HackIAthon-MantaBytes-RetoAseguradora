@@ -3,9 +3,7 @@ from __future__ import annotations
 import sqlite3
 import sys
 import unittest
-from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -217,27 +215,30 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertEqual(forbidden_audit.status_code, 403)
 
     def test_audit_log_pagination_and_total_count(self) -> None:
-        # Genera actividad suficiente para paginar.
+        # Genera actividad suficiente para paginar, con una accion propia
+        # (dashboard.kpis.viewed) que no choca con "audit_log.viewed": el
+        # propio GET /audit-log queda registrado como ese evento distinto
+        # cada vez que se lo consulta (via BackgroundTasks), asi que sin
+        # filtrar por accion, la fila que agrega la primera pagina desplaza
+        # el offset de la segunda y produce solapamiento falso -- un intento
+        # anterior de fijar esto con date_to seguia siendo fragil porque
+        # created_at se trunca a segundos enteros y ese evento propio puede
+        # caer en el mismo segundo. Filtrar por accion evita la carrera de
+        # raiz, sin depender de granularidad de reloj.
         for _ in range(3):
             self.client.get("/dashboard/kpis", headers=self.auth(self.analyst_token))
 
-        # El propio GET /audit-log queda registrado como evento "audit_log.viewed"
-        # (via BackgroundTasks), asi que consultarlo inserta una fila nueva cada
-        # vez. Sin fijar un corte temporal, la fila que agrega la primera pagina
-        # desplaza el offset de la segunda y produce solapamiento falso. Se fija
-        # un snapshot ("date_to") para que ambas paginas lean el mismo universo.
-        # El "+" de "+00:00" debe ir url-encoded (quote): en un query string sin
-        # encodear, parse_qsl lo decodifica como espacio y created_at <= date_to
-        # deja de matchear filas creadas en el mismo segundo que el snapshot.
-        snapshot = quote(datetime.now(timezone.utc).replace(microsecond=0).isoformat())
-
-        first_page = self.client.get(f"/audit-log?limit=2&offset=0&date_to={snapshot}", headers=self.auth(self.audit_token))
+        first_page = self.client.get(
+            "/audit-log?action=dashboard.kpis.viewed&limit=2&offset=0", headers=self.auth(self.audit_token)
+        )
         self.assertEqual(first_page.status_code, 200)
         total = int(first_page.headers["X-Total-Count"])
         self.assertGreaterEqual(total, 3)
         self.assertEqual(len(first_page.json()), 2)
 
-        second_page = self.client.get(f"/audit-log?limit=2&offset=2&date_to={snapshot}", headers=self.auth(self.audit_token))
+        second_page = self.client.get(
+            "/audit-log?action=dashboard.kpis.viewed&limit=2&offset=2", headers=self.auth(self.audit_token)
+        )
         first_ids = {row["id_event"] for row in first_page.json()}
         second_ids = {row["id_event"] for row in second_page.json()}
         self.assertTrue(first_ids.isdisjoint(second_ids))
