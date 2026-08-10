@@ -19,9 +19,12 @@ class DemoUser:
 
 
 DEMO_USERS = {
-    "analista@fraudia.demo": DemoUser("analista@fraudia.demo", "Analista Demo", "Analista"),
-    "jefatura@fraudia.demo": DemoUser("jefatura@fraudia.demo", "Jefatura Demo", "Jefatura"),
-    "auditoria@fraudia.demo": DemoUser("auditoria@fraudia.demo", "Auditoria Demo", "Auditoria"),
+    # El nombre visible en la app es solo el rol (sin sufijo "Demo"): estas son
+    # cuentas de acceso fijas (no hay alta de usuarios en este MVP), pero la UI
+    # no debe leerse como "esto es una demo" en cada pantalla donde aparece.
+    "analista@fraudia.demo": DemoUser("analista@fraudia.demo", "Analista", "Analista"),
+    "jefatura@fraudia.demo": DemoUser("jefatura@fraudia.demo", "Jefatura", "Jefatura"),
+    "auditoria@fraudia.demo": DemoUser("auditoria@fraudia.demo", "Auditoria", "Auditoria"),
 }
 
 # Los tokens demo tienen un valor por defecto conocido publicamente (repo abierto), por lo
@@ -46,7 +49,7 @@ def authenticate_demo_user(email: str, password: str) -> tuple[str, DemoUser]:
     if user is None or password != DEMO_PASSWORD:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Credenciales demo invalidas.",
+            detail="Credenciales invalidas.",
         )
     return EMAIL_TO_TOKEN[user.email], user
 
@@ -56,7 +59,7 @@ def user_from_token(token: str) -> DemoUser:
     if not email:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token demo invalido.",
+            detail="Token invalido.",
         )
     return DEMO_USERS[email]
 

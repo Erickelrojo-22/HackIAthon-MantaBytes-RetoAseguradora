@@ -123,7 +123,7 @@ def build_executive_report_html(
   {live_section}
   <section>
     <h2>Metodologia</h2>
-    <p>El score combina reglas de negocio, deteccion de anomalias por ramo y similitud narrativa. Las etiquetas del dataset son sinteticas y se usan solo para demo y pruebas.</p>
+    <p>El score combina reglas de negocio, deteccion de anomalias por ramo y similitud narrativa. Las etiquetas del dataset son sinteticas y se usan con fines ilustrativos y de prueba.</p>
     <p>Fuente publica de contexto: <a href="{SCVS_CONTEXT_URL}">SCVS - Portal de informacion de seguros</a>.</p>
   </section>
   <footer>{escape(DISCLAIMER)}</footer>

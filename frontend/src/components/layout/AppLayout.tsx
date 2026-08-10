@@ -124,13 +124,9 @@ export function AppLayout() {
             </button>
             <img src={mantaBytesLogo} alt="" className="h-10 w-10 rounded-xl bg-white object-contain p-1 shadow-sm ring-1 ring-navy-100" />
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-navy-900">Demo empresarial Manta Bytes</p>
+              <p className="truncate text-sm font-semibold text-navy-900">FraudIA Claims</p>
               <p className="text-xs text-navy-500">Alertas explicables para revision humana</p>
             </div>
-          </div>
-          <div className="hidden items-center gap-3 text-sm text-navy-600 sm:flex">
-            <ClipboardCheck className="h-5 w-5 text-cyan-700" />
-            <span>API FastAPI + Frontend React</span>
           </div>
         </header>
         <div className="flex-1 overflow-auto bg-[radial-gradient(circle_at_top_right,#cffafe_0,#f8fafc_34%,#ffffff_70%)] p-4 sm:p-6 lg:p-8">

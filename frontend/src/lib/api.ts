@@ -191,7 +191,11 @@ export interface VisionResult {
   disclaimer: string;
 }
 
-export const api = axios.create({ baseURL: API_URL, timeout: 30000 });
+// 45s: el backend corre en el plan free de Render, que apaga el servicio tras
+// inactividad y puede tardar 30-60s en "despertar" ante la primera solicitud.
+// Con un timeout mas corto, ese arranque en frio se veia (incorrectamente)
+// como un bloqueo de CORS en el login.
+export const api = axios.create({ baseURL: API_URL, timeout: 45000 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
