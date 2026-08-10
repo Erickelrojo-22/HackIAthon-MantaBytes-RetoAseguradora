@@ -9,17 +9,19 @@ from pathlib import Path
 from threading import Lock
 
 import pandas as pd
-from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from fraudia_claims.agent_tools import (
     aggregate_alerts,
     claim_exists,
+    count_risk_cases,
     executive_report,
     get_claim_detail,
     get_relationship_network,
     get_model_metrics,
+    list_risk_case_options,
     list_risk_cases,
     provider_red_alert_pareto,
     score_candidate_claim,
@@ -33,7 +35,7 @@ from fraudia_claims.openai_agent import ask_agent_with_status
 from fraudia_claims.rate_limit import enforce_rate_limit
 from fraudia_claims.reviews import REVIEW_STATUSES, create_review_decision, list_review_history
 from fraudia_claims.storage import database_status, ensure_operational_tables, initialize_demo_data
-from fraudia_claims.vision import MAX_IMAGE_BYTES, analyze_claim_image
+from fraudia_claims.vision import MAX_IMAGE_BYTES, analyze_claim_image, image_analysis_available
 
 
 _APP_READY = False
@@ -85,6 +87,7 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "Accept"],
+    expose_headers=["X-Total-Count"],
 )
 
 
@@ -204,18 +207,43 @@ def health() -> dict[str, Any]:
     return {
         "status": "ok",
         "database": status,
+        "vision_available": image_analysis_available(),
         "principio": "Alertas de revision humana; no acusaciones ni decisiones automaticas.",
     }
 
 
 @app.get("/claims/risk")
 def claims_risk(
+    response: Response,
     limit: int = Query(default=10, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
     level: str | None = Query(default=None, pattern="^(Verde|Amarillo|Rojo)$"),
+    ramo: str | None = Query(default=None, max_length=40),
+    ciudad: str | None = Query(default=None, max_length=80),
+    min_score: int | None = Query(default=None, ge=0, le=100),
     user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
 ) -> list[dict[str, Any]]:
     ensure_app_ready()
-    return list_risk_cases(limit=limit, level=level, db_path=DEFAULT_DB_PATH)
+    rows = list_risk_cases(
+        limit=limit,
+        offset=offset,
+        level=level,
+        ramo=ramo,
+        ciudad=ciudad,
+        min_score=min_score,
+        db_path=DEFAULT_DB_PATH,
+    )
+    total = count_risk_cases(level=level, ramo=ramo, ciudad=ciudad, min_score=min_score, db_path=DEFAULT_DB_PATH)
+    response.headers["X-Total-Count"] = str(total)
+    return rows
+
+
+@app.get("/claims/filter-options")
+def claims_filter_options(
+    user: DemoUser = Depends(require_roles("Analista", "Jefatura", "Auditoria")),
+) -> dict[str, list[str]]:
+    ensure_app_ready()
+    return list_risk_case_options(db_path=DEFAULT_DB_PATH)
 
 
 @app.get("/claims/{id_siniestro}")
