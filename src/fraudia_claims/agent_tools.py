@@ -8,13 +8,42 @@ from fraudia_claims.database import execute_one_cached, execute_rows, execute_ro
 from fraudia_claims.scoring import level_from_score
 
 
-def list_risk_cases(limit: int = 10, level: str | None = None, db_path: Path = DEFAULT_DB_PATH) -> list[dict[str, Any]]:
-    level_clause = ""
+def _risk_case_filters(
+    level: str | None = None,
+    ramo: str | None = None,
+    ciudad: str | None = None,
+    min_score: int | None = None,
+) -> tuple[list[str], dict[str, Any]]:
+    clauses: list[str] = []
     params: dict[str, Any] = {}
     if level:
-        level_clause = "WHERE sc.nivel_riesgo = :level"
+        clauses.append("sc.nivel_riesgo = :level")
         params["level"] = level
+    if ramo:
+        clauses.append("si.ramo = :ramo")
+        params["ramo"] = ramo
+    if ciudad:
+        clauses.append("si.sucursal = :ciudad")
+        params["ciudad"] = ciudad
+    if min_score is not None:
+        clauses.append("sc.score_final >= :min_score")
+        params["min_score"] = int(min_score)
+    return clauses, params
+
+
+def list_risk_cases(
+    limit: int = 10,
+    offset: int = 0,
+    level: str | None = None,
+    ramo: str | None = None,
+    ciudad: str | None = None,
+    min_score: int | None = None,
+    db_path: Path = DEFAULT_DB_PATH,
+) -> list[dict[str, Any]]:
+    clauses, params = _risk_case_filters(level, ramo, ciudad, min_score)
+    where_clause = ("WHERE " + " AND ".join(clauses)) if clauses else ""
     params["limit"] = int(limit)
+    params["offset"] = int(offset)
     query = f"""
         SELECT
             sc.id_siniestro,
@@ -29,11 +58,53 @@ def list_risk_cases(limit: int = 10, level: str | None = None, db_path: Path = D
         FROM scores sc
         JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
         LEFT JOIN proveedores pr ON pr.id_proveedor = si.id_proveedor
-        {level_clause}
+        {where_clause}
         ORDER BY sc.score_final DESC, si.monto_reclamado DESC
-        LIMIT :limit
+        LIMIT :limit OFFSET :offset
     """
     return execute_rows_cached(query, params, db_path=db_path)
+
+
+def count_risk_cases(
+    level: str | None = None,
+    ramo: str | None = None,
+    ciudad: str | None = None,
+    min_score: int | None = None,
+    db_path: Path = DEFAULT_DB_PATH,
+) -> int:
+    clauses, params = _risk_case_filters(level, ramo, ciudad, min_score)
+    where_clause = ("WHERE " + " AND ".join(clauses)) if clauses else ""
+    row = execute_one_cached(
+        f"""
+        SELECT COUNT(*) AS total
+        FROM scores sc
+        JOIN siniestros si ON si.id_siniestro = sc.id_siniestro
+        {where_clause}
+        """,
+        params,
+        db_path=db_path,
+    )
+    return int(row["total"]) if row else 0
+
+
+def list_risk_case_options(db_path: Path = DEFAULT_DB_PATH) -> dict[str, list[str]]:
+    """Distinct ramo/ciudad values across the whole table, for filter dropdowns.
+
+    Independent of any pagination window, so options never go missing just
+    because a matching row fell outside the currently loaded page.
+    """
+    ramos = execute_rows_cached(
+        "SELECT DISTINCT ramo FROM siniestros WHERE ramo IS NOT NULL ORDER BY ramo",
+        db_path=db_path,
+    )
+    ciudades = execute_rows_cached(
+        "SELECT DISTINCT sucursal AS ciudad FROM siniestros WHERE sucursal IS NOT NULL ORDER BY sucursal",
+        db_path=db_path,
+    )
+    return {
+        "ramos": [row["ramo"] for row in ramos],
+        "ciudades": [row["ciudad"] for row in ciudades],
+    }
 
 
 def get_claim_detail(id_siniestro: str, db_path: Path = DEFAULT_DB_PATH) -> dict[str, Any]:

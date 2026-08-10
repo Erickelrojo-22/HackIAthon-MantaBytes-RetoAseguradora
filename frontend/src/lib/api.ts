@@ -59,10 +59,14 @@ export interface ClaimDetail extends ClaimRisk {
   siniestro_similar?: string;
   proveedor_nombre?: string;
   proveedor_tipo?: string;
+  proveedor_lista_restrictiva?: number | boolean;
   fecha_ocurrencia?: string;
   fecha_reporte?: string;
   sucursal?: string;
   descripcion?: string;
+  estado?: string;
+  monto_estimado?: number;
+  monto_pagado?: number;
   alertas: Alert[];
   documentos: DocumentFinding[];
 }
@@ -99,6 +103,37 @@ export interface DashboardKpis {
   monto_priorizado: number;
   ahorro_potencial_simulado: number;
   score_promedio: number;
+}
+
+export interface ProviderCritico {
+  proveedor: string;
+  tipo: string;
+  total_siniestros: number;
+  alertas_rojas: number;
+  score_promedio: number;
+  monto_priorizado: number;
+}
+
+export interface CiudadCritica {
+  ciudad: string;
+  total_siniestros: number;
+  casos_revision: number;
+  porcentaje_revision: number;
+  score_promedio: number;
+}
+
+export interface RiskMatrixRow {
+  ramo: string;
+  nivel_riesgo: RiskLevel;
+  total: number;
+  monto_reclamado: number;
+}
+
+export interface DashboardResponse {
+  kpis: DashboardKpis;
+  proveedores_criticos: ProviderCritico[];
+  ciudades_criticas: CiudadCritica[];
+  matriz_riesgo: RiskMatrixRow[];
 }
 
 export interface RelationshipNode {
