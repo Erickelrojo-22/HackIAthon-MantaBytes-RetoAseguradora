@@ -420,9 +420,29 @@ async def upload_claims_csv(
                 pass
 
     stem = Path(file.filename or "").stem
-    required = REQUIRED_COLUMNS.get(stem, set())
-    missing = sorted(missing_required_columns(stem, frame.columns)) if required else []
-    status_value = "revisar" if missing else "ok"
+    table_known = stem in REQUIRED_COLUMNS
+    if table_known:
+        missing = sorted(missing_required_columns(stem, frame.columns))
+        status_value = "revisar" if missing else "ok"
+        message = (
+            "CSV validado. No se detectaron columnas obligatorias faltantes."
+            if not missing
+            else "CSV validado con columnas faltantes: revisa el detalle antes de usarlo."
+        )
+    else:
+        # Antes: un nombre de archivo que no calzara exactamente con una de las
+        # tablas conocidas (p.ej. "siniestros_marzo.csv" en vez de "siniestros.csv")
+        # devolvia missing_columns=[] y status="ok" -- pasando como "valido" un
+        # archivo cuyas columnas nunca se llegaron a revisar.
+        missing = []
+        status_value = "no_reconocido"
+        expected = ", ".join(sorted(REQUIRED_COLUMNS))
+        message = (
+            f"No se reconoce '{file.filename}' como ninguna de las tablas esperadas "
+            f"({expected}). Renombra el archivo exactamente a <tabla>.csv para que sus "
+            "columnas se puedan validar."
+        )
+    message += " En v1 este endpoint no reemplaza tablas persistidas."
     queue_log_event(
         background_tasks,
         user.email,
@@ -434,12 +454,12 @@ async def upload_claims_csv(
     )
     return {
         "filename": file.filename,
-        "table_detected": stem or None,
+        "table_detected": stem if table_known else None,
         "rows": int(len(frame)),
         "columns": list(frame.columns),
         "status": status_value,
         "missing_columns": missing,
-        "message": "CSV validado. En v1 no reemplaza tablas persistidas desde este endpoint.",
+        "message": message,
     }
 
 

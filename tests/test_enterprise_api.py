@@ -113,6 +113,21 @@ class EnterpriseApiTests(unittest.TestCase):
         self.assertEqual(upload.json()["status"], "revisar")
         self.assertIn("id_poliza", upload.json()["missing_columns"])
 
+        # Un nombre de archivo que no calza con ninguna tabla conocida (p.ej. un
+        # export con fecha en el nombre) no debe reportarse como "ok": antes se
+        # devolvia missing_columns=[] silenciosamente porque nunca se buscaban
+        # las columnas requeridas de una tabla que no se pudo identificar.
+        unrecognized = self.client.post(
+            "/claims/upload-csv",
+            files={"file": ("siniestros_marzo_2026.csv", b"id_siniestro,ramo\nSINX,Vehiculos\n", "text/csv")},
+            headers=self.auth(self.analyst_token),
+        )
+        self.assertEqual(unrecognized.status_code, 200)
+        body = unrecognized.json()
+        self.assertEqual(body["status"], "no_reconocido")
+        self.assertIsNone(body["table_detected"])
+        self.assertEqual(body["missing_columns"], [])
+
         oversized = self.client.post(
             "/claims/upload-csv",
             files={"file": ("huge.csv", b"x" * (2 * 1024 * 1024 + 10), "text/csv")},
